@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Signify Browser Extension",
+  "version": "0.0.1",
+  "background": {
+    "service_worker": "src/pages/background/index.ts"
+  },
+  "action": {
+    "default_popup": "src/pages/popup/index.html",
+    "default_icon": {
+      "32": "public/32_keri_logo.png",
+      "128": "public/128_keri_logo.png"
+    }
+  },
+  "icons": {
+    "32": "public/32_keri_logo.png",
+    "128": "public/128_keri_logo.png"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "<all_urls>"
+      ],
+      "js": [
+        "src/pages/content/index.tsx"
+      ],
+      "css": [
+        "contentStyle.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "contentStyle.css",
+        "128_keri_logo.png",
+        "32_keri_logo.png"
+      ],
+      "matches": []
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self' 'wasm-unsafe-eval'; connect-src 'self' data: https://keria-dev.rootsid.cloud"
+  }
+}
