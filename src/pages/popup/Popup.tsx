@@ -16,9 +16,11 @@ export default function Popup(): JSX.Element {
   }
     , [])
 
-  const generatePasscode = () => {
+  const generatePasscode = async () => {
     let p = randomPasscode()
     setPasscode(p)
+    const response = await chrome.runtime.sendMessage({greeting: "bye"});
+    console.log(response)
   }
 
   const newClient = (passcode: string) => {
