@@ -1,9 +1,10 @@
 import { userService } from "@pages/background/services/user";
 
-export function Main(): JSX.Element {
-  const handleLogout = async () => {
-    await userService.removeToken();
-  };
+interface IMain {
+  handleSignout: () => void;
+}
+
+export function Main(props: IMain): JSX.Element {
   return (
     <main>
       <aside
@@ -69,7 +70,7 @@ export function Main(): JSX.Element {
         </div>
       </aside>
       <div className="p-4 sm:ml-64">
-        <button onClick={handleLogout}>Logout</button>
+        <button onClick={props.handleSignout}>Logout</button>
         <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
           <div className="grid grid-cols-3 gap-4 mb-4">Hello World</div>
         </div>

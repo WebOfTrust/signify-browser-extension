@@ -8,7 +8,6 @@ const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
 
 export default function Popup(): JSX.Element {
-  const [passcode, setPasscode] = React.useState<string>("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const checkAuthentication = async () => {
@@ -24,6 +23,24 @@ export default function Popup(): JSX.Element {
   useEffect(() => {
     checkAuthentication();
   }, []);
+
+  const handleConnect = async (vendorUrl?: string, passcode?: string) => {
+    const resp = await chrome.runtime.sendMessage({
+      type: "authentication",
+      subtype: "persist-token",
+      message: "passcode generated",
+      passcode,
+      vendorUrl,
+    });
+    checkAuthentication();
+    console.log("res in signin", resp);
+  };
+
+  const handleSignout = async () => {
+    await userService.removeToken();
+    checkAuthentication();
+  };
+
   // const [client, setClient] = React.useState<SignifyClient | undefined>(undefined)
 
   // React.useEffect(() => {
@@ -82,7 +99,11 @@ export default function Popup(): JSX.Element {
         {client && <button onClick={() => connect(client!)}>connect</button>}
         <p>connectedState:{connectedState}</p> */}
       {/* </header> */}
-      {isAuthenticated ? <Main /> : <Signin />}
+      {isAuthenticated ? (
+        <Main handleSignout={handleSignout} />
+      ) : (
+        <Signin handleConnect={handleConnect} />
+      )}
     </div>
   );
 }

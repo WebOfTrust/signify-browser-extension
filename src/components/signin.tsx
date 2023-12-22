@@ -1,20 +1,15 @@
 import { useState } from "react";
 import logo from "@assets/img/128_keri_logo.png";
 
-export function Signin(): JSX.Element {
+interface ISignin {
+  vendorUrl?: string;
+  passcode?: string;
+  handleConnect: (vendorUrl?: string, passcode?: string) => void;
+}
+
+export function Signin(props: ISignin): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState("");
   const [passcode, setPasscode] = useState("");
-
-  const handleConnection = async () => {
-    const resp = await chrome.runtime.sendMessage({
-      type: "authentication",
-      subtype: "persist-token",
-      message: "passcode generated",
-      passcode,
-      vendorUrl,
-    });
-    console.log("res in signin", resp);
-  };
 
   return (
     <div className="grid grid-cols-1 gap-2">
@@ -48,7 +43,7 @@ export function Signin(): JSX.Element {
       <div>
         <button
           type="button"
-          onClick={handleConnection}
+          onClick={() => props.handleConnect(vendorUrl, passcode)}
           className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
         >
           Connect
