@@ -28,9 +28,10 @@ export default function Popup(): JSX.Element {
     const resp = await chrome.runtime.sendMessage({
       type: "authentication",
       subtype: "persist-token",
-      message: "passcode generated",
-      passcode,
-      vendorUrl,
+      data: {
+        passcode,
+        vendorUrl,
+      },
     });
     checkAuthentication();
     console.log("res in signin", resp);
