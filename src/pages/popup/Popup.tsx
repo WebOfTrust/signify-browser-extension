@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { userService } from "@pages/background/services/user";
-import { Signin } from "@components/forms/signin";
+import { Signin } from "@src/components/signin";
 import { Main } from "@components/main";
 
 // import { randomPasscode, SignifyClient, Tier, ready } from 'signify-ts'
