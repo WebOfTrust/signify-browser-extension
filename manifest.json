@@ -17,7 +17,8 @@
     "128": "public/128_keri_logo.png"
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "content_scripts": [
     {

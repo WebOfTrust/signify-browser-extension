@@ -12,6 +12,7 @@ import pkg from './package.json';
 const root = resolve(__dirname, 'src');
 const pagesDir = resolve(root, 'pages');
 const assetsDir = resolve(root, 'assets');
+const componentsDir = resolve(root, 'components');
 const outDir = resolve(__dirname, 'dist');
 const publicDir = resolve(__dirname, 'public');
 
@@ -31,6 +32,7 @@ export default defineConfig({
       '@src': root,
       '@assets': assetsDir,
       '@pages': pagesDir,
+      '@components': componentsDir,
     },
   },
   plugins: [
