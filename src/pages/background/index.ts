@@ -4,6 +4,8 @@ import { senderIsPopup } from "@pages/background/utils";
 
 console.log("Background script loaded");
 
+// import { connectClient, listCredentials, listIdentifiers } from "./signify";
+//TODO: use the function calls above to connect to signify and list credentials and identifiers
 export interface IMessage<T> {
     type: string
     subtype?: string
