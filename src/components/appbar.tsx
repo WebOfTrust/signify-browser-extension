@@ -4,7 +4,7 @@ interface IAppbar {}
 
 export function Appbar(props: IAppbar): JSX.Element {
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
+    <nav className="bg-white border-gray-200 dark:bg-gray-900 p-2">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <a
           href="https://github.com/WebOfTrust/signify-browser-extension"

@@ -1,33 +1,38 @@
 export function SigninCard(): JSX.Element {
   return (
     <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
-      <div className="mb-3 flex flex-row justify-between">
+      <div className="mb-2 flex flex-row justify-between">
         <div>
-          <p className="font-bold text-xl text-gray-dark">Website</p>
-          <p className="font-normal text-lg text-gray">github.com</p>
+          <p className="font-bold text-lg text-gray-dark">Website</p>
+          <p className="font-normal text-md text-gray">github.com</p>
         </div>
         <svg
-          className="w-7 h-7 text-gray-500 dark:text-gray-400"
-          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          className="w-6 h-6"
         >
-          <path d="M18 5h-.7c.229-.467.349-.98.351-1.5a3.5 3.5 0 0 0-3.5-3.5c-1.717 0-3.215 1.2-4.331 2.481C8.4.842 6.949 0 5.5 0A3.5 3.5 0 0 0 2 3.5c.003.52.123 1.033.351 1.5H2a2 2 0 0 0-2 2v3a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V7a2 2 0 0 0-2-2ZM8.058 5H5.5a1.5 1.5 0 0 1 0-3c.9 0 2 .754 3.092 2.122-.219.337-.392.635-.534.878Zm6.1 0h-3.742c.933-1.368 2.371-3 3.739-3a1.5 1.5 0 0 1 0 3h.003ZM11 13H9v7h2v-7Zm-4 0H2v5a2 2 0 0 0 2 2h3v-7Zm6 0v7h3a2 2 0 0 0 2-2v-5h-5Z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+          />
         </svg>
       </div>
 
-      <div className="mb-3">
-        <p className="font-bold text-xl text-gray-dark">Username</p>
-        <p className="font-normal text-lg text-gray">HunainBinSajid</p>
+      <div className="mb-2">
+        <p className="font-bold text-lg text-gray-dark">Username</p>
+        <p className="font-normal text-md text-gray">HunainBinSajid</p>
       </div>
-      <div className="mb-3">
-        <p className="font-bold text-xl text-gray-dark">Credential</p>
-        <p className="font-normal text-lg text-gray">Educational Credential</p>
+      <div className="mb-2">
+        <p className="font-bold text-lg text-gray-dark">Credential</p>
+        <p className="font-normal text-md text-gray">Educational Credential</p>
       </div>
-      <div className="mb-3">
-        <p className="font-bold text-xl text-gray-dark">Last Used</p>
-        <p className="font-normal text-lg text-gray">November 08, 2023</p>
+      <div className="mb-1">
+        <p className="font-bold text-lg text-gray-dark">Last Used</p>
+        <p className="font-normal text-md text-gray">November 08, 2023</p>
       </div>
     </div>
   );

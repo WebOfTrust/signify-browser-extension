@@ -1,9 +1,15 @@
 import { SignifyClient, Tier, ready } from 'signify-ts'
-await ready();
+
+const makeScriptReady = async () => {
+    await ready();
+}
+makeScriptReady();
+
 export async function connectClient(url: string , passcode: string ) {
     const client = new SignifyClient(url, passcode, Tier.low);
     try {
-        await client.connect();
+        const resp = await client.connect();
+        console.log("resp", resp);
         return true
     }
     catch (e) {
