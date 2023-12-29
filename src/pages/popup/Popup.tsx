@@ -3,7 +3,7 @@ import { userService } from "@pages/background/services/user";
 import { Signin } from "@src/components/signin";
 import { Main } from "@components/main";
 
-// import { randomPasscode, SignifyClient, Tier, ready } from 'signify-ts'
+import { randomPasscode, SignifyClient, Tier, ready } from 'signify-ts'
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
 
@@ -20,8 +20,18 @@ export default function Popup(): JSX.Element {
     setIsAuthenticated(!!token);
   };
 
+  const load = async () => {
+    await ready();
+    console.log("signify client is ready");
+    let client = new SignifyClient(url, "Cp6n5zxYRmnE4iTyCUM0gR", Tier.low, boot_url);
+    await client.connect();
+    let state = await client.state();
+    console.log(state);
+  }
+
   useEffect(() => {
     checkAuthentication();
+    load();
   }, []);
 
   const handleConnect = async (vendorUrl?: string, passcode?: string) => {
