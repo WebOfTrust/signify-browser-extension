@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { userService } from "@pages/background/services/user";
+import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/components/signin";
 import { Main } from "@components/main";
 
@@ -7,13 +8,18 @@ import { Main } from "@components/main";
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
 
+interface IConnect {
+  passcode?: string;
+  vendorUrl?: string;
+}
+
 export default function Popup(): JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const checkAuthentication = async () => {
     const token = await userService.getToken();
     if (token) {
-      document.body.style.width = "900px";
+      document.body.style.width = "768px";
     } else {
       document.body.style.width = "300px";
     }
@@ -25,7 +31,7 @@ export default function Popup(): JSX.Element {
   }, []);
 
   const handleConnect = async (vendorUrl?: string, passcode?: string) => {
-    const resp = await chrome.runtime.sendMessage({
+    const resp = await chrome.runtime.sendMessage<IMessage<IConnect>>({
       type: "authentication",
       subtype: "persist-token",
       data: {
@@ -88,7 +94,7 @@ export default function Popup(): JSX.Element {
   // }
 
   return (
-    <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full p-3 bg-gray-800">
+    <div>
       {/* <header className="flex flex-col items-center justify-center text-white"> */}
       {/* <img src={logo} className="w-32 h-32" alt="logo" /> */}
       {/* <button onClick={generatePasscode}> generate</button> */}

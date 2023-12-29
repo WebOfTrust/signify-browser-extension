@@ -1,16 +1,12 @@
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
+import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
 
 console.log("Background script loaded");
 
 // import { connectClient, listCredentials, listIdentifiers } from "./signify";
 //TODO: use the function calls above to connect to signify and list credentials and identifiers
-export interface IMessage<T> {
-    type: string
-    subtype?: string
-    data: T
-}
 
 // Handle messages
 chrome.runtime.onMessage.addListener(function (message: IMessage<any>, sender, sendResponse) {

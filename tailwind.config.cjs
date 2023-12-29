@@ -9,8 +9,10 @@ module.exports = {
       green: "#13ce66",
       yellow: "#ffc82c",
       "gray-dark": "#273444",
-      gray: "#8492a6",
+      gray: "#5A5252",
+      white: "#ffffff",
       "gray-light": "#d3dce6",
+      black: "#373e49",
     },
     extend: {
       animation: {
