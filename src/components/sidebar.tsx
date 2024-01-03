@@ -1,6 +1,8 @@
+import logo from "@assets/img/128_keri_logo.png";
+
 const SIDEBAR = [
   {
-    id: "identifier",
+    id: "Identifiers",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +22,7 @@ const SIDEBAR = [
     title: "Identifiers",
   },
   {
-    id: "credential",
+    id: "Credentials",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +42,7 @@ const SIDEBAR = [
     title: "Credentials",
   },
   {
-    id: "sign-in",
+    id: "Sign Ins",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +59,7 @@ const SIDEBAR = [
         />
       </svg>
     ),
-    title: "Sign In",
+    title: "Sign Ins",
   },
 ];
 
@@ -71,17 +73,34 @@ export function Sidebar(props: ISidebar): JSX.Element {
   return (
     <aside
       id="default-sidebar"
-      className="fixed top-8 left-0 z-40 w-64 h-[90%] transition-transform -translate-x-full sm:translate-x-0"
+      className="fixed top left-0 z-40 w-64 h-[100%] transition-transform -translate-x-full sm:translate-x-0"
       aria-label="Sidebar"
     >
-      <div className="h-full flex flex-col justify-between px-3 py-4 overflow-y-auto bg-gray-50">
+      <ul className="px-3 font-medium">
+        <li className="cursor-pointer">
+          <div>
+            <a
+              href="https://github.com/WebOfTrust/signify-browser-extension"
+              className="flex items-center space-x-3 rtl:space-x-reverse"
+            >
+              <img src={logo} className="h-8" alt="logo" />
+              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                KERI
+              </span>
+            </a>
+          </div>
+        </li>
+      </ul>
+      <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto bg-gray-50">
         <ul className="space-y-2 font-medium">
           {SIDEBAR.map((element, index) => (
             <li key={index} className="cursor-pointer">
               <div
                 onClick={() => props.onClickLink(element.id)}
                 className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light  hover:bg-gray-100  group ${
-                  element.id === props.active ? " text-green" : ""
+                  element.id === props.active
+                    ? " bg-gray-dark text-gray-light"
+                    : ""
                 }`}
               >
                 {element.icon}
@@ -90,32 +109,32 @@ export function Sidebar(props: ISidebar): JSX.Element {
             </li>
           ))}
         </ul>
-        <ul className="space-y-2 font-medium">
-          <li className="cursor-pointer">
-            <div
-              onClick={props.onSignout}
-              className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light hover:bg-gray-100 group`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-                />
-              </svg>
-
-              <span className="ms-3">Disconnect</span>
-            </div>
-          </li>
-        </ul>
       </div>
+      <ul className="px-3 font-medium">
+        <li className="cursor-pointer">
+          <div
+            onClick={props.onSignout}
+            className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light hover:bg-gray-100 group`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+
+            <span className="ms-3">Disconnect</span>
+          </div>
+        </li>
+      </ul>
     </aside>
   );
 }

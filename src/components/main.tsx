@@ -10,12 +10,12 @@ interface IMain {
 }
 
 export function Main(props: IMain): JSX.Element {
-  const [activeSidebar, setActiveSidebar] = useState("identifier");
+  const [activeSidebar, setActiveSidebar] = useState("Identifiers");
   const renderItems = () => {
     switch (activeSidebar) {
-      case "credential":
+      case "Credentials":
         return <CredentialList />;
-      case "sign-in":
+      case "Sign Ins":
         return <SigninCard />;
 
       default:
@@ -25,15 +25,15 @@ export function Main(props: IMain): JSX.Element {
 
   return (
     <main className="">
-      <Appbar />
+      {/* <Appbar /> */}
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}
         onSignout={props.handleDisconnect}
       />
-      <div className="rounded p-2 sm:ml-64 sm:mt-4 bg-gray-dark text-gray-light">
+      <div className="rounded p-2 sm:ml-64 sm:mt-4 bg-gray-dark text-gray-light mr-4">
         <div className="">
-          <p className="text-xl uppercase font-bold">{activeSidebar}</p>
+          <p className="text-xl capitalize font-bold">{activeSidebar}</p>
           <div className="bg-black py-8 rounded-3xl m-5 max-h-[576px] overflow-auto">
             {renderItems()}
           </div>
