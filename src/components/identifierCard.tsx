@@ -1,12 +1,12 @@
 interface IIdentifier {}
 
-export function IdentifierCard(): JSX.Element {
+export function IdentifierCard({ aid }): JSX.Element {
   return (
     <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
       <div className="mb-3 flex flex-row justify-between">
         <div>
           <p className=" mb-1 font-bold text-gray-dark">Alias:</p>
-          <p className="font-normal text-gray">Educational Credentials</p>
+          <p className="font-normal text-gray">{aid.name}</p>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -26,9 +26,7 @@ export function IdentifierCard(): JSX.Element {
 
       <div className="mb-3">
         <p className=" mb-1 font-bold text-gray-dark">ID:</p>
-        <p className="font-normal text-gray">
-          5C6L9h5W2mZZnQLn2...XTeJsPgCpoNv6
-        </p>
+        <p className="font-normal text-gray">{aid.prefix}</p>
       </div>
       <div className="mb-3 flex flex-row justify-between">
         <div className="">

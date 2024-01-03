@@ -50,22 +50,4 @@ const Signify = () => {
   };
 };
 
-const ABC = () => {
-    let count = 0;
-
-    const add = () => {
-        count = count + 1;
-    }
-
-    const show = () => {
-        return count;
-    }
-
-    return {
-        add,
-        show
-    }
-}
-
 export const signifyService = Signify();
-export const abc = ABC();

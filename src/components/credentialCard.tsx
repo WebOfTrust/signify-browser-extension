@@ -1,14 +1,18 @@
 interface ICredential {
-  isValid: boolean;
+  credential: any;
 }
 
-export function CredentialCard(props: ICredential): JSX.Element {
+export function CredentialCard({ credential }: ICredential): JSX.Element {
   return (
     <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
       <div className="mb-2 flex flex-row justify-between">
         <div>
-          <p className="font-bold text-lg text-gray-dark">Stanford</p>
-          <p className="font-normal text-md text-gray">Proof of Education</p>
+          <p className="font-bold text-lg text-gray-dark">
+            {credential.schema.title}
+          </p>
+          <p className="font-normal text-md text-gray">
+            {credential.schema.credentialType}
+          </p>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -27,14 +31,16 @@ export function CredentialCard(props: ICredential): JSX.Element {
       </div>
 
       <div className="mb-2">
-        <p className="font-bold text-lg text-gray-dark">Name</p>
-        <p className="font-normal text-md text-gray">Hunain Bin Sajid</p>
+        {/* <p className="font-bold text-lg text-gray-dark">Name</p> */}
+        <p className="font-normal text-md text-gray">
+          {credential.schema.description}
+        </p>
       </div>
       <div className="mb-2 flex flex-row justify-between">
         <div className="">
           <p className="font-bold text-gray text-lg">November 08, 2023</p>
         </div>
-        {props.isValid ? (
+        {credential.status?.et === "iss" ? (
           <div className="flex flex-col items-center text-green">
             <svg
               xmlns="http://www.w3.org/2000/svg"

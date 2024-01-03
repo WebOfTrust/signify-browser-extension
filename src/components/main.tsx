@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Appbar } from "@components/appbar";
 import { Sidebar } from "@components/sidebar";
-import { IdentifierCard } from "@components/identifierCard";
-import { CredentialCard } from "@components/credentialCard";
+import { IdentifierList } from "@components/identifierList";
+import { CredentialList } from "@components/credentialList";
 import { SigninCard } from "@components/signinCard";
 
 interface IMain {
@@ -11,15 +11,15 @@ interface IMain {
 
 export function Main(props: IMain): JSX.Element {
   const [activeSidebar, setActiveSidebar] = useState("identifier");
-  const renderItems = (index: number) => {
+  const renderItems = () => {
     switch (activeSidebar) {
       case "credential":
-        return <CredentialCard isValid={Boolean(index % 2)} />;
+        return <CredentialList />;
       case "sign-in":
         return <SigninCard />;
 
       default:
-        return <IdentifierCard />;
+        return <IdentifierList />;
     }
   };
 
@@ -35,13 +35,7 @@ export function Main(props: IMain): JSX.Element {
         <div className="">
           <p className="text-xl uppercase font-bold">{activeSidebar}</p>
           <div className="bg-black py-8 rounded-3xl m-5 max-h-[576px] overflow-auto">
-            {Array(3)
-              .fill(1)
-              .map((ele, index) => (
-                <div key={index} className="my-2">
-                  {renderItems(index)}
-                </div>
-              ))}
+            {renderItems()}
           </div>
         </div>
       </div>

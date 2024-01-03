@@ -82,6 +82,22 @@ chrome.runtime.onMessage.addListener(function (
         const state = await signifyService.isConnected();
         sendResponse({ data: { state } });
       }
+
+      if (
+        message.type === "fetch-resource" &&
+        message.subtype === "identifiers"
+      ) {
+        const identifiers = await signifyService.listIdentifiers();
+        sendResponse({ data: { aids: identifiers?.aids ?? [] } });
+      }
+
+      if (
+        message.type === "fetch-resource" &&
+        message.subtype === "credentials"
+      ) {
+        const credentials = await signifyService.listCredentials();
+        sendResponse({ data: { credentials: credentials ?? [] } });
+      }
     }
   })();
 
