@@ -6,7 +6,7 @@ import { CredentialCard } from "@components/credentialCard";
 import { SigninCard } from "@components/signinCard";
 
 interface IMain {
-  handleSignout: () => void;
+  handleDisconnect: () => void;
 }
 
 export function Main(props: IMain): JSX.Element {
@@ -29,7 +29,7 @@ export function Main(props: IMain): JSX.Element {
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}
-        onSignout={props.handleSignout}
+        onSignout={props.handleDisconnect}
       />
       <div className="rounded p-2 sm:ml-64 sm:mt-4 bg-gray-dark text-gray-light">
         <div className="">

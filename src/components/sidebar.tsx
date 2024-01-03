@@ -111,7 +111,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
                 />
               </svg>
 
-              <span className="ms-3">Logout</span>
+              <span className="ms-3">Disconnect</span>
             </div>
           </li>
         </ul>

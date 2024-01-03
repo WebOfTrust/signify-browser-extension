@@ -1,51 +1,69 @@
 import React, { useState, useEffect } from "react";
-import { userService } from "@pages/background/services/user";
+import { configService } from "@pages/background/services/config";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/components/signin";
 import { Main } from "@components/main";
 
-// import { randomPasscode, SignifyClient, Tier, ready } from 'signify-ts'
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
+const password = "Cp6n5zxYRmnE4iTyCUM0gR";
 
 interface IConnect {
   passcode?: string;
   vendorUrl?: string;
+  bootUrl?: string;
 }
 
 export default function Popup(): JSX.Element {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [vendorUrl, setVendorUrl] = useState("");
 
-  const checkAuthentication = async () => {
-    const token = await userService.getToken();
-    if (token) {
+  const getVendorUrl = async () => {
+    const _vendorUrl = await configService.getUrl();
+    console.log("_vendorUrl", _vendorUrl);
+    setVendorUrl(_vendorUrl);
+  };
+
+  const checkConnection = async () => {
+    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "authentication",
+      subtype: "check-agent-connection",
+    });
+
+    console.log("data", data);
+    if (data.isConnected) {
       document.body.style.width = "768px";
     } else {
       document.body.style.width = "300px";
     }
-    setIsAuthenticated(!!token);
+    setIsConnected(!!data.isConnected);
   };
 
   useEffect(() => {
-    checkAuthentication();
+    checkConnection();
+    getVendorUrl();
   }, []);
 
   const handleConnect = async (vendorUrl?: string, passcode?: string) => {
     const resp = await chrome.runtime.sendMessage<IMessage<IConnect>>({
       type: "authentication",
-      subtype: "persist-token",
+      subtype: "connect-agent",
       data: {
-        passcode,
-        vendorUrl,
+        passcode: password,
+        vendorUrl: url,
+        bootUrl: boot_url,
       },
     });
-    checkAuthentication();
+    await checkConnection();
     console.log("res in signin", resp);
   };
 
-  const handleSignout = async () => {
-    await userService.removeToken();
-    checkAuthentication();
+  const handleDisconnect = async () => {
+    await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "authentication",
+      subtype: "disconnect-agent",
+    });
+    checkConnection();
   };
 
   // const [client, setClient] = React.useState<SignifyClient | undefined>(undefined)
@@ -106,10 +124,10 @@ export default function Popup(): JSX.Element {
         {client && <button onClick={() => connect(client!)}>connect</button>}
         <p>connectedState:{connectedState}</p> */}
       {/* </header> */}
-      {isAuthenticated ? (
-        <Main handleSignout={handleSignout} />
+      {isConnected ? (
+        <Main handleDisconnect={handleDisconnect} />
       ) : (
-        <Signin handleConnect={handleConnect} />
+        <Signin vendorUrl={vendorUrl} handleConnect={handleConnect} />
       )}
     </div>
   );
