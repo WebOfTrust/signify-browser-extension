@@ -20,7 +20,7 @@ export function IdentifierList(): JSX.Element {
   return (
     <>
       {aids.map((aid, index) => (
-        <div key={index} className="my-2">
+        <div key={index} className="my-2 mx-4">
           <IdentifierCard aid={aid} />
         </div>
       ))}

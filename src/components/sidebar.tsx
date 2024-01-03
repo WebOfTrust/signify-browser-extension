@@ -73,7 +73,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
   return (
     <aside
       id="default-sidebar"
-      className="fixed top left-0 z-40 w-64 h-[100%] transition-transform -translate-x-full sm:translate-x-0"
+      className="fixed top left-0 z-40 w-48 h-[100%] transition-transform -translate-x-full sm:translate-x-0"
       aria-label="Sidebar"
     >
       <ul className="px-3 font-medium">
@@ -114,7 +114,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
         <li className="cursor-pointer">
           <div
             onClick={props.onSignout}
-            className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light hover:bg-gray-100 group`}
+            className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-red hover:text-gray-light group`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

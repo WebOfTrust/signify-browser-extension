@@ -32,7 +32,7 @@ export default function Popup(): JSX.Element {
 
     console.log("data", data);
     if (data.isConnected) {
-      document.body.style.width = "768px";
+      document.body.style.width = "640px";
     } else {
       document.body.style.width = "300px";
     }

@@ -31,7 +31,7 @@ export function Main(props: IMain): JSX.Element {
         onClickLink={setActiveSidebar}
         onSignout={props.handleDisconnect}
       />
-      <div className="rounded p-2 sm:ml-64 sm:mt-4 bg-gray-dark text-gray-light mr-4">
+      <div className="rounded p-2 sm:ml-48 sm:mt-4 bg-gray-dark text-gray-light mr-4">
         <div className="">
           <p className="text-xl capitalize font-bold">{activeSidebar}</p>
           <div className="bg-black py-8 rounded-3xl m-5 max-h-[576px] overflow-auto">

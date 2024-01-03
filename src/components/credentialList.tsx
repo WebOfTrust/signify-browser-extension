@@ -20,7 +20,7 @@ export function CredentialList(): JSX.Element {
   return (
     <>
       {credentials.map((credential, index) => (
-        <div key={index} className="my-2">
+        <div key={index} className="my-2 mx-4">
           <CredentialCard credential={credential} />
         </div>
       ))}
