@@ -5,7 +5,7 @@ const CONFIG_ENUMS = {
 }
 
 const Config = () => {
-    const getUrl = async () => {
+    const getUrl = async (): Promise<string> => {
         return await browserStorageService.getValue(CONFIG_ENUMS.VENDOR_URL);
     }
 

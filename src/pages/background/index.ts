@@ -1,19 +1,19 @@
-import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
+import { signifyService } from "@pages/background/services/signify";
+import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
 
 console.log("Background script loaded");
 
 // import { connectClient, listCredentials, listIdentifiers } from "./signify";
 //TODO: use the function calls above to connect to signify and list credentials and identifiers
-export interface IMessage<T> {
-    type: string
-    subtype?: string
-    data: T
-}
 
 // Handle messages
-chrome.runtime.onMessage.addListener(function (message: IMessage<any>, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (
+  message: IMessage<any>,
+  sender,
+  sendResponse
+) {
   (async () => {
     if (sender.tab) {
       // Handle mesages from content script
@@ -51,15 +51,53 @@ chrome.runtime.onMessage.addListener(function (message: IMessage<any>, sender, s
       }
     } else if (senderIsPopup(sender)) {
       // handle messages from Popup
-      console.log("Message received from browser extension pupup: " + message);
+      console.log("Message received from browser extension popup: " + message);
+      
       if (
         message.type === "authentication" &&
-        message.subtype === "persist-token"
+        message.subtype === "check-agent-connection"
       ) {
-        await userService.setToken(message.data.passcode);
-        await configService.setUrl(message.data.vendorUrl);
+        const isConnected = await signifyService.isConnected();
+        sendResponse({ data: { isConnected } });
       }
-      sendResponse({ resp: "received" });
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "disconnect-agent"
+      ) {
+        await signifyService.disconnect();
+        sendResponse({ data: { isConnected: false } });
+      }
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "connect-agent"
+      ) {
+        await signifyService.connect(
+          message.data.vendorUrl,
+          message.data.passcode,
+          message.data.bootUrl
+        );
+        await configService.setUrl(message.data.vendorUrl);
+        const state = await signifyService.isConnected();
+        sendResponse({ data: { state } });
+      }
+
+      if (
+        message.type === "fetch-resource" &&
+        message.subtype === "identifiers"
+      ) {
+        const identifiers = await signifyService.listIdentifiers();
+        sendResponse({ data: { aids: identifiers?.aids ?? [] } });
+      }
+
+      if (
+        message.type === "fetch-resource" &&
+        message.subtype === "credentials"
+      ) {
+        const credentials = await signifyService.listCredentials();
+        sendResponse({ data: { credentials: credentials ?? [] } });
+      }
     }
   })();
 
