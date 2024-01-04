@@ -1,4 +1,4 @@
-import { SignifyClient, Tier, ready } from "signify-ts";
+import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 
 const Signify = () => {
   let _client: SignifyClient | null;
@@ -41,12 +41,47 @@ const Signify = () => {
     _client = null;
   };
 
+  const signHeaders = async (aidName: string, method:string, path:string, origin: string) => {
+    const hab = await _client?.identifiers().get(aidName);
+    const keeper = _client?.manager!.get(hab);
+
+    const authenticator = new Authenticater(
+        keeper.signers[0],
+        keeper.signers[0].verfer
+    );
+
+    const headers = new Headers();
+    headers.set('Signify-Resource', hab.prefix);
+    headers.set(
+        'Signify-Timestamp',
+        new Date().toISOString().replace('Z', '000+00:00')
+    );
+    headers.set('Origin', origin);
+
+    const fields = [
+      '@method',
+      '@path',
+      'signify-resource',
+      'signify-timestamp',
+      'origin'
+    ];
+
+    const signed_headers = authenticator.sign(
+      headers,
+      method,
+      path,
+      fields
+    ); 
+    return signed_headers;
+  };
+
   return {
     connect,
     isConnected,
     disconnect,
     listIdentifiers,
     listCredentials,
+    signHeaders
   };
 };
 
