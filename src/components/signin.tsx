@@ -55,7 +55,7 @@ export function Signin(props: ISignin): JSX.Element {
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <p className="text-xl capitalize font-bold">KERI</p>
+        <p className="text-xl text-green capitalize font-bold">KERI</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
