@@ -17,7 +17,7 @@ const BrowserStorage = (storage = getNonSyncStorage()) => {
         });
     }
 
-    const getValue = (name) => {
+    const getValue = (name:string) => {
         return new Promise(resolve => {
             _storage.get(name, items => {
                 resolve(items[name]);
@@ -25,13 +25,13 @@ const BrowserStorage = (storage = getNonSyncStorage()) => {
         });
     }
 
-    const removeKey = (name) => {
+    const removeKey = (name:string) => {
         return new Promise<void>(resolve => {
             _storage.remove(name, () => resolve());
         });
     }
 
-    const setValue = (name, value) =>  {
+    const setValue = (name:string, value:any) =>  {
         return new Promise<void>(resolve => {
             _storage.set({ [name]: value }, () => resolve());
         });
