@@ -1,4 +1,5 @@
 import { configService } from "@pages/background/services/config";
+import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
 import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
@@ -51,7 +52,7 @@ chrome.runtime.onMessage.addListener(function (
       }
     } else if (senderIsPopup(sender)) {
       // handle messages from Popup
-      console.log("Message received from browser extension popup: " + message);
+      console.log("Message received from browser extension popup: " + message.type + ":" + message.subtype);
       
       if (
         message.type === "authentication" &&
@@ -66,6 +67,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "disconnect-agent"
       ) {
         await signifyService.disconnect();
+        await userService.removePasscode();
         sendResponse({ data: { isConnected: false } });
       }
 
@@ -75,10 +77,10 @@ chrome.runtime.onMessage.addListener(function (
       ) {
         await signifyService.connect(
           message.data.vendorUrl,
-          message.data.passcode,
-          message.data.bootUrl
+          message.data.passcode
         );
         await configService.setUrl(message.data.vendorUrl);
+        await userService.setPasscode(message.data.passcode);
         const state = await signifyService.isConnected();
         sendResponse({ data: { state } });
       }

@@ -1,26 +1,26 @@
 import { browserStorageService } from "@pages/background/services/browser-storage"
 
 const USER_ENUMS = {
-    TOKEN: "user-token"
+    PASSCODE: "user-passcode"
 }
 
 const User = () => {
-    const getToken = async () => {
-        return await browserStorageService.getValue(USER_ENUMS.TOKEN);
+    const getPasscode = async () : Promise<string> => {
+        return await browserStorageService.getValue(USER_ENUMS.PASSCODE);
     }
 
-    const removeToken = async () => {
-        await browserStorageService.removeKey(USER_ENUMS.TOKEN);
+    const removePasscode = async () => {
+        await browserStorageService.removeKey(USER_ENUMS.PASSCODE);
     }
 
-    const setToken = async (token: string) =>  {
-        await browserStorageService.setValue(USER_ENUMS.TOKEN, token)
+    const setPasscode = async (passcode: string) =>  {
+        await browserStorageService.setValue(USER_ENUMS.PASSCODE, passcode)
     }
 
     return {
-        removeToken,
-        getToken,
-        setToken
+        removePasscode,
+        getPasscode,
+        setPasscode
     }
 }
 

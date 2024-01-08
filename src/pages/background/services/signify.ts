@@ -1,20 +1,32 @@
 import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
+import { userService } from "@pages/background/services/user";
+import { configService } from "@pages/background/services/config";
+
+
 
 const Signify = () => {
   let _client: SignifyClient | null;
 
-  const connect = async (url: string, passcode: string, boot_url: string) => {
+  const connect = async (url: string, passcode: string) => {
     await ready();
-    _client = new SignifyClient(url, passcode, Tier.low, boot_url);
+    _client = new SignifyClient(url, passcode, Tier.low);
     await _client.connect();
-  };
+    setTimeout(async () => {
+      console.log("Timer expired, client and passcode zeroed out");
+      _client = null;
+      await userService.removePasscode();
+    }, 120000);
+  }
 
   const isConnected = async () => {
-    console.log("_client is connected", _client);
-    return _client ? true : false
+    const passcode = await userService.getPasscode();
+    const url = await configService.getUrl();
+    if (url && passcode && !_client) {
+      await connect(url, passcode);
+    }
 
-    // const state =  await _client?.state();
-    // return state;
+    console.log(_client ? "Signify client is connected" :  "Signify client is not connected");
+    return _client ? true : false
   };
 
   const validateClient = () => {
