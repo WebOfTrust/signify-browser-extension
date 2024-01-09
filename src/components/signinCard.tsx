@@ -1,10 +1,10 @@
-export function SigninCard(): JSX.Element {
+export function SigninCard({ signin }): JSX.Element {
   return (
     <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
       <div className="mb-2 flex flex-row justify-between">
         <div>
           <p className="font-bold text-lg text-gray-dark">Website</p>
-          <p className="font-normal text-md text-gray">github.com</p>
+          <p className="font-normal text-md text-gray">{signin?.domain}</p>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,16 +23,18 @@ export function SigninCard(): JSX.Element {
       </div>
 
       <div className="mb-2">
-        <p className="font-bold text-lg text-gray-dark">Username</p>
-        <p className="font-normal text-md text-gray">HunainBinSajid</p>
-      </div>
-      <div className="mb-2">
-        <p className="font-bold text-lg text-gray-dark">Credential</p>
-        <p className="font-normal text-md text-gray">Educational Credential</p>
+        <p className="font-bold text-lg text-gray-dark">
+          {signin?.identifier ? "Identifier Alias" : "Credential"}
+        </p>
+        <p className="font-normal text-md text-gray">
+          {signin?.identifier?.name}
+        </p>
       </div>
       <div className="mb-1">
         <p className="font-bold text-lg text-gray-dark">Last Used</p>
-        <p className="font-normal text-md text-gray">November 08, 2023</p>
+        <p className="font-normal text-md text-gray">
+          {new Date(signin?.updatedAt).toDateString()}
+        </p>
       </div>
     </div>
   );

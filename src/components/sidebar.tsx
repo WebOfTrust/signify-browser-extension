@@ -66,6 +66,7 @@ const SIDEBAR = [
 interface ISidebar {
   active: string;
   onClickLink: (active: string) => void;
+  disabled?: boolean;
   onSignout: () => void;
 }
 
@@ -94,9 +95,15 @@ export function Sidebar(props: ISidebar): JSX.Element {
       <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto bg-gray-50">
         <ul className="space-y-2 font-medium">
           {SIDEBAR.map((element, index) => (
-            <li key={index} className="cursor-pointer">
+            <li
+              key={index}
+              className={`${
+                props.disabled ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              aria-disabled={props.disabled}
+            >
               <div
-                onClick={() => props.onClickLink(element.id)}
+                onClick={() => !props.disabled && props.onClickLink(element.id)}
                 className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light  hover:bg-gray-100  group ${
                   element.id === props.active
                     ? " bg-gray-dark text-gray-light"
