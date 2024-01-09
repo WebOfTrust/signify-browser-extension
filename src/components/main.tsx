@@ -26,6 +26,16 @@ export function Main(props: IMain): JSX.Element {
 
     if (data?.appState) {
       setTabState(data?.appState);
+      if (
+        data?.appState === APP_STATE.SELECT_IDENTIFIER ||
+        data?.appState === APP_STATE.SELECT_CREDENTIAL
+      ) {
+        setActiveSidebar(
+          data?.appState === APP_STATE.SELECT_IDENTIFIER
+            ? "Identifiers"
+            : "Credentials"
+        );
+      }
     }
   };
 
