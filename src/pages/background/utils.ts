@@ -14,9 +14,14 @@ export const isValidUrl = (str: string) => {
 };
 
 export const getCurrentTab = () => {
-  return new Promise(resolve => {
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-          resolve(tabs[0]);
-      });
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      resolve(tabs[0]);
+    });
   });
-}
+};
+
+export const getCurrentDomain = async () => {
+  const currentTab = await getCurrentTab();
+  return currentTab ? new URL(currentTab?.url) : null;
+};

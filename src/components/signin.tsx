@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import logo from "@assets/img/128_keri_logo.png";
+import { Loader } from "@components/loader";
 import { isValidUrl } from "@pages/background/utils";
 
 interface ISignin {
   vendorUrl?: string;
   passcode?: string;
   handleConnect: (vendorUrl?: string, passcode?: string) => void;
+  isLoading?: boolean;
 }
 
 export function Signin(props: ISignin): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState(props?.vendorUrl);
   const [passcode, setPasscode] = useState("");
-
   const [urlError, setUrlError] = useState("");
   const [passcodeError, setPasscodeError] = useState("");
 
@@ -35,7 +36,7 @@ export function Signin(props: ISignin): JSX.Element {
     }
   };
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     let hasError = false;
     if (!vendorUrl || !isValidUrl(vendorUrl)) {
       setUrlError("Enter a valid url");
@@ -48,7 +49,7 @@ export function Signin(props: ISignin): JSX.Element {
     }
 
     if (!hasError) {
-      props.handleConnect(vendorUrl, passcode);
+      await props.handleConnect(vendorUrl, passcode);
     }
   };
 
@@ -115,7 +116,11 @@ export function Signin(props: ISignin): JSX.Element {
           onClick={handleConnect}
           className="text-white bg-green hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
-          Connect
+          {props.isLoading ? (
+            <Loader color="white" />
+          ) : (
+            <p className="font-medium text-md">Connect</p>
+          )}
         </button>
       </div>
       <div className="flex flex-row justify-center">

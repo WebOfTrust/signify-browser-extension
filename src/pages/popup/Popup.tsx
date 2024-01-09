@@ -17,6 +17,7 @@ interface IConnect {
 export default function Popup(): JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
   const [vendorUrl, setVendorUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const getVendorUrl = async () => {
     const _vendorUrl = await configService.getUrl();
@@ -45,6 +46,7 @@ export default function Popup(): JSX.Element {
   }, []);
 
   const handleConnect = async (vendorUrl?: string, passcode?: string) => {
+    setIsLoading(true);
     const resp = await chrome.runtime.sendMessage<IMessage<IConnect>>({
       type: "authentication",
       subtype: "connect-agent",
@@ -55,6 +57,7 @@ export default function Popup(): JSX.Element {
       },
     });
     await checkConnection();
+    setIsLoading(false);
     console.log("res in signin", resp);
   };
 
@@ -127,7 +130,11 @@ export default function Popup(): JSX.Element {
       {isConnected ? (
         <Main handleDisconnect={handleDisconnect} />
       ) : (
-        <Signin vendorUrl={vendorUrl} handleConnect={handleConnect} />
+        <Signin
+          vendorUrl={vendorUrl}
+          handleConnect={handleConnect}
+          isLoading={isLoading}
+        />
       )}
     </div>
   );
