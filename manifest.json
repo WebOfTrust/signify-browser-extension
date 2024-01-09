@@ -40,12 +40,9 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/src/assets/img/*",
-        "contentStyle.css",
-        "128_keri_logo.png",
-        "32_keri_logo.png"
+        "src/assets/img/128_keri_logo.png"
       ],
-      "matches": []
+      "matches": ["<all_urls>"]
     }
   ],
   "content_security_policy": {
