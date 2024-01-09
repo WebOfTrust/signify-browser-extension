@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Appbar } from "@components/appbar";
+import { useEffect, useState } from "react";
 import { Sidebar } from "@components/sidebar";
+import { SelectIdentifier } from "@components/selectIdentifier";
+import { APP_STATE } from "@pages/popup/constants";
 import { IdentifierList } from "@components/identifierList";
 import { CredentialList } from "@components/credentialList";
-import { SigninCard } from "@components/signinCard";
+import { SigninList } from "@components/signinList";
 
 interface IMain {
   handleDisconnect: () => void;
@@ -11,25 +12,56 @@ interface IMain {
 
 export function Main(props: IMain): JSX.Element {
   const [activeSidebar, setActiveSidebar] = useState("Identifiers");
+  const [tabState, setTabState] = useState(APP_STATE.DEFAULT);
+
+  const fetchTabState = async () => {
+    const { data } = await chrome.runtime.sendMessage({
+      type: "tab",
+      subtype: "get-tab-state",
+    });
+
+    console.log("tab state data", data);
+    if (!data) return;
+
+    if (data?.appState) {
+      setTabState(data?.appState);
+    }
+  };
+
+  useEffect(() => {
+    fetchTabState();
+  }, []);
+
   const renderItems = () => {
+    if (tabState === APP_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
+
+    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectIdentifier />;
+
     switch (activeSidebar) {
       case "Credentials":
         return <CredentialList />;
       case "Sign Ins":
-        return <SigninCard />;
+        return <SigninList />;
 
       default:
         return <IdentifierList />;
     }
   };
 
+  const isSidebarDisabled = () => {
+    return (
+      tabState === APP_STATE.SELECT_IDENTIFIER ||
+      tabState === APP_STATE.SELECT_CREDENTIAL
+    );
+  };
+
   return (
     <main className="">
-      {/* <Appbar /> */}
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}
         onSignout={props.handleDisconnect}
+        disabled={isSidebarDisabled()}
       />
       <div className="rounded p-2 sm:ml-48 sm:mt-4 bg-gray-dark text-gray-light mr-4">
         <div className="">

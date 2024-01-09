@@ -1,24 +1,24 @@
 import { useState, useEffect } from "react";
-import { CredentialCard } from "@components/credentialCard";
+import { SigninCard } from "@components/signinCard";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 
-export function CredentialList(): JSX.Element {
-  const [credentials, setCredentials] = useState([]);
+export function SigninList(): JSX.Element {
+  const [signins, setSignins] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const fetchCredentials = async () => {
+  const fetchSignins = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "fetch-resource",
-      subtype: "credentials",
+      subtype: "signins",
     });
-    console.log("credentials", data);
-    setCredentials(data.credentials);
+    console.log("signins", data?.signins);
+    setSignins(data?.signins);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchCredentials();
+    fetchSignins();
   }, []);
 
   return (
@@ -28,9 +28,9 @@ export function CredentialList(): JSX.Element {
           <Loader size={6} />
         </div>
       ) : null}
-      {credentials.map((credential, index) => (
+      {signins.map((signin, index) => (
         <div key={index} className="my-2 mx-4">
-          <CredentialCard credential={credential} />
+          <SigninCard signin={signin} />
         </div>
       ))}
     </>

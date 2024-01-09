@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import logo from "@assets/img/128_keri_logo.png";
+import { Loader } from "@components/loader";
 import { isValidUrl } from "@pages/background/utils";
 
 interface ISignin {
   vendorUrl?: string;
   passcode?: string;
   handleConnect: (vendorUrl?: string, passcode?: string) => void;
+  isLoading?: boolean;
 }
 
 export function Signin(props: ISignin): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState(props?.vendorUrl);
   const [passcode, setPasscode] = useState("");
-
   const [urlError, setUrlError] = useState("");
   const [passcodeError, setPasscodeError] = useState("");
 
@@ -35,7 +36,7 @@ export function Signin(props: ISignin): JSX.Element {
     }
   };
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     let hasError = false;
     if (!vendorUrl || !isValidUrl(vendorUrl)) {
       setUrlError("Enter a valid url");
@@ -48,14 +49,14 @@ export function Signin(props: ISignin): JSX.Element {
     }
 
     if (!hasError) {
-      props.handleConnect(vendorUrl, passcode);
+      await props.handleConnect(vendorUrl, passcode);
     }
   };
 
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <p className="text-xl capitalize font-bold">KERI</p>
+        <p className="text-xl text-green capitalize font-bold">KERI</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -113,9 +114,10 @@ export function Signin(props: ISignin): JSX.Element {
         <button
           type="button"
           onClick={handleConnect}
-          className="text-white bg-green hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+          className="text-white bg-green flex flex-row gap-x-1 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
-          Connect
+          {props.isLoading ? <Loader size={4} /> : null}
+          <p className="font-medium text-md">Connect</p>
         </button>
       </div>
       <div className="flex flex-row justify-center">
