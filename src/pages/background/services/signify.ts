@@ -51,6 +51,7 @@ const Signify = () => {
 
   const disconnect = async () => {
     _client = null;
+    await userService.removePasscode();
   };
 
   const signHeaders = async (aidName: string, method:string, path:string, origin: string) => {

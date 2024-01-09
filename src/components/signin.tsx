@@ -114,13 +114,10 @@ export function Signin(props: ISignin): JSX.Element {
         <button
           type="button"
           onClick={handleConnect}
-          className="text-white bg-green hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+          className="text-white bg-green flex flex-row gap-x-1 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
-          {props.isLoading ? (
-            <Loader color="white" />
-          ) : (
-            <p className="font-medium text-md">Connect</p>
-          )}
+          {props.isLoading ? <Loader size={4} /> : null}
+          <p className="font-medium text-md">Connect</p>
         </button>
       </div>
       <div className="flex flex-row justify-center">

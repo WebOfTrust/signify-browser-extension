@@ -19,23 +19,26 @@ export default function Popup(): JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
   const [vendorUrl, setVendorUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingConnection, setIsCheckingConnection] = useState(false);
+  const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
+    useState(false);
 
   const getVendorUrl = async () => {
     const _vendorUrl = await configService.getUrl();
-    console.log("_vendorUrl", _vendorUrl);
     setVendorUrl(_vendorUrl);
   };
 
+  const checkInitialConnection = async () => {
+    setIsCheckingInitialConnection(true);
+    await checkConnection();
+    setIsCheckingInitialConnection(false);
+  };
+
   const checkConnection = async () => {
-    setIsCheckingConnection(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "authentication",
       subtype: "check-agent-connection",
     });
 
-    setIsCheckingConnection(false);
-    console.log("data", data);
     if (data.isConnected) {
       document.body.style.width = "640px";
     } else {
@@ -45,13 +48,13 @@ export default function Popup(): JSX.Element {
   };
 
   useEffect(() => {
-    checkConnection();
+    checkInitialConnection();
     getVendorUrl();
   }, []);
 
   const handleConnect = async (vendorUrl?: string, passcode?: string) => {
     setIsLoading(true);
-    const resp = await chrome.runtime.sendMessage<IMessage<IConnect>>({
+    await chrome.runtime.sendMessage<IMessage<IConnect>>({
       type: "authentication",
       subtype: "connect-agent",
       data: {
@@ -62,7 +65,6 @@ export default function Popup(): JSX.Element {
     });
     await checkConnection();
     setIsLoading(false);
-    console.log("res in signin", resp);
   };
 
   const handleDisconnect = async () => {
@@ -73,69 +75,16 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
-  // const [client, setClient] = React.useState<SignifyClient | undefined>(undefined)
-
-  // React.useEffect(() => {
-  //   ready().then(() => {
-  //     console.log("signify client is ready")
-  //   })
-  // }
-  //   , [])
-
-  // const generatePasscode = () => {
-  //   let p = randomPasscode()
-  //   setPasscode(p)
-  // }
-
-  // const newClient = (passcode: string) => {
-  //   ready().then(() => {
-  //     console.log("signify client is ready")
-  //   }).catch((err) => {
-  //     console.log("signify client is not ready")
-  //   })
-  //   const client = new SignifyClient(url, passcode, Tier.low, boot_url);
-  //   console.log(client)
-  //   setClient(client)
-  // }
-
-  const [bootedState, setBootedState] = useState<string>("");
-
-  // const boot = async (client: SignifyClient) => {
-  //   await client.boot()
-  //   let resp = await client.state()
-  //   console.log('booted client')
-  //   setBootedState('booted')
-  //   return JSON.stringify(resp)
-  // }
-
-  const [connectedState, setConnectedState] = React.useState<string>("");
-
-  // const connect = async (client: SignifyClient) => {
-  //   await client.connect()
-  //   let resp = await client.state()
-  //   console.log('connected client')
-  //   setConnectedState('connected')
-  //   return JSON.stringify(resp)
-  // }
+  if (isCheckingInitialConnection) {
+    return (
+      <div className=" w-16 h-16 m-auto text-green">
+        <Loader size={12} />
+      </div>
+    );
+  }
 
   return (
     <div>
-      {/* <header className="flex flex-col items-center justify-center text-white"> */}
-      {/* <img src={logo} className="w-32 h-32" alt="logo" /> */}
-      {/* <button onClick={generatePasscode}> generate</button> */}
-      {/* <p>p:{passcode}</p> */}
-      {/* <button onClick={() => newClient(passcode)}>set client</button> */}
-      {/* {client && <p>client:{client.agent?.pre}</p>}
-        {client && <button onClick={() => boot(client!)}>boot</button>}
-        <p>bootedState:{bootedState}</p>
-        {client && <button onClick={() => connect(client!)}>connect</button>}
-        <p>connectedState:{connectedState}</p> */}
-      {/* </header> */}
-      {isCheckingConnection ? (
-        <div className=" w-24 h-24 m-auto">
-          <Loader color="green" />
-        </div>
-      ) : null}
       {isConnected ? (
         <Main handleDisconnect={handleDisconnect} />
       ) : (

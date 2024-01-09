@@ -48,7 +48,7 @@ export default function Dialog({ isConnected, tab, signins }): JSX.Element {
           </div>
         )}
         {signins?.length || isConnected ? (
-          <p className="text-2xl font-bold text-green">Signin with KERI</p>
+          <p className="text-2xl font-bold text-green">Sign in with KERI</p>
         ) : null}
         {signins?.length ? (
           signins?.map((signin) => (
@@ -64,7 +64,7 @@ export default function Dialog({ isConnected, tab, signins }): JSX.Element {
                 // onClick={handleCreate}
                 className="text-white bg-green font-medium rounded-full text-sm px-2 py-1 text-center me-2 mb-2"
               >
-                Signin
+                Sign in
               </button>
             </div>
           ))
