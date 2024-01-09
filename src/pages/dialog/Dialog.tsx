@@ -47,7 +47,9 @@ export default function Dialog({ isConnected, tab, signins }): JSX.Element {
             </svg>
           </div>
         )}
-        <p className="text-2xl font-bold text-green">Signin with KERI</p>
+        {signins?.length || isConnected ? (
+          <p className="text-2xl font-bold text-green">Signin with KERI</p>
+        ) : null}
         {signins?.length ? (
           signins?.map((signin) => (
             <div className="flex m-2 flex-row justify-between p-2 items-start border border-black rounded">

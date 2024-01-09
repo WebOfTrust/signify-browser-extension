@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { configService } from "@pages/background/services/config";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/components/signin";
+import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
 const url = "https://keria-dev.rootsid.cloud/admin";
@@ -18,6 +19,7 @@ export default function Popup(): JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
   const [vendorUrl, setVendorUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingConnection, setIsCheckingConnection] = useState(false);
 
   const getVendorUrl = async () => {
     const _vendorUrl = await configService.getUrl();
@@ -26,11 +28,13 @@ export default function Popup(): JSX.Element {
   };
 
   const checkConnection = async () => {
+    setIsCheckingConnection(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "authentication",
       subtype: "check-agent-connection",
     });
 
+    setIsCheckingConnection(false);
     console.log("data", data);
     if (data.isConnected) {
       document.body.style.width = "640px";
@@ -127,6 +131,11 @@ export default function Popup(): JSX.Element {
         {client && <button onClick={() => connect(client!)}>connect</button>}
         <p>connectedState:{connectedState}</p> */}
       {/* </header> */}
+      {isCheckingConnection ? (
+        <div className=" w-24 h-24 m-auto">
+          <Loader color="green" />
+        </div>
+      ) : null}
       {isConnected ? (
         <Main handleDisconnect={handleDisconnect} />
       ) : (
