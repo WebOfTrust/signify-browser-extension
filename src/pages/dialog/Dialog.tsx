@@ -27,6 +27,11 @@ export default function Dialog({
     });
   };
 
+  const handleClick = () => {
+    setAppState();
+    setShowPopupPrompt(true);
+  };
+
   useEffect(() => {
     if (!signins?.length) {
       setAppState();
@@ -66,7 +71,10 @@ export default function Dialog({
             {signins?.map((signin) => (
               <SigninItem signin={signin} />
             ))}
-            <div className="text-green font-bold text-sm cursor-pointer">
+            <button
+              onClick={handleClick}
+              className="text-green font-bold text-sm cursor-pointer"
+            >
               Open{" "}
               <span className="inline-block">
                 <img src={logo} className="h-4" alt="logo" />
@@ -75,7 +83,7 @@ export default function Dialog({
               {eventType === "init-req-identifier"
                 ? "identifier"
                 : "credential"}{" "}
-            </div>
+            </button>
           </>
         ) : null}
       </div>
