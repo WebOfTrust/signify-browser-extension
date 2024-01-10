@@ -3,36 +3,43 @@ import { APP_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 
-export default function Dialog({ isConnected, tab, signins }): JSX.Element {
+export default function Dialog({
+  isConnected,
+  tab,
+  signins,
+  eventType,
+}): JSX.Element {
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
-  const handleSetState = async (state) => {
+  const setAppState = async () => {
     await chrome.runtime.sendMessage({
       type: "tab",
-      subtype: "set-tab-state",
+      subtype: "set-app-state",
       data: {
-        appState: state,
+        appState:
+          eventType === "init-req-identifier"
+            ? APP_STATE.SELECT_IDENTIFIER
+            : eventType === "init-req-credential"
+            ? APP_STATE.SELECT_CREDENTIAL
+            : APP_STATE.DEFAULT,
       },
     });
   };
 
   const handleClick = () => {
-    handleSetState(APP_STATE.SELECT_IDENTIFIER);
+    setAppState();
     setShowPopupPrompt(true);
   };
   useEffect(() => {
     if (!signins?.length) {
-      handleSetState(APP_STATE.SELECT_IDENTIFIER);
-      setShowPopupPrompt(true);
-    } else if (!isConnected) {
-      handleSetState(APP_STATE.KERIA_CONNECT)
+      setAppState();
       setShowPopupPrompt(true);
     }
   }, []);
 
   return (
-    <div className="absolute top-10 right-10 min-w-[300px] rounded text-center p-3 bg-white">
+    <div className="absolute top-10 right-10 min-w-[300px] max-h-[540px] overflow-auto rounded text-center p-3 bg-white">
       <header className="items-center justify-center">
         <div className="flex flex-row gap-x-2 mb-2">
           <img src={logo} className="h-8" alt="logo" />
@@ -57,7 +64,10 @@ export default function Dialog({ isConnected, tab, signins }): JSX.Element {
               onClick={handleClick}
               className="text-green font-bold text-sm cursor-pointer"
             >
-              Select another identifier
+              Select another{" "}
+              {eventType === "init-req-identifier"
+                ? "identifier"
+                : "credential"}
             </button>
           </>
         ) : null}

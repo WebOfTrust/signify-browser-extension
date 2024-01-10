@@ -14,7 +14,8 @@ window.addEventListener(
     console.log("Content script received from web page: " + event.data.type);
     if (event.data.type) {
       switch (event.data.type) {
-        case "initAuth":
+        case "init-req-identifier":
+        case "init-req-credential":
           // const manifest = chrome.runtime.getManifest();
           const loginBtn = document.getElementById("login-btn");
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
@@ -28,9 +29,10 @@ window.addEventListener(
               type: "fetch-resource",
               subtype: "tab-signin",
             });
-            insertReactComponent({
+            insertDialog({
               ...data,
               signins: tabSigninResp?.data?.signins,
+              eventType: event.data.type,
             });
           } else {
             removeAlertComponent();
@@ -69,8 +71,8 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
   }
 });
 
-function insertReactComponent(data: any) {
-  console.log("inserting react component");
+function insertDialog(data: any) {
+  console.log("inserting dialog");
   const div = document.createElement("div");
   div.id = "__root";
   document.body.appendChild(div);
@@ -82,6 +84,7 @@ function insertReactComponent(data: any) {
       isConnected={data.isConnected}
       tab={data?.meta?.tab}
       signins={data.signins}
+      eventType={data.eventType}
     />
   );
 }

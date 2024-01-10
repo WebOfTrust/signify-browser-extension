@@ -27,7 +27,7 @@ export function SelectIdentifier(): JSX.Element {
     });
     await chrome.runtime.sendMessage({
       type: "tab",
-      subtype: "set-tab-state",
+      subtype: "set-app-state",
       data: {
         appState: APP_STATE.DEFAULT,
       },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
+import { SelectCredential } from "@components/selectCredential";
 import { APP_STATE } from "@pages/popup/constants";
 import { IdentifierList } from "@components/identifierList";
 import { CredentialList } from "@components/credentialList";
@@ -35,7 +36,7 @@ export function Main(props: IMain): JSX.Element {
   const renderItems = () => {
     if (tabState === APP_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
 
-    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectIdentifier />;
+    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectCredential />;
 
     switch (activeSidebar) {
       case "Credentials":
