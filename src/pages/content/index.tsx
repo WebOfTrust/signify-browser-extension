@@ -36,8 +36,6 @@ window.addEventListener(
             removeAlertComponent();
           }
           break;
-        case "isUnlocked":
-          break;
       }
     }
   },
@@ -45,12 +43,29 @@ window.addEventListener(
 );
 
 // Handle messages from background script
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log(sender);
+chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
   if (sender.origin === "chrome-extension://" + chrome.runtime.id) {
     // handle messages from Popup
-    console.log("Message received from browser extension pupup: " + message);
-    // sendResponse({ resp: "received" });
+    console.log("Message received from browser extension: " + message.type+" "+message.subtype);
+    if (message.type === "tab" && message.subtype === "reload-state") {
+      removeAlertComponent();
+      const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+        type: "authentication",
+        subtype: "check-agent-connection",
+      });
+      const tabSigninResp = await chrome.runtime.sendMessage<
+              IMessage<void>
+            >({
+              type: "fetch-resource",
+              subtype: "tab-signin",
+            });
+      insertReactComponent({
+        ...data,
+        signins: tabSigninResp?.data?.signins,
+      });
+      
+    }
+    
   }
 });
 

@@ -45,6 +45,13 @@ export default function Popup(): JSX.Element {
       document.body.style.width = "300px";
     }
     setIsConnected(!!data.isConnected);
+    if (data.isConnected) {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {type:"tab", subtype: "reload-state"}, function(response){
+  
+        });
+    });
+    }
   };
 
   useEffect(() => {

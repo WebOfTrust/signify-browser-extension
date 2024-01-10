@@ -2,7 +2,7 @@ import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 
-
+const PASSCODE_TIMEOUT = 5 * 60 * 1000;
 
 const Signify = () => {
   let _client: SignifyClient | null;
@@ -15,7 +15,7 @@ const Signify = () => {
       console.log("Timer expired, client and passcode zeroed out");
       _client = null;
       await userService.removePasscode();
-    }, 120000);
+    }, PASSCODE_TIMEOUT);
   }
 
   const isConnected = async () => {
