@@ -1,3 +1,4 @@
+import { obfuscateString } from "@pages/background/utils";
 interface IIdentifier {}
 
 export function IdentifierCard({ aid }): JSX.Element {
@@ -26,9 +27,9 @@ export function IdentifierCard({ aid }): JSX.Element {
         </svg>
       </div>
       <div className="">
-        <p className="font-bold text-gray-dark">ID:</p>
+        <p className="font-bold text-gray-dark">AID:</p>
         <p className="font-normal text-gray max-w-[200px] break-words">
-          {aid.prefix}
+          {obfuscateString(aid.prefix)}
         </p>
       </div>
       <div className="flex flex-row justify-between">

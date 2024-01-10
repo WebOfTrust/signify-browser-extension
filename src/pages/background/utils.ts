@@ -25,3 +25,17 @@ export const getCurrentDomain = async () => {
   const currentTab = await getCurrentTab();
   return currentTab ? new URL(currentTab?.url) : null;
 };
+
+export const obfuscateString = (inputString: string) => {
+  const prefixLength = 12;
+  const suffixLength = 8;
+
+  if (inputString.length <= prefixLength + suffixLength) {
+    return inputString;
+  }
+
+  const prefix = inputString.slice(0, prefixLength);
+  const suffix = inputString.slice(-suffixLength);
+
+  return `${prefix}...${suffix}`;
+}

@@ -12,24 +12,35 @@ export default function Dialog({
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
-  const setAppState = async () => {
+  const setAppState = async (state: string) => {
     await chrome.runtime.sendMessage({
       type: "tab",
       subtype: "set-app-state",
       data: {
-        appState:
-          eventType === "init-req-identifier"
-            ? APP_STATE.SELECT_IDENTIFIER
-            : eventType === "init-req-credential"
-            ? APP_STATE.SELECT_CREDENTIAL
-            : APP_STATE.DEFAULT,
+        appState: state,
       },
     });
   };
 
+  const getEventTypeAppState = () => {
+    return eventType === "init-req-identifier"
+      ? APP_STATE.SELECT_IDENTIFIER
+      : eventType === "init-req-credential"
+      ? APP_STATE.SELECT_CREDENTIAL
+      : APP_STATE.DEFAULT;
+  };
+
+  const handleClick = () => {
+    setAppState(getEventTypeAppState());
+    setShowPopupPrompt(true);
+  };
+
   useEffect(() => {
     if (!signins?.length) {
-      setAppState();
+      setAppState(getEventTypeAppState());
+      setShowPopupPrompt(true);
+    } else if (!isConnected) {
+      setAppState(APP_STATE.DEFAULT);
       setShowPopupPrompt(true);
     }
   }, []);
@@ -66,7 +77,10 @@ export default function Dialog({
             {signins?.map((signin) => (
               <SigninItem signin={signin} />
             ))}
-            <div className="text-green font-bold text-sm cursor-pointer">
+            <button
+              onClick={handleClick}
+              className="text-green font-bold text-sm cursor-pointer"
+            >
               Open{" "}
               <span className="inline-block">
                 <img src={logo} className="h-4" alt="logo" />
@@ -75,7 +89,7 @@ export default function Dialog({
               {eventType === "init-req-identifier"
                 ? "identifier"
                 : "credential"}{" "}
-            </div>
+            </button>
           </>
         ) : null}
       </div>
