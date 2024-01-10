@@ -7,7 +7,8 @@ import { Main } from "@components/main";
 
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
-const password = "j2H9kCTbGybPkrTs9cGQA";
+const password = "CdsUqv_8-F5otMp5feNpps";
+const password2 = "j2H9kCTbGybPkrTs9cGQA";
 
 interface IConnect {
   passcode?: string;

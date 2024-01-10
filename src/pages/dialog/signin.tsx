@@ -40,7 +40,7 @@ export const SigninItem = ({ signin }): JSX.Element => {
       <button
         type="button"
         onClick={handleClick}
-        className="text-white bg-green font-medium rounded-full text-sm px-2 py-1 text-center me-2 mb-2"
+        className="text-white self-end bg-green font-medium rounded-full text-sm px-2 py-1 text-center"
       >
         Sign in
       </button>
