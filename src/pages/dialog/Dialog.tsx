@@ -27,10 +27,6 @@ export default function Dialog({
     });
   };
 
-  const handleClick = () => {
-    setAppState();
-    setShowPopupPrompt(true);
-  };
   useEffect(() => {
     if (!signins?.length) {
       setAppState();
@@ -39,7 +35,7 @@ export default function Dialog({
   }, []);
 
   return (
-    <div className="absolute top-10 right-10 min-w-[300px] max-h-[540px] overflow-auto rounded text-center p-3 bg-white">
+    <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto rounded text-center p-3 bg-white">
       <header className="items-center justify-center">
         <div className="flex flex-row gap-x-2 mb-2">
           <img src={logo} className="h-8" alt="logo" />
@@ -47,11 +43,22 @@ export default function Dialog({
         </div>
 
         {showPopupPrompt ? (
-          <PopupPrompt message="Select the KERI icon in your browser to proceed" />
+          <PopupPrompt
+            message={
+              <p className="text-sm text-white">
+                Open{" "}
+                <span className="inline-block">
+                  <img src={logo} className="h-4" alt="logo" />
+                </span>{" "}
+                to proceed
+              </p>
+            }
+          />
         ) : null}
         {!signins?.length && isConnected ? (
-          <p className=" text-sm text-green font-bold">
-            {tab?.url} is requesting an ID
+          <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
+            <span className="">{tab?.url}</span> is requesting an{" "}
+            {eventType === "init-req-identifier" ? "ID" : "credential"}
           </p>
         ) : null}
 
@@ -60,15 +67,16 @@ export default function Dialog({
             {signins?.map((signin) => (
               <SigninItem signin={signin} />
             ))}
-            <button
-              onClick={handleClick}
-              className="text-green font-bold text-sm cursor-pointer"
-            >
-              Select another{" "}
+            <div className="text-green font-bold text-sm cursor-pointer">
+              Open{" "}
+              <span className="inline-block">
+                <img src={logo} className="h-4" alt="logo" />
+              </span>{" "}
+              to select other{" "}
               {eventType === "init-req-identifier"
                 ? "identifier"
-                : "credential"}
-            </button>
+                : "credential"}{" "}
+            </div>
           </>
         ) : null}
       </header>

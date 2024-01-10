@@ -41,9 +41,9 @@ function App() {
           <Button variant="contained" onClick={handleRequestIdentifier}>
             Authenticate with AID
           </Button>
-          <Button variant="contained" onClick={handleRequestCredential}>
+          {/* <Button variant="contained" onClick={handleRequestCredential}>
             Authenticate with Credential
-          </Button>
+          </Button> */}
         </div>
         {storageToken ? null : (
           <Button

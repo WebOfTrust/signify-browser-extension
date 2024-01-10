@@ -1,13 +1,13 @@
 interface IPopupPrompt {
-  message: string;
+  message: JSX.Element;
 }
 
 export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {
   return (
-    <div className="flex max-w-[280px] flex-row border  p-2 bg-gray-dark rounded">
-      <p className="text-sm text-white">{message}</p>
+    <div className="flex justify-center max-w-[280px] flex-row border  p-2 bg-gray-dark rounded">
+      {message}
       <svg
-        className="ml-2 h-6 w-6 rounded border-green animate-bounce"
+        className="ml-2 h-4 w-4 rounded border-green animate-bounce"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 197.091 197.091"
       >
