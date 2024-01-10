@@ -31,13 +31,7 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({ data: appData });
     }
 
-    if (
-      message.type === "authentication" &&
-      message.subtype === "check-agent-connection"
-    ) {
-      const isConnected = await signifyService.isConnected();
-      sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
-    }
+    
 
     if (message.type === "create-resource" && message.subtype === "signin") {
       const signins = await browserStorageService.getValue("signins");
@@ -87,14 +81,42 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({ data: { credentials: credentials ?? [] } });
     }
 
-    if (sender.tab) {
+
+
+    
+
+    if (sender.tab &&  sender.tab.active) {
       // Handle mesages from content script
       console.log(
         "Message received from content script at " +
           sender.tab.url +
           ": " +
-          message.type
+          message.type +
+          "-" +
+          message.subtype
       );
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "check-agent-connection"
+      ) {
+        const isConnected = await signifyService.isConnected();
+        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+      }
+
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "get-signed-headers"
+      ) {
+        // TODO get real signed headers from signify
+        const headers = {
+          'Signify-Resource': "asdasd",
+          'Signify-Timestamp': new Date().toISOString().replace('Z', '000+00:00'),
+        }
+        sendResponse({ data: { headers: headers } });
+
+      }
 
       if (
         message.type === "fetch-resource" &&
@@ -104,35 +126,17 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { signins: signins ?? [] } });
       }
 
-      if (message.type) {
-        switch (message.type) {
-          case "getVersion":
-            const manifestData = chrome.runtime.getManifest();
-            sendResponse(manifestData.version);
-            break;
-          case "isUnlocked":
-            const [tab] = await chrome.tabs.query({
-              active: true,
-              lastFocusedWindow: true,
-            });
-            const response = chrome.tabs.sendMessage(tab.id!, {
-              type: "for_content_script",
-            });
-            // sendResponse(true);
-            break;
-          case "hasLogin":
-            sendResponse({ login: "AID 123" });
-            break;
-          case "authenticate":
-            sendResponse({ signature: "ABCD" });
-            break;
-          default:
-            break;
-        }
-      }
     } else if (senderIsPopup(sender)) {
       // handle messages from Popup
-      console.log("Message received from browser extension popup: " + message);
+      console.log("Message received from browser extension popup: " + message.type + "-" + message.subtype);
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "check-agent-connection"
+      ) {
+        const isConnected = await signifyService.isConnected();
+        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+      }
 
       if (
         message.type === "authentication" &&

@@ -7,23 +7,26 @@ export default function Dialog({ isConnected, tab, signins }): JSX.Element {
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
-  const handleSetState = async () => {
+  const handleSetState = async (state) => {
     await chrome.runtime.sendMessage({
       type: "tab",
       subtype: "set-tab-state",
       data: {
-        appState: APP_STATE.SELECT_IDENTIFIER,
+        appState: state,
       },
     });
   };
 
   const handleClick = () => {
-    handleSetState();
+    handleSetState(APP_STATE.SELECT_IDENTIFIER);
     setShowPopupPrompt(true);
   };
   useEffect(() => {
     if (!signins?.length) {
-      handleSetState();
+      handleSetState(APP_STATE.SELECT_IDENTIFIER);
+      setShowPopupPrompt(true);
+    } else if (!isConnected) {
+      handleSetState(APP_STATE.KERIA_CONNECT)
       setShowPopupPrompt(true);
     }
   }, []);

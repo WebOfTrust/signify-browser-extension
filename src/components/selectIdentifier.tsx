@@ -32,7 +32,13 @@ export function SelectIdentifier(): JSX.Element {
         appState: APP_STATE.DEFAULT,
       },
     });
+
     console.log("data.signins", data.signins);
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {type:"tab", subtype: "reload-state"}, function(response){
+
+      });
+  });
     window.close();
   };
 

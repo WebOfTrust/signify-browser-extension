@@ -122,7 +122,7 @@ export function Signin(props: ISignin): JSX.Element {
       </div>
       <div className="flex flex-row justify-center">
         <a href="#" className="font-medium text-blue-600 hover:underline">
-          Don't have account?
+          Don't have a KERIA agent?
         </a>
       </div>
       <div className="flex flex-row justify-center">

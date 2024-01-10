@@ -23,14 +23,6 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} alt="logo" />
-        <input
-          id="aid-input"
-          type="password"
-          onChange={(e) => {
-            console.log(e);
-            setPassword(e.target.value);
-          }}
-        />
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
