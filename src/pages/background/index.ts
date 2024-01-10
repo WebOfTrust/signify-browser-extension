@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({ data: appData });
     }
 
-    if (message.type === "tab" && message.subtype === "set-tab-state") {
+    if (message.type === "tab" && message.subtype === "set-app-state") {
       const currentDomain = await getCurrentDomain();
       await webappService.setAppData(currentDomain.origin, message.data);
       const appData = await webappService.getAppData(currentDomain.origin);
@@ -37,9 +37,10 @@ chrome.runtime.onMessage.addListener(function (
       const signins = await browserStorageService.getValue("signins");
       const currentDomain = await getCurrentDomain();
 
-      const { identifier } = message.data;
+      const { identifier, credential } = message.data;
       const signinObj = {
         identifier,
+        credential,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
         domain: currentDomain.origin,

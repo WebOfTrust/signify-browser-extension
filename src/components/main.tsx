@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
+import { SelectCredential } from "@components/selectCredential";
 import { APP_STATE } from "@pages/popup/constants";
 import { IdentifierList } from "@components/identifierList";
 import { CredentialList } from "@components/credentialList";
@@ -25,6 +26,16 @@ export function Main(props: IMain): JSX.Element {
 
     if (data?.appState) {
       setTabState(data?.appState);
+      if (
+        data?.appState === APP_STATE.SELECT_IDENTIFIER ||
+        data?.appState === APP_STATE.SELECT_CREDENTIAL
+      ) {
+        setActiveSidebar(
+          data?.appState === APP_STATE.SELECT_IDENTIFIER
+            ? "Identifiers"
+            : "Credentials"
+        );
+      }
     }
   };
 
@@ -35,7 +46,7 @@ export function Main(props: IMain): JSX.Element {
   const renderItems = () => {
     if (tabState === APP_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
 
-    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectIdentifier />;
+    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectCredential />;
 
     switch (activeSidebar) {
       case "Credentials":
@@ -56,7 +67,7 @@ export function Main(props: IMain): JSX.Element {
   };
 
   return (
-    <main className="">
+    <main className="w-[640px]">
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}
@@ -66,9 +77,7 @@ export function Main(props: IMain): JSX.Element {
       <div className="rounded p-2 sm:ml-48 sm:mt-4 bg-gray-dark text-gray-light mr-4">
         <div className="">
           <p className="text-xl capitalize font-bold">{activeSidebar}</p>
-          <div className="bg-black py-8 rounded-3xl m-5 max-h-[576px] overflow-auto">
-            {renderItems()}
-          </div>
+          <div className="m-5 max-h-[576px] overflow-auto">{renderItems()}</div>
         </div>
       </div>
     </main>

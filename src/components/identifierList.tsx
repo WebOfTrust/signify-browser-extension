@@ -33,6 +33,11 @@ export function IdentifierList(): JSX.Element {
           <IdentifierCard aid={aid} />
         </div>
       ))}
+      {!isLoading && !aids?.length ? (
+        <p className="">No items to show</p>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

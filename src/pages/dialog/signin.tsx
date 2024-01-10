@@ -1,7 +1,6 @@
 import { APP_STATE } from "@pages/popup/constants";
 
 export const SigninItem = ({ signin }): JSX.Element => {
-  
   const handleClick = async () => {
     const headers = await chrome.runtime.sendMessage({
       type: "authentication",
@@ -15,16 +14,25 @@ export const SigninItem = ({ signin }): JSX.Element => {
     const element = document.getElementById("__root");
     if (element) element.remove();
   };
-  
+
   return (
     <div className="flex m-2 flex-row justify-between p-2 items-start border border-black rounded">
       <div>
-        <p className=" text-start text-sm font-bold">
-          URL: {signin.domain}
-        </p>
-        <p className=" text-start text-sm font-bold">
-          AID: {signin?.identifier?.name}
-        </p>
+        <p className=" text-start text-sm font-bold">URL: {signin.domain}</p>
+        {signin?.identifier ? (
+          <p className=" text-start text-sm">
+            <strong>AID: </strong> {signin?.identifier?.name}
+          </p>
+        ) : (
+          <></>
+        )}
+        {signin?.credential ? (
+          <p className=" text-sm text-start font-normal text-gray">
+            <strong>Cred: </strong> {signin?.credential?.schema?.title}
+          </p>
+        ) : (
+          <></>
+        )}
         <p className=" text-start text-xs font-bold">
           Last used: {new Date(signin.updatedAt).toDateString()}
         </p>

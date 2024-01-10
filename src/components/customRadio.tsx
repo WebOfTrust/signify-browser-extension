@@ -14,8 +14,8 @@ export function CustomRadio({
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer items-center border ${
-        checked ? "border-green" : ""
+      className={`flex cursor-pointer items-center border rounded ${
+        checked ? "border-green bg-green" : ""
       }`}
     >
       <input
@@ -24,9 +24,9 @@ export function CustomRadio({
         type="radio"
         value=""
         name="bordered-radio"
-        className="w-4 h-4 dark:ring-offset-green  "
+        className="w-4 h-4 accent-green"
       />
-      <label htmlFor={id} className="w-full ms-1 font-medium">
+      <label htmlFor={id} className="cursor-pointer w-full ms-1 font-medium">
         {component}
       </label>
     </div>
