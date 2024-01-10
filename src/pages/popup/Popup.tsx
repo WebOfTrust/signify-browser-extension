@@ -7,7 +7,7 @@ import { Main } from "@components/main";
 
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
-const password = "Cp6n5zxYRmnE4iTyCUM0gR";
+const password = "j2H9kCTbGybPkrTs9cGQA";
 
 interface IConnect {
   passcode?: string;
@@ -39,18 +39,15 @@ export default function Popup(): JSX.Element {
       subtype: "check-agent-connection",
     });
 
-    if (data.isConnected) {
-      document.body.style.width = "640px";
-    } else {
-      document.body.style.width = "300px";
-    }
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {type:"tab", subtype: "reload-state"}, function(response){
-  
-        });
-    });
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { type: "tab", subtype: "reload-state" },
+          function (response) {}
+        );
+      });
     }
   };
 
@@ -84,8 +81,10 @@ export default function Popup(): JSX.Element {
 
   if (isCheckingInitialConnection) {
     return (
-      <div className=" w-16 h-16 m-auto text-green">
-        <Loader size={12} />
+      <div className="w-[300px]">
+        <div className=" w-16 h-16 m-auto text-green">
+          <Loader size={12} />
+        </div>
       </div>
     );
   }
@@ -95,11 +94,13 @@ export default function Popup(): JSX.Element {
       {isConnected ? (
         <Main handleDisconnect={handleDisconnect} />
       ) : (
-        <Signin
-          vendorUrl={vendorUrl}
-          handleConnect={handleConnect}
-          isLoading={isLoading}
-        />
+        <div className="w-[300px]">
+          <Signin
+            vendorUrl={vendorUrl}
+            handleConnect={handleConnect}
+            isLoading={isLoading}
+          />
+        </div>
       )}
     </div>
   );

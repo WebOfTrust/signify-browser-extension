@@ -4,12 +4,10 @@ interface ICredential {
 
 export function CredentialCard({ credential }: ICredential): JSX.Element {
   return (
-    <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
-      <div className="mb-2 flex flex-row justify-between">
+    <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
+      <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-lg text-gray-dark">
-            {credential.schema.title}
-          </p>
+          <p className="font-bold text-gray-dark">{credential.schema.title}</p>
           <p className="font-normal text-md text-gray">
             {credential.schema.credentialType}
           </p>
@@ -29,16 +27,15 @@ export function CredentialCard({ credential }: ICredential): JSX.Element {
           />
         </svg>
       </div>
-
-      <div className="mb-2">
-        {/* <p className="font-bold text-lg text-gray-dark">Name</p> */}
+      <div className="">
         <p className="font-normal text-md text-gray">
           {credential.schema.description}
         </p>
       </div>
-      <div className="mb-2 flex flex-row justify-between">
+      <div className="flex flex-row justify-between">
         <div className="">
-          <p className="font-bold text-gray text-lg">November 08, 2023</p>
+          <p className="font-bold text-gray-dark">Last Used: </p>
+          <p className="font-normal text-gray">November 08, 2023</p>
         </div>
         {credential.status?.et === "iss" ? (
           <div className="flex flex-col items-center text-green">

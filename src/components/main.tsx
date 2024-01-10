@@ -67,7 +67,7 @@ export function Main(props: IMain): JSX.Element {
   };
 
   return (
-    <main className="">
+    <main className="w-[640px]">
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}

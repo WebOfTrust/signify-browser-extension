@@ -35,26 +35,25 @@ export default function Dialog({
   }, []);
 
   return (
-    <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto rounded text-center p-3 bg-white">
-      <header className="items-center justify-center">
+    <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7 ">
+      {showPopupPrompt ? (
+        <PopupPrompt
+          message={
+            <p className="text-sm text-white">
+              Open{" "}
+              <span className="inline-block">
+                <img src={logo} className="h-4" alt="logo" />
+              </span>{" "}
+              to proceed
+            </p>
+          }
+        />
+      ) : null}
+      <div className="items-center justify-center rounded text-center p-3 bg-white">
         <div className="flex flex-row gap-x-2 mb-2">
           <img src={logo} className="h-8" alt="logo" />
           <p className="text-2xl font-bold text-green">Sign in with KERI</p>
         </div>
-
-        {showPopupPrompt ? (
-          <PopupPrompt
-            message={
-              <p className="text-sm text-white">
-                Open{" "}
-                <span className="inline-block">
-                  <img src={logo} className="h-4" alt="logo" />
-                </span>{" "}
-                to proceed
-              </p>
-            }
-          />
-        ) : null}
         {!signins?.length && isConnected ? (
           <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
             <span className="">{tab?.url}</span> is requesting an{" "}
@@ -79,7 +78,7 @@ export default function Dialog({
             </div>
           </>
         ) : null}
-      </header>
+      </div>
     </div>
   );
 }

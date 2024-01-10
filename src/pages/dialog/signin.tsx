@@ -20,15 +20,15 @@ export const SigninItem = ({ signin }): JSX.Element => {
       <div>
         <p className=" text-start text-sm font-bold">URL: {signin.domain}</p>
         {signin?.identifier ? (
-          <p className=" text-start text-sm font-bold">
-            AID: {signin?.identifier?.name}
+          <p className=" text-start text-sm">
+            <strong>AID: </strong> {signin?.identifier?.name}
           </p>
         ) : (
           <></>
         )}
         {signin?.credential ? (
           <p className=" text-sm text-start font-normal text-gray">
-            <strong>{signin?.credential?.schema?.title}</strong>
+            <strong>Cred: </strong> {signin?.credential?.schema?.title}
           </p>
         ) : (
           <></>

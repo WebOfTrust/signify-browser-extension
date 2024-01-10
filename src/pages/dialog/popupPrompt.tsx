@@ -4,7 +4,7 @@ interface IPopupPrompt {
 
 export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {
   return (
-    <div className="flex justify-center max-w-[280px] flex-row border  p-2 bg-gray-dark rounded">
+    <div className="absolute top-0 right-0 flex justify-center max-w-[280px] flex-row border  p-2 bg-gray-dark rounded">
       {message}
       <svg
         className="ml-2 h-4 w-4 rounded border-green animate-bounce"

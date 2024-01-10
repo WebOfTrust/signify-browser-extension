@@ -33,6 +33,11 @@ export function CredentialList(): JSX.Element {
           <CredentialCard credential={credential} />
         </div>
       ))}
+      {!isLoading && !credentials?.length ? (
+        <p className="">No items to show</p>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

@@ -2,11 +2,13 @@ interface IIdentifier {}
 
 export function IdentifierCard({ aid }): JSX.Element {
   return (
-    <div className="m-auto max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
-      <div className="mb-3 flex flex-row justify-between">
+    <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
+      <div className="flex flex-row justify-between">
         <div>
-          <p className=" mb-1 font-bold text-gray-dark">Alias:</p>
-          <p className="font-normal text-gray">{aid.name}</p>
+          <p className="font-bold text-gray-dark">
+            Alias:{" "}
+            <span className="font-normal text-gray max-w">{aid.name}</span>
+          </p>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,20 +25,19 @@ export function IdentifierCard({ aid }): JSX.Element {
           />
         </svg>
       </div>
-
-      <div className="mb-3">
-        <p className=" mb-1 font-bold text-gray-dark">ID:</p>
-        <p className="font-normal text-gray">{aid.prefix}</p>
+      <div className="">
+        <p className="font-bold text-gray-dark">ID:</p>
+        <p className="font-normal text-gray max-w-[200px] break-words">
+          {aid.prefix}
+        </p>
       </div>
-      <div className="mb-3 flex flex-row justify-between">
+      <div className="flex flex-row justify-between">
         <div className="">
-          <p className=" mb-1 font-bold text-gray-dark">
-            Credentials Received:
-          </p>
+          <p className="font-bold text-gray-dark">Credentials Received: </p>
           <p className="font-normal text-gray">13</p>
         </div>
         <div className="">
-          <p className=" mb-1 font-bold text-gray-dark">Last Used:</p>
+          <p className="font-bold text-gray-dark">Last Used: </p>
           <p className="font-normal text-gray">November 08, 2023</p>
         </div>
       </div>
