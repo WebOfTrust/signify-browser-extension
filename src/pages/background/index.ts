@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "check-agent-connection"
       ) {
         const isConnected = await signifyService.isConnected();
-        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+        sendResponse({ data: { isConnected, tabUrl: sender?.tab.url } });
       }
 
       if (
@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "check-agent-connection"
       ) {
         const isConnected = await signifyService.isConnected();
-        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+        sendResponse({ data: { isConnected } });
       }
 
       if (
