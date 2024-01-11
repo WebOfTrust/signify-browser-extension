@@ -1,4 +1,5 @@
 import { APP_STATE } from "@pages/popup/constants";
+import { sign } from "crypto";
 
 export const SigninItem = ({ signin }): JSX.Element => {
   const handleClick = async () => {
@@ -6,11 +7,10 @@ export const SigninItem = ({ signin }): JSX.Element => {
       type: "authentication",
       subtype: "get-signed-headers",
       data: {
-        signin: "selectedAID",
+        signin: signin,
       },
     });
-    console.log("Signed headers: ", headers);
-    alert("Signed headers received");
+    alert("Signed headers received\n"+ JSON.stringify(headers.data.headers, null, 2));
     const element = document.getElementById("__root");
     if (element) element.remove();
   };

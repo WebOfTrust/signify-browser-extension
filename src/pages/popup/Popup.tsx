@@ -5,10 +5,10 @@ import { Signin } from "@src/components/signin";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
+// TODO Harcoded for initial development. Must be removed soon
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
-const password = "CdsUqv_8-F5otMp5feNpps";
-const password2 = "j2H9kCTbGybPkrTs9cGQA";
+const password = "CqjYb60NT9gZl8itwuttD9";
 
 interface IConnect {
   passcode?: string;
@@ -22,7 +22,6 @@ export default function Popup(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
-
   const getVendorUrl = async () => {
     const _vendorUrl = await configService.getUrl();
     setVendorUrl(_vendorUrl);
@@ -43,11 +42,13 @@ export default function Popup(): JSX.Element {
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          { type: "tab", subtype: "reload-state" },
-          function (response) {}
-        );
+        if (tabs.length === 1) {
+          chrome.tabs.sendMessage(
+            tabs[0].id!,
+            { type: "tab", subtype: "reload-state" },
+            function (response) {}
+          );
+        }
       });
     }
   };

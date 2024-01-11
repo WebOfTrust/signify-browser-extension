@@ -21,7 +21,6 @@ export function Main(props: IMain): JSX.Element {
       subtype: "get-tab-state",
     });
 
-    console.log("tab state data", data);
     if (!data) return;
 
     if (data?.appState) {

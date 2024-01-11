@@ -32,6 +32,8 @@ export function IdentifierCard({ aid }): JSX.Element {
           {obfuscateString(aid.prefix)}
         </p>
       </div>
+
+      {/* COMMENTED OUT FOR THE DEMO
       <div className="flex flex-row justify-between">
         <div className="">
           <p className="font-bold text-gray-dark">Credentials Received: </p>
@@ -41,7 +43,7 @@ export function IdentifierCard({ aid }): JSX.Element {
           <p className="font-bold text-gray-dark">Last Used: </p>
           <p className="font-normal text-gray">November 08, 2023</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
