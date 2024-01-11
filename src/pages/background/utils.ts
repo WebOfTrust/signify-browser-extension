@@ -13,7 +13,7 @@ export const isValidUrl = (str: string) => {
   }
 };
 
-export const getCurrentTab = () => {
+export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
   return new Promise((resolve) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       resolve(tabs[0]);
@@ -23,7 +23,7 @@ export const getCurrentTab = () => {
 
 export const getCurrentDomain = async () => {
   const currentTab = await getCurrentTab();
-  return currentTab ? new URL(currentTab?.url) : null;
+  return currentTab ? new URL(currentTab.url!) : null;
 };
 
 export const obfuscateString = (inputString: string) => {

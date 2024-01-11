@@ -94,19 +94,19 @@ chrome.runtime.onMessage.addListener(function (
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
       const currentDomain = await getCurrentDomain();
-      const appData = await webappService.getAppData(currentDomain?.origin);
+      const appData = await webappService.getAppData(currentDomain!.origin);
       sendResponse({ data: appData });
     }
 
     if (message.type === "tab" && message.subtype === "set-app-state") {
       const currentDomain = await getCurrentDomain();
-      await webappService.setAppData(currentDomain.origin, message.data);
-      const appData = await webappService.getAppData(currentDomain.origin);
+      await webappService.setAppData(currentDomain!.origin, message.data);
+      const appData = await webappService.getAppData(currentDomain!.origin);
       sendResponse({ data: appData });
     }
 
     if (message.type === "create-resource" && message.subtype === "signin") {
-      const signins = await browserStorageService.getValue("signins");
+      const signins = await browserStorageService.getValue("signins") as any[];
       const currentDomain = await getCurrentDomain();
 
       const { identifier, credential } = message.data;
@@ -115,7 +115,7 @@ chrome.runtime.onMessage.addListener(function (
         credential,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
-        domain: currentDomain.origin,
+        domain: currentDomain!.origin,
       };
       if (signins && signins?.length) {
         await browserStorageService.setValue("signins", [
