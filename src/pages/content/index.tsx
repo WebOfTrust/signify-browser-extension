@@ -35,7 +35,7 @@ window.addEventListener(
               eventType: event.data.type,
             });
           } else {
-            removeAlertComponent();
+            removeDialog();
           }
           break;
       }
@@ -51,15 +51,14 @@ chrome.runtime.onMessage.addListener(async function (
   sendResponse
 ) {
   if (sender.origin === "chrome-extension://" + chrome.runtime.id) {
-    // handle messages from Popup
     console.log(
       "Message received from browser extension: " +
         message.type +
-        " " +
+        ":" +
         message.subtype
     );
     if (message.type === "tab" && message.subtype === "reload-state") {
-      removeAlertComponent();
+      removeDialog();
       const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
         type: "authentication",
         subtype: "check-agent-connection",
@@ -95,7 +94,7 @@ function insertDialog(data: any) {
   );
 }
 
-function removeAlertComponent() {
+function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
 }

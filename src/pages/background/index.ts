@@ -16,84 +16,14 @@ chrome.runtime.onMessage.addListener(function (
   sendResponse
 ) {
   (async () => {
-    console.log("sender", sender);
 
-    if (message.type === "tab" && message.subtype === "get-tab-state") {
-      const currentDomain = await getCurrentDomain();
-      const appData = await webappService.getAppData(currentDomain?.origin);
-      sendResponse({ data: appData });
-    }
-
-    if (message.type === "tab" && message.subtype === "set-app-state") {
-      const currentDomain = await getCurrentDomain();
-      await webappService.setAppData(currentDomain.origin, message.data);
-      const appData = await webappService.getAppData(currentDomain.origin);
-      sendResponse({ data: appData });
-    }
-
-    
-
-    if (message.type === "create-resource" && message.subtype === "signin") {
-      const signins = await browserStorageService.getValue("signins");
-      const currentDomain = await getCurrentDomain();
-
-      const { identifier, credential } = message.data;
-      const signinObj = {
-        identifier,
-        credential,
-        createdAt: new Date().getTime(),
-        updatedAt: new Date().getTime(),
-        domain: currentDomain.origin,
-      };
-      if (signins && signins?.length) {
-        await browserStorageService.setValue("signins", [
-          ...signins,
-          signinObj,
-        ]);
-      } else {
-        await browserStorageService.setValue("signins", [signinObj]);
-      }
-      const storageSignins = await browserStorageService.getValue("signins");
-      sendResponse({ data: { signins: storageSignins } });
-    }
-
-    if (
-      message.type === "fetch-resource" &&
-      message.subtype === "identifiers"
-    ) {
-      const identifiers = await signifyService.listIdentifiers();
-      sendResponse({ data: { aids: identifiers?.aids ?? [] } });
-    }
-
-    if (message.type === "fetch-resource" && message.subtype === "signins") {
-      const signins = await browserStorageService.getValue("signins");
-      sendResponse({
-        data: {
-          signins: signins ?? [],
-        },
-      });
-    }
-
-    if (
-      message.type === "fetch-resource" &&
-      message.subtype === "credentials"
-    ) {
-      const credentials = await signifyService.listCredentials();
-      sendResponse({ data: { credentials: credentials ?? [] } });
-    }
-
-
-
-    
-
+    // Handle mesages from content script on active tab
     if (sender.tab &&  sender.tab.active) {
-      // Handle mesages from content script
+
       console.log(
         "Message received from content script at " +
-          sender.tab.url +
-          ": " +
-          message.type +
-          "-" +
+          sender.tab.url + " " +
+          message.type + ":" +
           message.subtype
       );
 
@@ -105,18 +35,18 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
       }
 
-
       if (
         message.type === "authentication" &&
         message.subtype === "get-signed-headers"
       ) {
-        // TODO get real signed headers from signify
-        const headers = {
-          'Signify-Resource': "asdasd",
-          'Signify-Timestamp': new Date().toISOString().replace('Z', '000+00:00'),
+        const origin = sender.tab.url!;
+        // TODO  method and path should be passed from web page
+        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, "GET", "/", origin);
+        let jsonHeaders: { [key: string]: string; } = {};
+        for (const pair of signedHeaders.entries()) {
+          jsonHeaders[pair[0]] = pair[1];
         }
-        sendResponse({ data: { headers: headers } });
-
+        sendResponse({ data: { headers: jsonHeaders } });
       }
 
       if (
@@ -126,10 +56,10 @@ chrome.runtime.onMessage.addListener(function (
         const signins = await browserStorageService.getValue("signins");
         sendResponse({ data: { signins: signins ?? [] } });
       }
-
+      
+    // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
-      // handle messages from Popup
-      console.log("Message received from browser extension popup: " + message.type + "-" + message.subtype);
+      console.log("Message received from browser extension: " + message.type + "-" + message.subtype);
 
       if (
         message.type === "authentication" &&
@@ -162,6 +92,68 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { state } });
       }
     }
+
+    if (message.type === "tab" && message.subtype === "get-tab-state") {
+      const currentDomain = await getCurrentDomain();
+      const appData = await webappService.getAppData(currentDomain?.origin);
+      sendResponse({ data: appData });
+    }
+
+    if (message.type === "tab" && message.subtype === "set-app-state") {
+      const currentDomain = await getCurrentDomain();
+      await webappService.setAppData(currentDomain.origin, message.data);
+      const appData = await webappService.getAppData(currentDomain.origin);
+      sendResponse({ data: appData });
+    }
+
+    if (message.type === "create-resource" && message.subtype === "signin") {
+      const signins = await browserStorageService.getValue("signins");
+      const currentDomain = await getCurrentDomain();
+
+      const { identifier, credential } = message.data;
+      const signinObj = {
+        identifier,
+        credential,
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        domain: currentDomain.origin,
+      };
+      if (signins && signins?.length) {
+        await browserStorageService.setValue("signins", [
+          ...signins,
+          signinObj,
+        ]);
+      } else {
+        await browserStorageService.setValue("signins", [signinObj]);
+      }
+      const storageSignins = await browserStorageService.getValue("signins");
+      sendResponse({ data: { signins: storageSignins } });
+    }
+    if (
+      message.type === "fetch-resource" &&
+      message.subtype === "identifiers"
+    ) {
+      const identifiers = await signifyService.listIdentifiers();
+      sendResponse({ data: { aids: identifiers?.aids ?? [] } });
+    }
+
+    if (message.type === "fetch-resource" && message.subtype === "signins") {
+      const signins = await browserStorageService.getValue("signins");
+      sendResponse({
+        data: {
+          signins: signins ?? [],
+        },
+      });
+    }
+
+    if (
+      message.type === "fetch-resource" &&
+      message.subtype === "credentials"
+    ) {
+      const credentials = await signifyService.listCredentials();
+      sendResponse({ data: { credentials: credentials ?? [] } });
+    }
+
   })();
 
   // return true to indicate chrome api to send a response asynchronously

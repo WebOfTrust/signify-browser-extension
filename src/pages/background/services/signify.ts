@@ -85,6 +85,7 @@ const Signify = () => {
       path,
       fields
     ); 
+
     return signed_headers;
   };
 
