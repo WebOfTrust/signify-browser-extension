@@ -16,27 +16,22 @@ window.addEventListener(
       switch (event.data.type) {
         case "init-req-identifier":
         case "init-req-credential":
-          // const manifest = chrome.runtime.getManifest();
-          const loginBtn = document.getElementById("login-btn");
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
           });
-          if (loginBtn) {
-            const tabSigninResp = await chrome.runtime.sendMessage<
-              IMessage<void>
-            >({
-              type: "fetch-resource",
-              subtype: "tab-signin",
-            });
-            insertDialog({
-              ...data,
-              signins: tabSigninResp?.data?.signins,
-              eventType: event.data.type,
-            });
-          } else {
-            removeDialog();
-          }
+          const tabSigninResp = await chrome.runtime.sendMessage<
+            IMessage<void>
+          >({
+            type: "fetch-resource",
+            subtype: "tab-signin",
+          });
+          insertDialog(
+            data.isConnected,
+            data.tabUrl,
+            tabSigninResp?.data?.signins,
+            "init-req-identifier"
+          );
           break;
       }
     }
@@ -67,17 +62,17 @@ chrome.runtime.onMessage.addListener(async function (
         type: "fetch-resource",
         subtype: "tab-signin",
       });
-      insertDialog({
-        ...data,
-        signins: tabSigninResp?.data?.signins,
-        eventType: "init-req-identifier",
-      });
+      insertDialog(
+        data.isConnected,
+        data.tabUrl,
+        tabSigninResp?.data?.signins,
+        "init-req-identifier"
+      );
     }
   }
 });
 
-function insertDialog(data: any) {
-  console.log("inserting dialog");
+function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventType: string) {
   const div = document.createElement("div");
   div.id = "__root";
   document.body.appendChild(div);
@@ -86,10 +81,10 @@ function insertDialog(data: any) {
   const root = createRoot(rootContainer!);
   root.render(
     <Dialog
-      isConnected={data.isConnected}
-      tab={data?.meta?.tab}
-      signins={data.signins}
-      eventType={data.eventType}
+      isConnected={isConnected}
+      tabUrl={tabUrl}
+      signins={signins}
+      eventType={eventType}
     />
   );
 }

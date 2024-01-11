@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "check-agent-connection"
       ) {
         const isConnected = await signifyService.isConnected();
-        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+        sendResponse({ data: { isConnected, tabUrl: sender?.tab.url } });
       }
 
       if (
@@ -40,8 +40,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
-        // TODO  method and path should be passed from web page
-        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, "GET", "/", origin);
+        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, origin);
         let jsonHeaders: { [key: string]: string; } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
@@ -66,7 +65,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "check-agent-connection"
       ) {
         const isConnected = await signifyService.isConnected();
-        sendResponse({ data: { isConnected, meta: { tab: sender?.tab } } });
+        sendResponse({ data: { isConnected } });
       }
 
       if (
@@ -95,19 +94,19 @@ chrome.runtime.onMessage.addListener(function (
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
       const currentDomain = await getCurrentDomain();
-      const appData = await webappService.getAppData(currentDomain?.origin);
+      const appData = await webappService.getAppData(currentDomain!.origin);
       sendResponse({ data: appData });
     }
 
     if (message.type === "tab" && message.subtype === "set-app-state") {
       const currentDomain = await getCurrentDomain();
-      await webappService.setAppData(currentDomain.origin, message.data);
-      const appData = await webappService.getAppData(currentDomain.origin);
+      await webappService.setAppData(currentDomain!.origin, message.data);
+      const appData = await webappService.getAppData(currentDomain!.origin);
       sendResponse({ data: appData });
     }
 
     if (message.type === "create-resource" && message.subtype === "signin") {
-      const signins = await browserStorageService.getValue("signins");
+      const signins = await browserStorageService.getValue("signins") as any[];
       const currentDomain = await getCurrentDomain();
 
       const { identifier, credential } = message.data;
@@ -116,7 +115,7 @@ chrome.runtime.onMessage.addListener(function (
         credential,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
-        domain: currentDomain.origin,
+        domain: currentDomain!.origin,
       };
       if (signins && signins?.length) {
         await browserStorageService.setValue("signins", [

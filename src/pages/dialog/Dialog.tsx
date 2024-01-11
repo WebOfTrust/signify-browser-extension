@@ -4,10 +4,10 @@ import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 
 export default function Dialog({
-  isConnected,
-  tab,
-  signins,
-  eventType,
+  isConnected = false,
+  tabUrl = "",
+  signins = [],
+  eventType = "",
 }): JSX.Element {
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
@@ -65,14 +65,14 @@ export default function Dialog({
           <img src={logo} className="h-8" alt="logo" />
           <p className="text-2xl font-bold text-green">Sign in with KERI</p>
         </div>
-        {!signins?.length && isConnected ? (
+        {!signins.length || !isConnected ? (
           <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
-            <span className="">{tab?.url}</span> is requesting an{" "}
-            {eventType === "init-req-identifier" ? "ID" : "credential"}
+            <span className="">{tabUrl}</span> requests authentication with{" "}
+            {eventType === "init-req-identifier" ? "AID" : "credential"}
           </p>
         ) : null}
 
-        {signins?.length && isConnected ? (
+        {signins.length && isConnected ? (
           <>
             {signins?.map((signin) => (
               <SigninItem signin={signin} />

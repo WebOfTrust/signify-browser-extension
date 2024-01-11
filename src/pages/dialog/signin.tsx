@@ -1,7 +1,6 @@
-import { APP_STATE } from "@pages/popup/constants";
-import { sign } from "crypto";
 
-export const SigninItem = ({ signin }): JSX.Element => {
+// TODO do not pass the full signins stored object (only AID name, schema name, web url)
+export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
   const handleClick = async () => {
     const headers = await chrome.runtime.sendMessage({
       type: "authentication",
