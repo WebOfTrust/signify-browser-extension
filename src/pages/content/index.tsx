@@ -16,27 +16,21 @@ window.addEventListener(
       switch (event.data.type) {
         case "init-req-identifier":
         case "init-req-credential":
-          // const manifest = chrome.runtime.getManifest();
-          const loginBtn = document.getElementById("login-btn");
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
           });
-          if (loginBtn) {
-            const tabSigninResp = await chrome.runtime.sendMessage<
-              IMessage<void>
-            >({
-              type: "fetch-resource",
-              subtype: "tab-signin",
-            });
-            insertDialog({
-              ...data,
-              signins: tabSigninResp?.data?.signins,
-              eventType: event.data.type,
-            });
-          } else {
-            removeDialog();
-          }
+          const tabSigninResp = await chrome.runtime.sendMessage<
+            IMessage<void>
+          >({
+            type: "fetch-resource",
+            subtype: "tab-signin",
+          });
+          insertDialog({
+            ...data,
+            signins: tabSigninResp?.data?.signins,
+            eventType: event.data.type,
+          });
           break;
       }
     }
