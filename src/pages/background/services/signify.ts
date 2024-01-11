@@ -54,7 +54,7 @@ const Signify = () => {
     await userService.removePasscode();
   };
 
-  const signHeaders = async (aidName: string, method:string, path:string, origin: string) => {
+  const signHeaders = async (aidName: string, origin: string) => {
     const hab = await _client?.identifiers().get(aidName);
     const keeper = _client?.manager!.get(hab);
 
@@ -72,8 +72,8 @@ const Signify = () => {
     headers.set('Origin', origin);
 
     const fields = [
-      '@method',
-      '@path',
+      // '@method',
+      // '@path',
       'signify-resource',
       'signify-timestamp',
       'origin'
@@ -81,8 +81,8 @@ const Signify = () => {
 
     const signed_headers = authenticator.sign(
       headers,
-      method,
-      path,
+      "",
+      "",
       fields
     ); 
 

@@ -40,8 +40,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
-        // TODO  method and path should be passed from web page
-        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, "GET", "/", origin);
+        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, origin);
         let jsonHeaders: { [key: string]: string; } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
