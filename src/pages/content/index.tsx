@@ -33,6 +33,8 @@ window.addEventListener(
             "init-req-identifier"
           );
           break;
+        default:
+          break;
       }
     }
   },
