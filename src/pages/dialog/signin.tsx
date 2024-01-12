@@ -9,9 +9,10 @@ export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
         signin: signin,
       },
     });
-    alert("Signed headers received\n"+ JSON.stringify(headers.data.headers, null, 2));
     const element = document.getElementById("__root");
     if (element) element.remove();
+    // Communicate headers to web page
+    window.postMessage({ type: "signify-signature", data: headers.data }, "*");
   };
 
   return (

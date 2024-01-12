@@ -12,6 +12,8 @@ function App() {
     window.postMessage({ type: "init-req-credential" }, "*");
   };
 
+
+
   return (
     <div className="App">
       <header className="App-header">
