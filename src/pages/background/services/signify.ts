@@ -2,20 +2,36 @@ import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 
-const PASSCODE_TIMEOUT = 5 * 60 * 1000;
+const PASSCODE_TIMEOUT = 5;
 
 const Signify = () => {
   let _client: SignifyClient | null;
+
+  chrome.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name == 'passcode-timeout') {
+      console.log("Timer expired, client and passcode zeroed out");
+      _client = null;
+      await userService.removePasscode();
+    }
+  });
+
+  const setTimeoutAlarm = () => {
+    chrome.alarms.create('passcode-timeout', {
+      delayInMinutes: PASSCODE_TIMEOUT,
+    });
+  }
+
+  const resetTimeoutAlarm = async () => {
+    await chrome.alarms.clear('passcode-timeout')
+    setTimeoutAlarm();
+  }
+
 
   const connect = async (url: string, passcode: string) => {
     await ready();
     _client = new SignifyClient(url, passcode, Tier.low);
     await _client.connect();
-    setTimeout(async () => {
-      console.log("Timer expired, client and passcode zeroed out");
-      _client = null;
-      await userService.removePasscode();
-    }, PASSCODE_TIMEOUT);
+    setTimeoutAlarm();
   }
 
   const isConnected = async () => {
@@ -23,6 +39,7 @@ const Signify = () => {
     const url = await configService.getUrl();
     if (url && passcode && !_client) {
       await connect(url, passcode);
+      await resetTimeoutAlarm();
     }
 
     console.log(_client ? "Signify client is connected" :  "Signify client is not connected");
