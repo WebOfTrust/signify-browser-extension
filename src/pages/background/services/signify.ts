@@ -21,10 +21,9 @@ const Signify = () => {
     });
   }
 
-  const resetTimeoutAlarm = () => {
-    chrome.alarms.clear('passcode-timeout'), () => {
-      setTimeoutAlarm();
-    };
+  const resetTimeoutAlarm = async () => {
+    await chrome.alarms.clear('passcode-timeout')
+    setTimeoutAlarm();
   }
 
 
@@ -40,7 +39,7 @@ const Signify = () => {
     const url = await configService.getUrl();
     if (url && passcode && !_client) {
       await connect(url, passcode);
-      resetTimeoutAlarm();
+      await resetTimeoutAlarm();
     }
 
     console.log(_client ? "Signify client is connected" :  "Signify client is not connected");
