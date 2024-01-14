@@ -9,6 +9,12 @@ import { getCurrentDomain } from "@pages/background/utils";
 
 console.log("Background script loaded");
 
+chrome.runtime.onInstalled.addListener(function (object) {
+  if (object.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    console.log("Signify Browser Extension installed");
+  }
+});
+
 // Handle messages
 chrome.runtime.onMessage.addListener(function (
   message: IMessage<any>,
@@ -158,3 +164,27 @@ chrome.runtime.onMessage.addListener(function (
   // return true to indicate chrome api to send a response asynchronously
   return true;
 });
+
+chrome.runtime.onMessageExternal.addListener(
+  async function(request, sender, sendResponse) {
+    console.log("Message received from external source: " + sender.url);
+    // if (sender.url === blocklistedWebsite)
+    //   return;  // don't allow this web page access
+    // if (request.openUrlInEditor)
+    //   openUrl(request.openUrlInEditor);
+    // sendResponse({data: "received"})
+    const origin = sender.url!;
+    const signins = await browserStorageService.getValue("signins");
+    console.log(signins)
+    console.log(origin)
+    if (origin.startsWith(signins[0].domain)) {
+      const signedHeaders = await signifyService.signHeaders(signins[0].identifier.name, origin);
+      let jsonHeaders: { [key: string]: string; } = {};
+      for (const pair of signedHeaders.entries()) {
+        jsonHeaders[pair[0]] = pair[1];
+      }
+      sendResponse({ data: { headers: jsonHeaders } });
+    
+    }
+
+  });
