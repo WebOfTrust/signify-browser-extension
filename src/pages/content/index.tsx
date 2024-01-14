@@ -4,7 +4,7 @@ import "./style.css";
 import Dialog from "../dialog/Dialog";
 import { TAB_STATE } from "../popup/constants";
 
-var tabState = TAB_STATE.DEFAULT;
+var tabState = TAB_STATE.NONE;
 
 // Handle messages from web page
 window.addEventListener(
@@ -19,6 +19,7 @@ window.addEventListener(
       switch (event.data.type) {
         case "init-req-identifier":
         case "init-req-credential":
+          setTabState(TAB_STATE.DEFAULT)
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
@@ -33,7 +34,7 @@ window.addEventListener(
             data.isConnected,
             data.tabUrl,
             tabSigninResp?.data?.signins,
-            "init-req-identifier"
+            event.data.type
           );
           break;
         default:
@@ -58,28 +59,31 @@ chrome.runtime.onMessage.addListener(async function (
         message.subtype
     );
     if (message.type === "tab" && message.subtype === "reload-state") {
-      setTabState(TAB_STATE.DEFAULT);
-      removeDialog();
-      const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-        type: "authentication",
-        subtype: "check-agent-connection",
-      });
-      const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
-        type: "fetch-resource",
-        subtype: "tab-signin",
-      });
-      insertDialog(
-        data.isConnected,
-        data.tabUrl,
-        tabSigninResp?.data?.signins,
-        "init-req-identifier"
-      );
+      if (getTabState() !== TAB_STATE.NONE) {
+        removeDialog();
+        const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+          type: "authentication",
+          subtype: "check-agent-connection",
+        });
+        const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
+          type: "fetch-resource",
+          subtype: "tab-signin",
+        });
+        insertDialog(
+          data.isConnected,
+          data.tabUrl,
+          tabSigninResp?.data?.signins,
+          ""
+        );
+      }
+
     }
-    if (message.type === "tab" && message.subtype === "get-tab2-state") {
+
+    if (message.type === "tab" && message.subtype === "get-tab-state") {
       sendResponse({data: {appState:getTabState()}});
       }
 
-    if (message.type === "tab" && message.subtype === "set-tab2-state") {
+    if (message.type === "tab" && message.subtype === "set-tab-state") {
       setTabState(message.data.appState);
       }
   }
@@ -114,7 +118,6 @@ export function setTabState(state: string) {
 }
 
 export function getTabState() {
-  console.log("setTabState: " + tabState)
-
+  console.log("getTabState: " + tabState)
   return tabState;
 }

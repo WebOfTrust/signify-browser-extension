@@ -5,7 +5,7 @@ import { Signin } from "@src/components/signin";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
-// TODO Harcoded for initial development. Must be removed soon
+// TODO Harcoded for initial development. Will be removed soon
 const url = "https://keria-dev.rootsid.cloud/admin";
 const boot_url = "https://keria-dev.rootsid.cloud";
 const password = "CqjYb60NT9gZl8itwuttD9";
@@ -40,17 +40,17 @@ export default function Popup(): JSX.Element {
     });
 
     setIsConnected(!!data.isConnected);
-    // if (data.isConnected) {
-    //   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    //     if (tabs.length === 1) {
-    //       chrome.tabs.sendMessage(
-    //         tabs[0].id!,
-    //         { type: "tab", subtype: "reload-state" },
-    //         function (response) {}
-    //       );
-    //     }
-    //   });
-    // }
+    if (data.isConnected) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        if (tabs.length === 1) {
+          console.log("realoading tab")
+          chrome.tabs.sendMessage(
+            tabs[0].id!,
+            { type: "tab", subtype: "reload-state" }
+          );
+        }
+      });
+    }
   };
 
   useEffect(() => {

@@ -1,3 +1,6 @@
+import { TAB_STATE } from "@pages/popup/constants";
+import { setTabState } from "@pages/content/index";
+
 
 // TODO do not pass the full signins stored object (only AID name, schema name, web url)
 export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
@@ -11,6 +14,7 @@ export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
     });
     const element = document.getElementById("__root");
     if (element) element.remove();
+    setTabState(TAB_STATE.NONE);
     // Communicate headers to web page
     window.postMessage({ type: "signify-signature", data: headers.data }, "*");
   };

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { IdentifierCard } from "@components/identifierCard";
 import { IMessage } from "@pages/background/types";
-import { APP_STATE } from "@pages/popup/constants";
 
 export function SelectIdentifier(): JSX.Element {
   const [aids, setAids] = useState([]);
@@ -14,29 +13,19 @@ export function SelectIdentifier(): JSX.Element {
     setAids(data.aids);
   };
 
-  const createSigninWithIdentifiers = async (aid) => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+  const createSigninWithIdentifiers = async (aid: any) => {
+    await chrome.runtime.sendMessage<IMessage<any>>({
       type: "create-resource",
       subtype: "signin",
       data: {
         identifier: aid,
       },
     });
-    await chrome.runtime.sendMessage({
-      type: "tab",
-      subtype: "set-app-state",
-      data: {
-        appState: APP_STATE.DEFAULT,
-      },
-    });
 
-    console.log("data.signins", data.signins);
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(
         tabs[0].id!,
-        { type: "tab", subtype: "reload-state" },
-        function (response) {}
-      );
+        { type: "tab", subtype: "reload-state" });
     });
     window.close();
   };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { APP_STATE } from "@pages/popup/constants";
+import { useState, useEffect } from "react";
+import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 import { setTabState } from "@pages/content/index";
@@ -13,36 +13,25 @@ export default function Dialog({
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
-  const setAppState = async (state: string) => {
-    setTabState(state);
-    await chrome.runtime.sendMessage({
-      type: "tab",
-      subtype: "set-app-state",
-      data: {
-        appState: state,
-      },
-    });
-  };
-
   const getEventTypeAppState = () => {
     return eventType === "init-req-identifier"
-      ? APP_STATE.SELECT_IDENTIFIER
+      ? TAB_STATE.SELECT_IDENTIFIER
       : eventType === "init-req-credential"
-      ? APP_STATE.SELECT_CREDENTIAL
-      : APP_STATE.DEFAULT;
+      ? TAB_STATE.SELECT_CREDENTIAL
+      : TAB_STATE.DEFAULT;
   };
 
   const handleClick = () => {
-    setAppState(getEventTypeAppState());
+    setTabState(getEventTypeAppState());
     setShowPopupPrompt(true);
   };
 
   useEffect(() => {
     if (!signins?.length) {
-      setAppState(getEventTypeAppState());
+      setTabState(getEventTypeAppState());
       setShowPopupPrompt(true);
     } else if (!isConnected) {
-      setAppState(APP_STATE.DEFAULT);
+      setTabState(TAB_STATE.DEFAULT);
       setShowPopupPrompt(true);
     }
   }, []);
