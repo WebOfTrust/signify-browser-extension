@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { APP_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
+import { setTabState } from "@pages/content/index";
 
 export default function Dialog({
   isConnected = false,
@@ -13,6 +14,7 @@ export default function Dialog({
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
   const setAppState = async (state: string) => {
+    setTabState(state);
     await chrome.runtime.sendMessage({
       type: "tab",
       subtype: "set-app-state",

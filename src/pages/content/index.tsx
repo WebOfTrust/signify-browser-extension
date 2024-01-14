@@ -2,6 +2,9 @@ import { createRoot } from "react-dom/client";
 import { IMessage } from "@pages/background/types";
 import "./style.css";
 import Dialog from "../dialog/Dialog";
+import { TAB_STATE } from "../popup/constants";
+
+var tabState = TAB_STATE.DEFAULT;
 
 // Handle messages from web page
 window.addEventListener(
@@ -55,6 +58,7 @@ chrome.runtime.onMessage.addListener(async function (
         message.subtype
     );
     if (message.type === "tab" && message.subtype === "reload-state") {
+      setTabState(TAB_STATE.DEFAULT);
       removeDialog();
       const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
         type: "authentication",
@@ -71,7 +75,15 @@ chrome.runtime.onMessage.addListener(async function (
         "init-req-identifier"
       );
     }
+    if (message.type === "tab" && message.subtype === "get-tab2-state") {
+      sendResponse({data: {appState:getTabState()}});
+      }
+
+    if (message.type === "tab" && message.subtype === "set-tab2-state") {
+      setTabState(message.data.appState);
+      }
   }
+  
 });
 
 function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventType: string) {
@@ -94,4 +106,15 @@ function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventT
 function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
+}
+
+export function setTabState(state: string) {
+  console.log("setTabState: " + state)
+  tabState = state;
+}
+
+export function getTabState() {
+  console.log("setTabState: " + tabState)
+
+  return tabState;
 }

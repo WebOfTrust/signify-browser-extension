@@ -16,12 +16,17 @@ export function Main(props: IMain): JSX.Element {
   const [tabState, setTabState] = useState(APP_STATE.DEFAULT);
 
   const fetchTabState = async () => {
-    const { data } = await chrome.runtime.sendMessage({
-      type: "tab",
-      subtype: "get-tab-state",
-    });
-
-    if (!data) return;
+    // const { data } = await chrome.runtime.sendMessage({
+    //   type: "tab",
+    //   subtype: "get-tab2-state",
+    // });
+    chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
+      const { data } = await chrome.tabs.sendMessage(
+        tabs[0].id!,
+        { type: "tab", subtype: "get-tab2-state" }
+      );
+      console.log(data)
+      if (!data) return;
 
     if (data?.appState) {
       setTabState(data?.appState);
@@ -36,6 +41,9 @@ export function Main(props: IMain): JSX.Element {
         );
       }
     }
+    });
+
+    
   };
 
   useEffect(() => {

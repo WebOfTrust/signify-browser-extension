@@ -104,6 +104,16 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({ data: appData });
     }
 
+    // if (message.type === "tab" && message.subtype === "get-tab2-state") {
+    //   const {data} = await chrome.runtime.sendMessage({
+    //     type: "tab",
+    //     subtype: "set-app2-state",
+    //   });
+    //   console.log("RM HERE")
+    //   console.log(data)
+    //   sendResponse({ data });
+    // }
+
     if (message.type === "tab" && message.subtype === "set-app-state") {
       const currentDomain = await getCurrentDomain();
       await webappService.setAppData(currentDomain!.origin, message.data);
