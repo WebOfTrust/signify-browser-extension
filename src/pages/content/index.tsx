@@ -2,6 +2,9 @@ import { createRoot } from "react-dom/client";
 import { IMessage } from "@pages/background/types";
 import "./style.css";
 import Dialog from "../dialog/Dialog";
+import { TAB_STATE } from "../popup/constants";
+
+var tabState = TAB_STATE.NONE;
 
 // Handle messages from web page
 window.addEventListener(
@@ -16,6 +19,7 @@ window.addEventListener(
       switch (event.data.type) {
         case "init-req-identifier":
         case "init-req-credential":
+          setTabState(TAB_STATE.DEFAULT)
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
@@ -30,7 +34,7 @@ window.addEventListener(
             data.isConnected,
             data.tabUrl,
             tabSigninResp?.data?.signins,
-            "init-req-identifier"
+            event.data.type
           );
           break;
         default:
@@ -55,23 +59,35 @@ chrome.runtime.onMessage.addListener(async function (
         message.subtype
     );
     if (message.type === "tab" && message.subtype === "reload-state") {
-      removeDialog();
-      const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-        type: "authentication",
-        subtype: "check-agent-connection",
-      });
-      const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
-        type: "fetch-resource",
-        subtype: "tab-signin",
-      });
-      insertDialog(
-        data.isConnected,
-        data.tabUrl,
-        tabSigninResp?.data?.signins,
-        "init-req-identifier"
-      );
+      if (getTabState() !== TAB_STATE.NONE) {
+        removeDialog();
+        const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+          type: "authentication",
+          subtype: "check-agent-connection",
+        });
+        const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
+          type: "fetch-resource",
+          subtype: "tab-signin",
+        });
+        insertDialog(
+          data.isConnected,
+          data.tabUrl,
+          tabSigninResp?.data?.signins,
+          ""
+        );
+      }
+
     }
+
+    if (message.type === "tab" && message.subtype === "get-tab-state") {
+      sendResponse({data: {appState:getTabState()}});
+      }
+
+    if (message.type === "tab" && message.subtype === "set-tab-state") {
+      setTabState(message.data.appState);
+      }
   }
+  
 });
 
 function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventType: string) {
@@ -94,4 +110,14 @@ function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventT
 function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
+}
+
+export function setTabState(state: string) {
+  console.log("setTabState: " + state)
+  tabState = state;
+}
+
+export function getTabState() {
+  console.log("getTabState: " + tabState)
+  return tabState;
 }

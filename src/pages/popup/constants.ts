@@ -1,6 +1,6 @@
-export const APP_STATE = {
+export const TAB_STATE = {
     DEFAULT: "default",
     SELECT_IDENTIFIER: "select-identifier",
     SELECT_CREDENTIAL: "select-credential",
-    KERIA_CONNECT: "keria-connect",
+    NONE: "none"
 }

@@ -19,23 +19,14 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs",
     "alarms"
   ],
   "content_scripts": [
     {
-      "matches": [
-        "http://*/*",
-        "https://*/*",
-        "<all_urls>"
-      ],
+      "matches": ["<all_urls>"],
       "run_at": "document_end",
-      "js": [
-        "src/pages/content/index.tsx"
-      ],
-      "css": [
-        "contentStyle.css"
-      ]
+      "js": ["src/pages/content/index.tsx"],
+      "css": ["contentStyle.css"]
     }
   ],
   "web_accessible_resources": [
@@ -48,5 +39,8 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+  },
+  "externally_connectable": {
+    "matches": ["<all_urls>"]
   }
 }

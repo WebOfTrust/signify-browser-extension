@@ -6,7 +6,7 @@ const CONFIG_ENUMS = {
 
 const Config = () => {
     const getUrl = async (): Promise<string> => {
-        return await browserStorageService.getValue(CONFIG_ENUMS.KERIA_URL);
+        return await browserStorageService.getValue(CONFIG_ENUMS.KERIA_URL) as string;
     }
 
     const removeUrl = async () => {

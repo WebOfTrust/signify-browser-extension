@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
 import { SelectCredential } from "@components/selectCredential";
-import { APP_STATE } from "@pages/popup/constants";
+import { TAB_STATE } from "@pages/popup/constants";
 import { IdentifierList } from "@components/identifierList";
 import { CredentialList } from "@components/credentialList";
 import { SigninList } from "@components/signinList";
@@ -13,29 +13,31 @@ interface IMain {
 
 export function Main(props: IMain): JSX.Element {
   const [activeSidebar, setActiveSidebar] = useState("Identifiers");
-  const [tabState, setTabState] = useState(APP_STATE.DEFAULT);
+  const [tabState, setTabState] = useState(TAB_STATE.DEFAULT);
 
   const fetchTabState = async () => {
-    const { data } = await chrome.runtime.sendMessage({
-      type: "tab",
-      subtype: "get-tab-state",
-    });
 
-    if (!data) return;
+    chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
+      const { data } = await chrome.tabs.sendMessage(
+        tabs[0].id!,
+        { type: "tab", subtype: "get-tab-state" }
+      );
+      if (!data) return;
 
     if (data?.appState) {
       setTabState(data?.appState);
       if (
-        data?.appState === APP_STATE.SELECT_IDENTIFIER ||
-        data?.appState === APP_STATE.SELECT_CREDENTIAL
+        data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
+        data?.appState === TAB_STATE.SELECT_CREDENTIAL
       ) {
         setActiveSidebar(
-          data?.appState === APP_STATE.SELECT_IDENTIFIER
+          data?.appState === TAB_STATE.SELECT_IDENTIFIER
             ? "Identifiers"
             : "Credentials"
         );
       }
     }
+    });
   };
 
   useEffect(() => {
@@ -43,9 +45,9 @@ export function Main(props: IMain): JSX.Element {
   }, []);
 
   const renderItems = () => {
-    if (tabState === APP_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
+    if (tabState === TAB_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
 
-    if (tabState === APP_STATE.SELECT_CREDENTIAL) return <SelectCredential />;
+    if (tabState === TAB_STATE.SELECT_CREDENTIAL) return <SelectCredential />;
 
     switch (activeSidebar) {
       case "Credentials":
@@ -60,8 +62,8 @@ export function Main(props: IMain): JSX.Element {
 
   const isSidebarDisabled = () => {
     return (
-      tabState === APP_STATE.SELECT_IDENTIFIER ||
-      tabState === APP_STATE.SELECT_CREDENTIAL
+      tabState === TAB_STATE.SELECT_IDENTIFIER ||
+      tabState === TAB_STATE.SELECT_CREDENTIAL
     );
   };
 

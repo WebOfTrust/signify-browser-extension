@@ -1,5 +1,4 @@
 import { browserStorageService } from "@pages/background/services/browser-storage";
-import { webappService } from "@pages/background/services/webapp";
 import { configService } from "@pages/background/services/config";
 import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
@@ -8,6 +7,12 @@ import { senderIsPopup } from "@pages/background/utils";
 import { getCurrentDomain } from "@pages/background/utils";
 
 console.log("Background script loaded");
+
+chrome.runtime.onInstalled.addListener(function (object) {
+  if (object.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    console.log("Signify Browser Extension installed");
+  }
+});
 
 // Handle messages
 chrome.runtime.onMessage.addListener(function (
@@ -18,7 +23,7 @@ chrome.runtime.onMessage.addListener(function (
   (async () => {
 
     // Handle mesages from content script on active tab
-    if (sender.tab &&  sender.tab.active) {
+    if (sender.tab && sender.tab.active) {
 
       console.log(
         "Message received from content script at " +
@@ -92,19 +97,6 @@ chrome.runtime.onMessage.addListener(function (
       }
     }
 
-    if (message.type === "tab" && message.subtype === "get-tab-state") {
-      const currentDomain = await getCurrentDomain();
-      const appData = await webappService.getAppData(currentDomain!.origin);
-      sendResponse({ data: appData });
-    }
-
-    if (message.type === "tab" && message.subtype === "set-app-state") {
-      const currentDomain = await getCurrentDomain();
-      await webappService.setAppData(currentDomain!.origin, message.data);
-      const appData = await webappService.getAppData(currentDomain!.origin);
-      sendResponse({ data: appData });
-    }
-
     if (message.type === "create-resource" && message.subtype === "signin") {
       const signins = await browserStorageService.getValue("signins") as any[];
       const currentDomain = await getCurrentDomain();
@@ -158,3 +150,26 @@ chrome.runtime.onMessage.addListener(function (
   // return true to indicate chrome api to send a response asynchronously
   return true;
 });
+
+chrome.runtime.onMessageExternal.addListener(
+  async function(request, sender, sendResponse) {
+    console.log("Message received from external source: " + sender.url);
+    // if (sender.url === blocklistedWebsite)
+    //   return;  // don't allow this web page access
+    // if (request.openUrlInEditor)
+    //   openUrl(request.openUrlInEditor);
+    // sendResponse({data: "received"})
+    const origin = sender.url!;
+    const signins = await browserStorageService.getValue("signins") as any;
+    // Validate that message comes from a page that has a signin
+    if (origin.startsWith(signins[0].domain)) {
+      const signedHeaders = await signifyService.signHeaders(signins[0].identifier.name, origin);
+      let jsonHeaders: { [key: string]: string; } = {};
+      for (const pair of signedHeaders.entries()) {
+        jsonHeaders[pair[0]] = pair[1];
+      }
+      sendResponse({ data: { headers: jsonHeaders } });
+    
+    }
+
+  });

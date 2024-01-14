@@ -12,6 +12,16 @@ function App() {
     window.postMessage({ type: "init-req-credential" }, "*");
   };
 
+  const handleSyncRequest = () => {
+    // TODO extension Id harcoded just for testing, need to find a way to get it dynamically
+    chrome.runtime.sendMessage("fklmfbmpaimbgjplbambkdjphdadbmed", {data: "test"},
+      function(response) {
+        if (!response.success)
+          console.log(response.data)
+          alert("Signed headers received\n"+ JSON.stringify(response.data.headers, null, 2));
+      });
+  };
+
 
 
   return (
@@ -24,6 +34,9 @@ function App() {
           </Button>
           <Button variant="contained" onClick={handleRequestCredential}>
             Authenticate with Credential
+          </Button>
+          <Button variant="contained" onClick={handleSyncRequest}>
+            Synchronous Authentication
           </Button>
         </div>
       </header>

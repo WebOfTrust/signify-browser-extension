@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { CredentialCard } from "@components/credentialCard";
 import { IMessage } from "@pages/background/types";
-import { APP_STATE } from "@pages/popup/constants";
 
 export function SelectCredential(): JSX.Element {
   const [credentials, setCredentials] = useState([]);
@@ -13,20 +12,18 @@ export function SelectCredential(): JSX.Element {
     setCredentials(data.credentials);
   };
 
-  const createSigninWithCredential = async (credential) => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+  const createSigninWithCredential = async (credential: any) => {
+    await chrome.runtime.sendMessage<IMessage<any>>({
       type: "create-resource",
       subtype: "signin",
       data: {
         credential,
       },
     });
-    await chrome.runtime.sendMessage({
-      type: "tab",
-      subtype: "set-app-state",
-      data: {
-        appState: APP_STATE.DEFAULT,
-      },
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id!,
+        { type: "tab", subtype: "reload-state" });
     });
     window.close();
   };
