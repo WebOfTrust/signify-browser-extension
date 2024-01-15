@@ -5,6 +5,7 @@ import { signifyService } from "@pages/background/services/signify";
 import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { getCurrentDomain } from "@pages/background/utils";
+import { deleteSigninByIndex } from "@pages/background/signins-utils";
 
 console.log("Background script loaded");
 
@@ -21,14 +22,14 @@ chrome.runtime.onMessage.addListener(function (
   sendResponse
 ) {
   (async () => {
-
     // Handle mesages from content script on active tab
     if (sender.tab && sender.tab.active) {
-
       console.log(
         "Message received from content script at " +
-          sender.tab.url + " " +
-          message.type + ":" +
+          sender.tab.url +
+          " " +
+          message.type +
+          ":" +
           message.subtype
       );
 
@@ -45,8 +46,11 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
-        const signedHeaders = await signifyService.signHeaders(message.data.signin.identifier.name, origin);
-        let jsonHeaders: { [key: string]: string; } = {};
+        const signedHeaders = await signifyService.signHeaders(
+          message.data.signin.identifier.name,
+          origin
+        );
+        let jsonHeaders: { [key: string]: string } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
         }
@@ -60,10 +64,15 @@ chrome.runtime.onMessage.addListener(function (
         const signins = await browserStorageService.getValue("signins");
         sendResponse({ data: { signins: signins ?? [] } });
       }
-      
-    // Handle messages from Popup
+
+      // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
-      console.log("Message received from browser extension: " + message.type + "-" + message.subtype);
+      console.log(
+        "Message received from browser extension: " +
+          message.type +
+          "-" +
+          message.subtype
+      );
 
       if (
         message.type === "authentication" &&
@@ -98,7 +107,9 @@ chrome.runtime.onMessage.addListener(function (
     }
 
     if (message.type === "create-resource" && message.subtype === "signin") {
-      const signins = await browserStorageService.getValue("signins") as any[];
+      const signins = (await browserStorageService.getValue(
+        "signins"
+      )) as any[];
       const currentDomain = await getCurrentDomain();
 
       const { identifier, credential } = message.data;
@@ -137,6 +148,15 @@ chrome.runtime.onMessage.addListener(function (
       });
     }
 
+    if (message.type === "delete-resource" && message.subtype === "signins") {
+      const resp = await deleteSigninByIndex(message?.data?.index);
+      sendResponse({
+        data: {
+          ...resp,
+        },
+      });
+    }
+
     if (
       message.type === "fetch-resource" &&
       message.subtype === "credentials"
@@ -144,32 +164,35 @@ chrome.runtime.onMessage.addListener(function (
       const credentials = await signifyService.listCredentials();
       sendResponse({ data: { credentials: credentials ?? [] } });
     }
-
   })();
 
   // return true to indicate chrome api to send a response asynchronously
   return true;
 });
 
-chrome.runtime.onMessageExternal.addListener(
-  async function(request, sender, sendResponse) {
-    console.log("Message received from external source: " + sender.url);
-    // if (sender.url === blocklistedWebsite)
-    //   return;  // don't allow this web page access
-    // if (request.openUrlInEditor)
-    //   openUrl(request.openUrlInEditor);
-    // sendResponse({data: "received"})
-    const origin = sender.url!;
-    const signins = await browserStorageService.getValue("signins") as any;
-    // Validate that message comes from a page that has a signin
-    if (origin.startsWith(signins[0].domain)) {
-      const signedHeaders = await signifyService.signHeaders(signins[0].identifier.name, origin);
-      let jsonHeaders: { [key: string]: string; } = {};
-      for (const pair of signedHeaders.entries()) {
-        jsonHeaders[pair[0]] = pair[1];
-      }
-      sendResponse({ data: { headers: jsonHeaders } });
-    
+chrome.runtime.onMessageExternal.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  console.log("Message received from external source: " + sender.url);
+  // if (sender.url === blocklistedWebsite)
+  //   return;  // don't allow this web page access
+  // if (request.openUrlInEditor)
+  //   openUrl(request.openUrlInEditor);
+  // sendResponse({data: "received"})
+  const origin = sender.url!;
+  const signins = (await browserStorageService.getValue("signins")) as any;
+  // Validate that message comes from a page that has a signin
+  if (origin.startsWith(signins[0].domain)) {
+    const signedHeaders = await signifyService.signHeaders(
+      signins[0].identifier.name,
+      origin
+    );
+    let jsonHeaders: { [key: string]: string } = {};
+    for (const pair of signedHeaders.entries()) {
+      jsonHeaders[pair[0]] = pair[1];
     }
-
-  });
+    sendResponse({ data: { headers: jsonHeaders } });
+  }
+});

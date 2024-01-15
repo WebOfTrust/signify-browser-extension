@@ -17,6 +17,26 @@ export function SigninList(): JSX.Element {
     setIsLoading(false);
   };
 
+  const deleteSignin = async (index: number) => {
+    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "delete-resource",
+      subtype: "signins",
+      data: {
+        index,
+      },
+    });
+    if (data?.isDeleted) {
+      setSignins(data?.signins);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id!, {
+          type: "tab",
+          subtype: "reload-state",
+          eventType: "init-req-identifier",
+        });
+      });
+    }
+  };
+
   useEffect(() => {
     fetchSignins();
   }, []);
@@ -30,7 +50,10 @@ export function SigninList(): JSX.Element {
       ) : null}
       {signins.map((signin, index) => (
         <div key={index} className="my-2 mx-4">
-          <SigninCard signin={signin} />
+          <SigninCard
+            signin={signin}
+            handleDelete={() => deleteSignin(index)}
+          />
         </div>
       ))}
       {!isLoading && !signins?.length ? (
