@@ -19,7 +19,7 @@ window.addEventListener(
       switch (event.data.type) {
         case "init-req-identifier":
         case "init-req-credential":
-          setTabState(TAB_STATE.DEFAULT)
+          setTabState(TAB_STATE.DEFAULT);
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
@@ -73,24 +73,27 @@ chrome.runtime.onMessage.addListener(async function (
           data.isConnected,
           data.tabUrl,
           tabSigninResp?.data?.signins,
-          ""
+          message.eventType ?? ""
         );
       }
-
     }
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
-      sendResponse({data: {appState:getTabState()}});
-      }
+      sendResponse({ data: { appState: getTabState() } });
+    }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {
       setTabState(message.data.appState);
-      }
+    }
   }
-  
 });
 
-function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventType: string) {
+function insertDialog(
+  isConnected: boolean,
+  tabUrl: string,
+  signins: any,
+  eventType: string
+) {
   const div = document.createElement("div");
   div.id = "__root";
   document.body.appendChild(div);
@@ -103,6 +106,7 @@ function insertDialog(isConnected: boolean, tabUrl: string, signins: any, eventT
       tabUrl={tabUrl}
       signins={signins}
       eventType={eventType}
+      removeDialog={removeDialog}
     />
   );
 }
@@ -113,11 +117,11 @@ function removeDialog() {
 }
 
 export function setTabState(state: string) {
-  console.log("setTabState: " + state)
+  console.log("setTabState: " + state);
   tabState = state;
 }
 
 export function getTabState() {
-  console.log("getTabState: " + tabState)
+  console.log("getTabState: " + tabState);
   return tabState;
 }

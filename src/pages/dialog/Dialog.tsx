@@ -9,6 +9,7 @@ export default function Dialog({
   tabUrl = "",
   signins = [],
   eventType = "",
+  removeDialog,
 }): JSX.Element {
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
@@ -36,6 +37,10 @@ export default function Dialog({
     }
   }, []);
 
+  const handleRemove = () => {
+    removeDialog();
+  };
+
   return (
     <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7 ">
       {showPopupPrompt ? (
@@ -51,6 +56,13 @@ export default function Dialog({
           }
         />
       ) : null}
+      <button
+        type="button"
+        onClick={handleRemove}
+        className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
+      >
+        {"x"}
+      </button>
       <div className="items-center justify-center rounded text-center p-3 bg-white">
         <div className="flex flex-row gap-x-2 mb-2">
           <img src={logo} className="h-8" alt="logo" />
@@ -77,9 +89,7 @@ export default function Dialog({
                 <img src={logo} className="h-4" alt="logo" />
               </span>{" "}
               to select other{" "}
-              {eventType === "init-req-identifier"
-                ? "identifier"
-                : "credential"}{" "}
+              {eventType === "init-req-identifier" ? "AID" : "credential"}{" "}
             </button>
           </>
         ) : null}

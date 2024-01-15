@@ -1,4 +1,4 @@
-export function SigninCard({ signin }): JSX.Element {
+export function SigninCard({ signin, handleDelete }): JSX.Element {
   return (
     <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
       <div className="flex flex-row justify-between">
@@ -30,11 +30,22 @@ export function SigninCard({ signin }): JSX.Element {
           {signin?.identifier?.name}
         </p>
       </div>
-      <div className="">
-        <p className="font-bold text-gray-dark">Last Used</p>
-        <p className="font-normal text-md text-gray">
-          {new Date(signin?.updatedAt).toDateString()}
-        </p>
+      <div className="flex flex-row justify-between">
+        <div>
+          <p className="font-bold text-gray-dark">Last Used</p>
+          <p className="font-normal text-md text-gray">
+            {new Date(signin?.updatedAt).toDateString()}
+          </p>
+        </div>
+        <div className="flex items-end">
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="text-white bg-green hover:bg-red font-medium rounded-full text-xs px-2 py-1 text-center"
+          >
+            {"Delete"}
+          </button>
+        </div>
       </div>
     </div>
   );
