@@ -9,7 +9,7 @@ export const updateDomainAutoSigninByIndex = async (index: number, signin) => {
       if (idx !== index && _ele.domain === signin.domain)
         return { ..._ele, autoSignin: false };
 
-      return { ..._ele, autoSignin: true };
+      return { ..._ele, autoSignin: !signin?.autoSignin };
     });
     await browserStorageService.setValue("signins", newSignins);
   }
