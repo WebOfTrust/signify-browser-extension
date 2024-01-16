@@ -37,6 +37,28 @@ export function SigninList(): JSX.Element {
     }
   };
 
+  const updateAutoSignin = async (index: number, signin) => {
+    console.log("signin", signin, index);
+    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "update-resource",
+      subtype: "auto-signin",
+      data: {
+        index,
+        signin,
+      },
+    });
+    if (data?.signins) {
+      setSignins(data?.signins);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id!, {
+          type: "tab",
+          subtype: "reload-state",
+          eventType: "init-req-identifier",
+        });
+      });
+    }
+  };
+
   useEffect(() => {
     fetchSignins();
   }, []);
@@ -53,6 +75,7 @@ export function SigninList(): JSX.Element {
           <SigninCard
             signin={signin}
             handleDelete={() => deleteSignin(index)}
+            handleAutoSignin={() => updateAutoSignin(index, signin)}
           />
         </div>
       ))}

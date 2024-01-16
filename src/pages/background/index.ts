@@ -5,7 +5,7 @@ import { signifyService } from "@pages/background/services/signify";
 import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { getCurrentDomain } from "@pages/background/utils";
-import { deleteSigninByIndex } from "@pages/background/signins-utils";
+import { updateDomainAutoSigninByIndex, deleteSigninByIndex } from "@pages/background/signins-utils";
 
 console.log("Background script loaded");
 
@@ -144,6 +144,15 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({
         data: {
           signins: signins ?? [],
+        },
+      });
+    }
+
+    if (message.type === "update-resource" && message.subtype === "auto-signin") {
+      const resp = await updateDomainAutoSigninByIndex(message?.data?.index, message?.data?.signin);
+      sendResponse({
+        data: {
+          ...resp,
         },
       });
     }
