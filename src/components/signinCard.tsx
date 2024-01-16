@@ -1,4 +1,10 @@
-export function SigninCard({ signin, handleDelete }): JSX.Element {
+import { CustomSwitch } from "@components/customSwitch";
+
+export function SigninCard({
+  signin,
+  handleDelete,
+  handleAutoSignin,
+}): JSX.Element {
   return (
     <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
       <div className="flex flex-row justify-between">
@@ -22,20 +28,29 @@ export function SigninCard({ signin, handleDelete }): JSX.Element {
         </svg>
       </div>
 
-      <div className="">
-        <p className="font-bold text-gray-dark">
-          {signin?.identifier ? "Identifier Alias" : "Credential"}
-        </p>
-        <p className="font-normal text-md text-gray">
-          {signin?.identifier?.name}
-        </p>
-      </div>
       <div className="flex flex-row justify-between">
+        <div>
+          <p className="font-bold text-gray-dark">
+            {signin?.identifier ? "Identifier Alias" : "Credential"}
+          </p>
+          <p className="font-normal text-md text-gray">
+            {signin?.identifier?.name}
+          </p>
+        </div>
         <div>
           <p className="font-bold text-gray-dark">Last Used</p>
           <p className="font-normal text-md text-gray">
             {new Date(signin?.updatedAt).toDateString()}
           </p>
+        </div>
+      </div>
+      <div className="flex flex-row justify-between">
+        <div>
+          <p className="font-bold text-gray-dark">Auto Sign in</p>
+          <CustomSwitch
+            isChecked={signin.autoSignin}
+            handleToggle={handleAutoSignin}
+          />
         </div>
         <div className="flex items-end">
           <button
