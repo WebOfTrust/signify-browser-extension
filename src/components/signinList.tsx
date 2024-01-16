@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { TAB_STATE } from "@pages/popup/constants";
 import { SigninCard } from "@components/signinCard";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
@@ -31,7 +32,7 @@ export function SigninList(): JSX.Element {
         chrome.tabs.sendMessage(tabs[0].id!, {
           type: "tab",
           subtype: "reload-state",
-          eventType: "init-req-identifier",
+          eventType: TAB_STATE.SELECT_IDENTIFIER,
         });
       });
     }
@@ -53,7 +54,7 @@ export function SigninList(): JSX.Element {
         chrome.tabs.sendMessage(tabs[0].id!, {
           type: "tab",
           subtype: "reload-state",
-          eventType: "init-req-identifier",
+          eventType: TAB_STATE.SELECT_IDENTIFIER,
         });
       });
     }

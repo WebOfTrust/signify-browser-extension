@@ -17,8 +17,8 @@ window.addEventListener(
     console.log("Content script received from web page: " + event.data.type);
     if (event.data.type) {
       switch (event.data.type) {
-        case "init-req-identifier":
-        case "init-req-credential":
+        case TAB_STATE.SELECT_IDENTIFIER:
+        case TAB_STATE.SELECT_CREDENTIAL:
           setTabState(TAB_STATE.DEFAULT);
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
@@ -45,7 +45,7 @@ window.addEventListener(
   false
 );
 
-// Handle messages from background script
+// Handle messages from background script and popup
 chrome.runtime.onMessage.addListener(async function (
   message,
   sender,
