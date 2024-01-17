@@ -3,26 +3,28 @@ import Button from "@mui/material/Button";
 import "./App.css";
 
 function App() {
-
   const handleRequestIdentifier = () => {
-    window.postMessage({ type: "init-req-identifier" }, "*");
+    window.postMessage({ type: "select-identifier" }, "*");
   };
 
   const handleRequestCredential = () => {
-    window.postMessage({ type: "init-req-credential" }, "*");
+    window.postMessage({ type: "select-credential" }, "*");
   };
 
   const handleSyncRequest = () => {
     // TODO extension Id harcoded just for testing, need to find a way to get it dynamically
-    chrome.runtime.sendMessage("fklmfbmpaimbgjplbambkdjphdadbmed", {data: "test"},
-      function(response) {
-        if (!response.success)
-          console.log(response.data)
-          alert("Signed headers received\n"+ JSON.stringify(response.data.headers, null, 2));
-      });
+    chrome.runtime.sendMessage(
+      "fklmfbmpaimbgjplbambkdjphdadbmed",
+      { data: "test" },
+      function (response) {
+        if (!response.success) console.log(response.data);
+        alert(
+          "Signed headers received\n" +
+            JSON.stringify(response.data.headers, null, 2)
+        );
+      }
+    );
   };
-
-
 
   return (
     <div className="App">

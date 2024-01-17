@@ -15,11 +15,7 @@ export default function Dialog({
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
 
   const getEventTypeAppState = () => {
-    return eventType === "init-req-identifier"
-      ? TAB_STATE.SELECT_IDENTIFIER
-      : eventType === "init-req-credential"
-      ? TAB_STATE.SELECT_CREDENTIAL
-      : TAB_STATE.DEFAULT;
+    return eventType ?? TAB_STATE.DEFAULT;
   };
 
   const handleClick = () => {
@@ -71,7 +67,7 @@ export default function Dialog({
         {!signins.length || !isConnected ? (
           <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
             <span className="">{tabUrl}</span> requests authentication with{" "}
-            {eventType === "init-req-identifier" ? "AID" : "credential"}
+            {eventType === TAB_STATE.SELECT_IDENTIFIER ? "AID" : "credential"}
           </p>
         ) : null}
 
@@ -89,7 +85,7 @@ export default function Dialog({
                 <img src={logo} className="h-4" alt="logo" />
               </span>{" "}
               to select other{" "}
-              {eventType === "init-req-identifier" ? "AID" : "credential"}{" "}
+              {eventType === TAB_STATE.SELECT_IDENTIFIER ? "AID" : "credential"}{" "}
             </button>
           </>
         ) : null}
