@@ -16,28 +16,32 @@ export function Main(props: IMain): JSX.Element {
   const [tabState, setTabState] = useState(TAB_STATE.DEFAULT);
 
   const fetchTabState = async () => {
+    chrome.tabs.query(
+      { active: true, currentWindow: true },
+      async function (tabs) {
+        const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
+          type: "tab",
+          subtype: "get-tab-state",
+        });
+        if (!data) return;
 
-    chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-      const { data } = await chrome.tabs.sendMessage(
-        tabs[0].id!,
-        { type: "tab", subtype: "get-tab-state" }
-      );
-      if (!data) return;
-
-    if (data?.appState) {
-      setTabState(data?.appState);
-      if (
-        data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
-        data?.appState === TAB_STATE.SELECT_CREDENTIAL
-      ) {
-        setActiveSidebar(
-          data?.appState === TAB_STATE.SELECT_IDENTIFIER
-            ? "Identifiers"
-            : "Credentials"
-        );
+        if (data?.appState) {
+          setTabState(data?.appState);
+          if (
+            data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
+            data?.appState === TAB_STATE.SELECT_CREDENTIAL ||
+            data?.appState === TAB_STATE.SELECT_ID_CRED
+          ) {
+            setActiveSidebar(
+              data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
+                data?.appState === TAB_STATE.SELECT_ID_CRED
+                ? "Identifiers"
+                : "Credentials"
+            );
+          }
+        }
       }
-    }
-    });
+    );
   };
 
   useEffect(() => {
@@ -45,17 +49,25 @@ export function Main(props: IMain): JSX.Element {
   }, []);
 
   const renderItems = () => {
-    if (tabState === TAB_STATE.SELECT_IDENTIFIER) return <SelectIdentifier />;
-
-    if (tabState === TAB_STATE.SELECT_CREDENTIAL) return <SelectCredential />;
-
     switch (activeSidebar) {
       case "Credentials":
+        if (
+          tabState === TAB_STATE.SELECT_CREDENTIAL ||
+          tabState === TAB_STATE.SELECT_ID_CRED
+        )
+          return <SelectCredential />;
+
         return <CredentialList />;
       case "Sign Ins":
         return <SigninList />;
 
       default:
+        if (
+          tabState === TAB_STATE.SELECT_IDENTIFIER ||
+          tabState === TAB_STATE.SELECT_ID_CRED
+        )
+          return <SelectIdentifier />;
+
         return <IdentifierList />;
     }
   };
@@ -73,7 +85,7 @@ export function Main(props: IMain): JSX.Element {
         active={activeSidebar}
         onClickLink={setActiveSidebar}
         onSignout={props.handleDisconnect}
-        disabled={isSidebarDisabled()}
+        // disabled={isSidebarDisabled()}
       />
       <div className="rounded p-2 sm:ml-48 sm:mt-4 bg-gray-dark text-gray-light mr-4">
         <div className="">
