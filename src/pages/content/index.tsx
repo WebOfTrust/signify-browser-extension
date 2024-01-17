@@ -19,6 +19,7 @@ window.addEventListener(
       switch (event.data.type) {
         case TAB_STATE.SELECT_IDENTIFIER:
         case TAB_STATE.SELECT_CREDENTIAL:
+        case TAB_STATE.SELECT_ID_CRED:
           setTabState(TAB_STATE.DEFAULT);
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",

@@ -1,5 +1,10 @@
 import { browserStorageService } from "@pages/background/services/browser-storage";
 
+export const getSigninsByDomain = async (domain: string) => {
+  const signins = await browserStorageService.getValue("signins");
+  return signins?.filter(signin => signin.domain === domain) ?? [];
+};
+
 export const updateDomainAutoSigninByIndex = async (index: number, signin) => {
   let signins = await browserStorageService.getValue("signins");
   if (signins?.length) {
