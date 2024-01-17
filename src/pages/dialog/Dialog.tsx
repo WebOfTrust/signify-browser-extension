@@ -67,7 +67,11 @@ export default function Dialog({
         {!signins.length || !isConnected ? (
           <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
             <span className="">{tabUrl}</span> requests authentication with{" "}
-            {eventType === TAB_STATE.SELECT_IDENTIFIER ? "AID" : "credential"}
+            {eventType === TAB_STATE.SELECT_IDENTIFIER
+              ? "AID"
+              : eventType === TAB_STATE.SELECT_ID_CRED
+              ? "AID or Credential"
+              : "Credential"}
           </p>
         ) : null}
 

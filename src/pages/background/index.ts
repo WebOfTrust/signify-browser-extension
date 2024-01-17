@@ -4,8 +4,12 @@ import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
 import { IMessage } from "@pages/background/types";
 import { senderIsPopup } from "@pages/background/utils";
-import { getCurrentDomain } from "@pages/background/utils";
-import { updateDomainAutoSigninByIndex, deleteSigninByIndex } from "@pages/background/signins-utils";
+import { removeSlash, getCurrentDomain } from "@pages/background/utils";
+import {
+  updateDomainAutoSigninByIndex,
+  getSigninsByDomain,
+  deleteSigninByIndex,
+} from "@pages/background/signins-utils";
 
 console.log("Background script loaded");
 
@@ -148,8 +152,14 @@ chrome.runtime.onMessage.addListener(function (
       });
     }
 
-    if (message.type === "update-resource" && message.subtype === "auto-signin") {
-      const resp = await updateDomainAutoSigninByIndex(message?.data?.index, message?.data?.signin);
+    if (
+      message.type === "update-resource" &&
+      message.subtype === "auto-signin"
+    ) {
+      const resp = await updateDomainAutoSigninByIndex(
+        message?.data?.index,
+        message?.data?.signin
+      );
       sendResponse({
         data: {
           ...resp,
@@ -179,29 +189,50 @@ chrome.runtime.onMessage.addListener(function (
   return true;
 });
 
-chrome.runtime.onMessageExternal.addListener(async function (
-  request,
+chrome.runtime.onMessageExternal.addListener(function (
+  message,
   sender,
   sendResponse
 ) {
-  console.log("Message received from external source: " + sender.url);
-  // if (sender.url === blocklistedWebsite)
-  //   return;  // don't allow this web page access
-  // if (request.openUrlInEditor)
-  //   openUrl(request.openUrlInEditor);
-  // sendResponse({data: "received"})
-  const origin = sender.url!;
-  const signins = (await browserStorageService.getValue("signins")) as any;
-  // Validate that message comes from a page that has a signin
-  if (origin.startsWith(signins[0].domain)) {
-    const signedHeaders = await signifyService.signHeaders(
-      signins[0].identifier.name,
-      origin
-    );
-    let jsonHeaders: { [key: string]: string } = {};
-    for (const pair of signedHeaders.entries()) {
-      jsonHeaders[pair[0]] = pair[1];
+  (async () => {
+    console.log("Message received from external source: ", sender);
+    console.log("Message received from external request: ", message);
+    // if (sender.url === blocklistedWebsite)
+    //   return;  // don't allow this web page access
+    // if (request.openUrlInEditor)
+    //   openUrl(request.openUrlInEditor);
+    // sendResponse({data: "received"})
+
+    if (
+      message.type === "fetch-resource" &&
+      message.subtype === "auto-signin-signature"
+    ) {
+      // Validate that message comes from a page that has a signin
+
+      const origin = removeSlash(sender.url);
+      const signins = await getSigninsByDomain(origin);
+      console.log("signins", signins);
+      const autoSignin = signins?.find((signin) => signin.autoSignin);
+      if (!signins?.length || !autoSignin) {
+        sendResponse({
+          error: { code: 404, message: "auto signin not found" },
+        });
+        return;
+      }
+
+      const signedHeaders = await signifyService.signHeaders(
+        // sigin can either have identifier or credential
+        autoSignin?.identifier.name ?? autoSignin?.credential?.schema?.title,
+        origin
+      );
+      let jsonHeaders: { [key: string]: string } = {};
+      for (const pair of signedHeaders.entries()) {
+        jsonHeaders[pair[0]] = pair[1];
+      }
+      sendResponse({ data: { headers: jsonHeaders } });
     }
-    sendResponse({ data: { headers: jsonHeaders } });
-  }
+  })();
+
+  // return true to indicate chrome api to send a response asynchronously
+  return true;
 });

@@ -23,7 +23,7 @@ export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
 
 export const getCurrentDomain = async () => {
   const currentTab = await getCurrentTab();
-  console.log("Current tab: ", currentTab)
+  console.log("Current tab: ", currentTab);
   return currentTab ? new URL(currentTab.url!) : null;
 };
 
@@ -39,4 +39,8 @@ export const obfuscateString = (inputString: string) => {
   const suffix = inputString.slice(-suffixLength);
 
   return `${prefix}...${suffix}`;
-}
+};
+
+export const removeSlash = (site:string) => {
+  return site.replace(/\/$/, "");
+};
