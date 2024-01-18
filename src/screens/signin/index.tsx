@@ -30,7 +30,9 @@ export function Signin(props: ISignin): JSX.Element {
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <p className="text-xl text-green capitalize font-bold">KERI</p>
+        <p className="text-xl text-green capitalize font-bold">
+          {showConfig ? "Config" : "KERI"}
+        </p>
         <button onClick={() => setShowConfig(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,9 +55,6 @@ export function Signin(props: ISignin): JSX.Element {
           </svg>
         </button>
       </div>
-      <div className="flex flex-row justify-center">
-        <img src={logo} className="w-32 h-32" alt="logo" />
-      </div>
       {showConfig ? (
         <Config afterSetUrl={afterSetUrl} />
       ) : (
@@ -64,19 +63,21 @@ export function Signin(props: ISignin): JSX.Element {
           handleConnect={props.handleConnect}
         />
       )}
-      <div className="flex flex-row justify-center">
-        <a href="#" className="font-medium text-blue-600 hover:underline">
-          Don't have a KERIA agent?
-        </a>
-      </div>
-      <div className="flex flex-row justify-center">
-        <a href="#" className="font-medium text-blue-600 hover:underline">
-          docs
-        </a>
-        <strong>|</strong>
-        <a href="#" className="font-medium text-blue-600 hover:underline">
-          support
-        </a>
+      <div className=" absolute bottom-2 w-full">
+        <div className=" text-center">
+          <a href="#" className="font-medium text-blue-600 hover:underline">
+            Don't have a KERIA agent?
+          </a>
+        </div>
+        <div className=" text-center">
+          <a href="#" className="font-medium text-blue-600 hover:underline">
+            docs
+          </a>
+          <strong>|</strong>
+          <a href="#" className="font-medium text-blue-600 hover:underline">
+            support
+          </a>
+        </div>
       </div>
     </div>
   );

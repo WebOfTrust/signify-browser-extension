@@ -43,6 +43,7 @@ export function Config(props: IConfig): JSX.Element {
   return (
     <>
       <div className="px-4 py-2">
+        <p className="text-sm font-bold text-gray-dark">Vendor Url:</p>
         <input
           type="text"
           id="vendor_url"
