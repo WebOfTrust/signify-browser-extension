@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { configService } from "@pages/background/services/config";
 import { IMessage } from "@pages/background/types";
-import { Signin } from "@src/components/signin";
+import { Signin } from "@src/screens/signin";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
@@ -18,14 +17,9 @@ interface IConnect {
 
 export default function Popup(): JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
-  const [vendorUrl, setVendorUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
-  const getVendorUrl = async () => {
-    const _vendorUrl = await configService.getUrl();
-    setVendorUrl(_vendorUrl);
-  };
 
   const checkInitialConnection = async () => {
     setIsCheckingInitialConnection(true);
@@ -43,11 +37,11 @@ export default function Popup(): JSX.Element {
     if (data.isConnected) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (tabs.length === 1) {
-          console.log("realoading tab")
-          chrome.tabs.sendMessage(
-            tabs[0].id!,
-            { type: "tab", subtype: "reload-state" }
-          );
+          console.log("realoading tab");
+          chrome.tabs.sendMessage(tabs[0].id!, {
+            type: "tab",
+            subtype: "reload-state",
+          });
         }
       });
     }
@@ -55,16 +49,17 @@ export default function Popup(): JSX.Element {
 
   useEffect(() => {
     checkInitialConnection();
-    getVendorUrl();
   }, []);
 
-  const handleConnect = async (vendorUrl?: string, passcode?: string) => {
+  const handleConnect = async (passcode?: string) => {
     setIsLoading(true);
     await chrome.runtime.sendMessage<IMessage<IConnect>>({
       type: "authentication",
       subtype: "connect-agent",
       data: {
         passcode: password,
+        // TODO: vendorUrl willbe fetched by config service
+        // const vendorUrl = await configService.getUrl()
         vendorUrl: url,
         bootUrl: boot_url,
       },
@@ -97,11 +92,7 @@ export default function Popup(): JSX.Element {
         <Main handleDisconnect={handleDisconnect} />
       ) : (
         <div className="w-[300px]">
-          <Signin
-            vendorUrl={vendorUrl}
-            handleConnect={handleConnect}
-            isLoading={isLoading}
-          />
+          <Signin handleConnect={handleConnect} isLoading={isLoading} />
         </div>
       )}
     </div>
