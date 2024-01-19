@@ -31,7 +31,7 @@ export function Signin(props: ISignin): JSX.Element {
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
         <p className="text-xl text-green capitalize font-bold">
-          {showConfig ? "Config" : "KERI"}
+          {showConfig ? "Settings" : "KERI"}
         </p>
         <button onClick={() => setShowConfig(true)}>
           <svg
