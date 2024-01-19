@@ -39,6 +39,9 @@ export function Main(props: IMain): JSX.Element {
                 : "Credentials"
             );
           }
+          if (data?.appState === TAB_STATE.SELECT_AUTO_SIGNIN) {
+            setActiveSidebar("Sign Ins");
+          }
         }
       }
     );

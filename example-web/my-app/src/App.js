@@ -17,6 +17,10 @@ function App() {
     window.postMessage({ type: "select-aid-or-credential" }, "*");
   };
 
+  const handleRequestAutoSignin = () => {
+    window.postMessage({ type: "select-auto-signin" }, "*");
+  };
+
   const handleSyncRequest = async () => {
     // TODO extension Id harcoded just for testing, need to find a way to get it dynamically
     const { data, error } = await chrome.runtime.sendMessage(extensionId, {
@@ -25,7 +29,7 @@ function App() {
     });
 
     if (error) {
-      alert(error?.message);
+      handleRequestAutoSignin();
     } else {
       alert(
         "Signed headers received\n" + JSON.stringify(data.headers, null, 2)

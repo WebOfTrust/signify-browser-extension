@@ -65,8 +65,9 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "fetch-resource" &&
         message.subtype === "tab-signin"
       ) {
-        const signins = await browserStorageService.getValue("signins");
-        sendResponse({ data: { signins: signins ?? [] } });
+        const signins = await getSigninsByDomain(removeSlash(sender.url));
+        const autoSigninObj = signins?.find((signin) => signin.autoSignin);
+        sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
       }
 
       // Handle messages from Popup

@@ -20,6 +20,7 @@ window.addEventListener(
         case TAB_STATE.SELECT_IDENTIFIER:
         case TAB_STATE.SELECT_CREDENTIAL:
         case TAB_STATE.SELECT_ID_CRED:
+        case TAB_STATE.SELECT_AUTO_SIGNIN:
           setTabState(TAB_STATE.DEFAULT);
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
@@ -35,7 +36,8 @@ window.addEventListener(
             data.isConnected,
             data.tabUrl,
             tabSigninResp?.data?.signins,
-            event.data.type
+            event.data.type,
+            tabSigninResp?.data?.autoSigninObj
           );
           break;
         default:
@@ -74,7 +76,8 @@ chrome.runtime.onMessage.addListener(async function (
           data.isConnected,
           data.tabUrl,
           tabSigninResp?.data?.signins,
-          message.eventType ?? ""
+          message.eventType ?? "",
+          tabSigninResp?.data?.autoSigninObj
         );
       }
     }
@@ -93,7 +96,8 @@ function insertDialog(
   isConnected: boolean,
   tabUrl: string,
   signins: any,
-  eventType: string
+  eventType: string,
+  autoSigninObj: any
 ) {
   const div = document.createElement("div");
   div.id = "__root";
@@ -106,6 +110,7 @@ function insertDialog(
       isConnected={isConnected}
       tabUrl={tabUrl}
       signins={signins}
+      autoSigninObj={autoSigninObj}
       eventType={eventType}
       removeDialog={removeDialog}
     />
