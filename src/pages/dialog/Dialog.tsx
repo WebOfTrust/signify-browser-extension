@@ -8,11 +8,17 @@ export default function Dialog({
   isConnected = false,
   tabUrl = "",
   signins = [],
+  autoSigninObj,
   eventType = "",
   removeDialog,
 }): JSX.Element {
   const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
+
+  const showRequestAuthPrompt =
+    !signins.length ||
+    (!autoSigninObj && eventType === TAB_STATE.SELECT_AUTO_SIGNIN) ||
+    !isConnected;
 
   const getEventTypeAppState = () => {
     return eventType ?? TAB_STATE.DEFAULT;
@@ -24,7 +30,10 @@ export default function Dialog({
   };
 
   useEffect(() => {
-    if (!signins?.length) {
+    if (
+      !signins?.length ||
+      (!autoSigninObj && eventType === TAB_STATE.SELECT_AUTO_SIGNIN)
+    ) {
       setTabState(getEventTypeAppState());
       setShowPopupPrompt(true);
     } else if (!isConnected) {
@@ -35,6 +44,19 @@ export default function Dialog({
 
   const handleRemove = () => {
     removeDialog();
+  };
+
+  const getTextByEventType = () => {
+    switch (eventType) {
+      case TAB_STATE.SELECT_CREDENTIAL:
+        return "Credential";
+      case TAB_STATE.SELECT_ID_CRED:
+        return "AID or Credential";
+      case TAB_STATE.SELECT_AUTO_SIGNIN:
+        return "Auto Signin";
+      default:
+        return "AID";
+    }
   };
 
   return (
@@ -64,18 +86,12 @@ export default function Dialog({
           <img src={logo} className="h-8" alt="logo" />
           <p className="text-2xl font-bold text-green">Sign in with KERI</p>
         </div>
-        {!signins.length || !isConnected ? (
+        {showRequestAuthPrompt ? (
           <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
             <span className="">{tabUrl}</span> requests authentication with{" "}
-            {eventType === TAB_STATE.SELECT_IDENTIFIER
-              ? "AID"
-              : eventType === TAB_STATE.SELECT_ID_CRED
-              ? "AID or Credential"
-              : "Credential"}
+            {getTextByEventType()}
           </p>
-        ) : null}
-
-        {signins.length && isConnected ? (
+        ) : (
           <>
             {signins?.map((signin) => (
               <SigninItem signin={signin} />
@@ -88,11 +104,10 @@ export default function Dialog({
               <span className="inline-block">
                 <img src={logo} className="h-4" alt="logo" />
               </span>{" "}
-              to select other{" "}
-              {eventType === TAB_STATE.SELECT_IDENTIFIER ? "AID" : "credential"}{" "}
+              to select other {getTextByEventType()}
             </button>
           </>
-        ) : null}
+        )}
       </div>
     </div>
   );
