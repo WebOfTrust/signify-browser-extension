@@ -187,7 +187,19 @@ chrome.runtime.onMessage.addListener(function (
       message.type === "fetch-resource" &&
       message.subtype === "credentials"
     ) {
-      const credentials = await signifyService.listCredentials();
+      var credentials = await signifyService.listCredentials();
+      const indentifiers = await signifyService.listIdentifiers();
+      console.log(indentifiers.aids)
+      // Add holder name to credential
+      credentials?.forEach((credential) => {
+        const issueePrefix = credential.sad.a.i
+        const aidIssuee = indentifiers.aids.find(aid => {
+          return aid.prefix === issueePrefix
+        })
+        credential.issueeName = aidIssuee.name
+      });
+      
+
       sendResponse({ data: { credentials: credentials ?? [] } });
     }
   })();
