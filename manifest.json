@@ -25,9 +25,7 @@
     {
       "matches": ["<all_urls>"],
       "run_at": "document_end",
-      "js": ["src/pages/content/index.tsx"],
-      "css": ["contentStyle.css"]
-    }
+      "js": ["src/pages/content/index.tsx"]    }
   ],
   "web_accessible_resources": [
     {

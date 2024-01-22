@@ -31,6 +31,9 @@ export function CredentialCard({ credential }: ICredential): JSX.Element {
         <p className="font-normal text-md text-gray">
           {credential.schema.description}
         </p>
+        <p className="font-bold text-gray-dark">Isuee:{" "}
+        <span className="font-normal text-gray">{credential.issueeName}</span>
+        </p>
       </div>
       <div className="flex flex-row justify-between">
         <div className="">
