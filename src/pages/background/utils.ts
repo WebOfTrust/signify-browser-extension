@@ -44,3 +44,11 @@ export const obfuscateString = (inputString: string) => {
 export const removeSlash = (site:string) => {
   return site.replace(/\/$/, "");
 };
+
+export const hasWhiteSpace = (s: string) => {
+  return s.indexOf(' ') >= 0;
+}
+
+export const removeWhiteSpace = (s: string, replace="") => {
+  return s.replace(/\s/g, replace);
+}

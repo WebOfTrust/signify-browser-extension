@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { isValidElement, useState, useEffect } from "react";
+import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 import { Loader } from "@components/loader";
 
 export function CreateIdentifierCard(props): JSX.Element {
@@ -16,13 +17,31 @@ export function CreateIdentifierCard(props): JSX.Element {
     }
   };
 
+  const handleRemoveWhiteSpace = () => {
+    setName(removeWhiteSpace(name));
+    setNameError("");
+  };
   const onCreateIdentifier = async () => {
     let hasError = false;
     if (!name) {
       setNameError("Name can not be empty");
       hasError = true;
+    } else if (hasWhiteSpace(name)) {
+      setNameError(
+        <div className="text-red mt-1">
+          No white spaces allowed.{" "}
+          <button
+            className=" underline cursor-pointer"
+            onClick={handleRemoveWhiteSpace}
+          >
+            click to remove
+          </button>
+        </div>
+      );
+      hasError = true;
     }
-    props.handleCreateIdentifier(name);
+
+    if (!hasError) props.handleCreateIdentifier(name);
   };
 
   return (
@@ -41,7 +60,13 @@ export function CreateIdentifierCard(props): JSX.Element {
             onChange={(e) => setName(e.target.value)}
             onBlur={onBlurName}
           />
-          {nameError ? <p className="text-red">{nameError}</p> : null}
+          {nameError ? (
+            isValidElement(nameError) ? (
+              nameError
+            ) : (
+              <p className="text-red mt-1">{nameError}</p>
+            )
+          ) : null}
         </div>
         <div className=" flex flex-row justify-center mt-2">
           <button
