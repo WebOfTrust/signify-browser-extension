@@ -8,7 +8,7 @@ const Signify = () => {
   let _client: SignifyClient | null;
 
   chrome.alarms.onAlarm.addListener(async (alarm) => {
-    if (alarm.name == 'passcode-timeout') {
+    if (alarm.name == "passcode-timeout") {
       console.log("Timer expired, client and passcode zeroed out");
       _client = null;
       await userService.removePasscode();
@@ -16,23 +16,22 @@ const Signify = () => {
   });
 
   const setTimeoutAlarm = () => {
-    chrome.alarms.create('passcode-timeout', {
+    chrome.alarms.create("passcode-timeout", {
       delayInMinutes: PASSCODE_TIMEOUT,
     });
-  }
+  };
 
   const resetTimeoutAlarm = async () => {
-    await chrome.alarms.clear('passcode-timeout')
+    await chrome.alarms.clear("passcode-timeout");
     setTimeoutAlarm();
-  }
-
+  };
 
   const connect = async (url: string, passcode: string) => {
     await ready();
     _client = new SignifyClient(url, passcode, Tier.low);
     await _client.connect();
     setTimeoutAlarm();
-  }
+  };
 
   const isConnected = async () => {
     const passcode = await userService.getPasscode();
@@ -42,8 +41,12 @@ const Signify = () => {
       await resetTimeoutAlarm();
     }
 
-    console.log(_client ? "Signify client is connected" :  "Signify client is not connected");
-    return _client ? true : false
+    console.log(
+      _client
+        ? "Signify client is connected"
+        : "Signify client is not connected"
+    );
+    return _client ? true : false;
   };
 
   const validateClient = () => {
@@ -76,34 +79,35 @@ const Signify = () => {
     const keeper = _client?.manager!.get(hab);
 
     const authenticator = new Authenticater(
-        keeper.signers[0],
-        keeper.signers[0].verfer
+      keeper.signers[0],
+      keeper.signers[0].verfer
     );
 
     const headers = new Headers();
-    headers.set('Signify-Resource', hab.prefix);
+    headers.set("Signify-Resource", hab.prefix);
     headers.set(
-        'Signify-Timestamp',
-        new Date().toISOString().replace('Z', '000+00:00')
+      "Signify-Timestamp",
+      new Date().toISOString().replace("Z", "000+00:00")
     );
-    headers.set('Origin', origin);
+    headers.set("Origin", origin);
 
     const fields = [
       // '@method',
       // '@path',
-      'signify-resource',
-      'signify-timestamp',
-      'origin'
+      "signify-resource",
+      "signify-timestamp",
+      "origin",
     ];
 
-    const signed_headers = authenticator.sign(
-      headers,
-      "",
-      "",
-      fields
-    ); 
+    const signed_headers = authenticator.sign(headers, "", "", fields);
 
     return signed_headers;
+  };
+
+  const createAID = async (name: string) => {
+    validateClient();
+    let res = await _client?.identifiers().create(name);
+    return await res?.op();
   };
 
   return {
@@ -112,7 +116,8 @@ const Signify = () => {
     disconnect,
     listIdentifiers,
     listCredentials,
-    signHeaders
+    signHeaders,
+    createAID,
   };
 };
 
