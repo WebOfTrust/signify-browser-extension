@@ -6,6 +6,14 @@ import { TAB_STATE } from "../popup/constants";
 
 var tabState = TAB_STATE.NONE;
 
+
+// Advertize extensionId to web page
+window.postMessage({ 
+  type: "signify-extension", 
+  data: {
+    extensionId: chrome.runtime.id,
+  } }, "*");
+
 // Handle messages from web page
 window.addEventListener(
   "message",

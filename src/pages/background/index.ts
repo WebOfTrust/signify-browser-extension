@@ -198,18 +198,13 @@ chrome.runtime.onMessageExternal.addListener(function (
   (async () => {
     console.log("Message received from external source: ", sender);
     console.log("Message received from external request: ", message);
-    // if (sender.url === blocklistedWebsite)
-    //   return;  // don't allow this web page access
-    // if (request.openUrlInEditor)
-    //   openUrl(request.openUrlInEditor);
-    // sendResponse({data: "received"})
+
 
     if (
       message.type === "fetch-resource" &&
       message.subtype === "auto-signin-signature"
     ) {
       // Validate that message comes from a page that has a signin
-
       const origin = removeSlash(sender.url);
       const signins = await getSigninsByDomain(origin);
       console.log("signins", signins);
