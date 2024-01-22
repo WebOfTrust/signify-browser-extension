@@ -27,9 +27,9 @@ export function IdentifierCard({ aid }): JSX.Element {
         </svg>
       </div>
       <div className="">
-        <p className="font-bold text-gray-dark">AID:</p>
-        <p className="font-normal text-gray max-w-[200px] break-words">
-          {obfuscateString(aid.prefix)}
+        <p className="font-bold text-gray-dark">AID:{" "}
+        <span className="font-normal text-gray max-w-[200px] break-words">
+          {obfuscateString(aid.prefix)}</span>
         </p>
       </div>
 

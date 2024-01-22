@@ -2,9 +2,26 @@ import logo from "./ACME_Corporation.png";
 import Button from "@mui/material/Button";
 import "./App.css";
 
-const extensionId = "dfhkgnnnbadadbljpjnpifpbaemcgpfa";
+var extensionId = "";
 
 function App() {
+
+  window.addEventListener(
+    "message",
+    async (event) => {
+      // Accept messages only from same window
+      if (event.source !== window) {
+        return;
+      }
+      
+      if (event.data.type && event.data.type === "signify-extension") {
+        console.log("Content scrip loaded");
+        extensionId = event.data.data.extensionId;
+      }
+    },
+    false
+  );
+
   const handleRequestIdentifier = () => {
     window.postMessage({ type: "select-identifier" }, "*");
   };

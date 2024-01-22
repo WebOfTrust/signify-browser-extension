@@ -6,6 +6,14 @@ import { TAB_STATE } from "../popup/constants";
 
 var tabState = TAB_STATE.NONE;
 
+
+// Advertize extensionId to web page
+window.postMessage({ 
+  type: "signify-extension", 
+  data: {
+    extensionId: chrome.runtime.id,
+  } }, "*");
+
 // Handle messages from web page
 window.addEventListener(
   "message",
@@ -32,10 +40,22 @@ window.addEventListener(
             type: "fetch-resource",
             subtype: "tab-signin",
           });
+          
+          let filteredSignins:any[] = [];
+          console.log(event.data.type)
+          tabSigninResp?.data?.signins.forEach((signin:any) => {
+            if (signin.identifier && (event.data.type===TAB_STATE.SELECT_IDENTIFIER || event.data.type===TAB_STATE.SELECT_ID_CRED)){
+              filteredSignins.push(signin)
+            }
+            if (signin.credential && (event.data.type===TAB_STATE.SELECT_CREDENTIAL || event.data.type===TAB_STATE.SELECT_ID_CRED)){
+              filteredSignins.push(signin)
+            }
+          })
+
           insertDialog(
             data.isConnected,
             data.tabUrl,
-            tabSigninResp?.data?.signins,
+            filteredSignins,
             event.data.type,
             tabSigninResp?.data?.autoSigninObj
           );

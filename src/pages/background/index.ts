@@ -50,15 +50,20 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
+        console.log(message.data.signin)
+
         const signedHeaders = await signifyService.signHeaders(
-          message.data.signin.identifier.name,
+          message.data.signin.identifier? message.data.signin.identifier.name : message.data.signin.credential.issueeName,
           origin
         );
         let jsonHeaders: { [key: string]: string } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
         }
-        sendResponse({ data: { headers: jsonHeaders } });
+        sendResponse({ data: { 
+          headers: jsonHeaders,
+          credential: message.data.signin.credential? message.data.signin.credential: null
+        } });
       }
 
       if (
@@ -195,7 +200,19 @@ chrome.runtime.onMessage.addListener(function (
       message.type === "fetch-resource" &&
       message.subtype === "credentials"
     ) {
-      const credentials = await signifyService.listCredentials();
+      var credentials = await signifyService.listCredentials();
+      const indentifiers = await signifyService.listIdentifiers();
+      console.log(indentifiers.aids)
+      // Add holder name to credential
+      credentials?.forEach((credential) => {
+        const issueePrefix = credential.sad.a.i
+        const aidIssuee = indentifiers.aids.find(aid => {
+          return aid.prefix === issueePrefix
+        })
+        credential.issueeName = aidIssuee.name
+      });
+      
+
       sendResponse({ data: { credentials: credentials ?? [] } });
     }
   })();
@@ -212,18 +229,13 @@ chrome.runtime.onMessageExternal.addListener(function (
   (async () => {
     console.log("Message received from external source: ", sender);
     console.log("Message received from external request: ", message);
-    // if (sender.url === blocklistedWebsite)
-    //   return;  // don't allow this web page access
-    // if (request.openUrlInEditor)
-    //   openUrl(request.openUrlInEditor);
-    // sendResponse({data: "received"})
+
 
     if (
       message.type === "fetch-resource" &&
       message.subtype === "auto-signin-signature"
     ) {
       // Validate that message comes from a page that has a signin
-
       const origin = removeSlash(sender.url);
       const signins = await getSigninsByDomain(origin);
       console.log("signins", signins);
