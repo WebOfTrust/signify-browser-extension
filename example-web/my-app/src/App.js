@@ -5,6 +5,23 @@ import "./App.css";
 const extensionId = "fklmfbmpaimbgjplbambkdjphdadbmed";
 
 function App() {
+
+  window.addEventListener(
+    "message",
+    async (event) => {
+      // Accept messages only from same window
+      if (event.source !== window) {
+        return;
+      }
+      
+      if (event.data.type && event.data.type === "signify-extension") {
+        console.log("Content scrip loaded");
+        extensionId = event.data.data.extensionId;
+      }
+    },
+    false
+  );
+
   const handleRequestIdentifier = () => {
     window.postMessage({ type: "select-identifier" }, "*");
   };
