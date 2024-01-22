@@ -142,7 +142,7 @@ chrome.runtime.onMessage.addListener(function (
     ) {
       try {
         const resp = await signifyService.createAID(message.data.name);
-        sendResponse({ data: { resp } });
+        sendResponse({ data: { ...(resp ?? {}) } });
       } catch (error) {
         const errorMsg = JSON.parse(error?.message ?? "");
         sendResponse({
