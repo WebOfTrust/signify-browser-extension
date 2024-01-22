@@ -50,8 +50,14 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
+        console.log(message.data.signin)
+        // TODO, aidName should be the isuee from the credential
+        let aidName = 'holder'
+        if (message.data.signin.identifier) {
+          aidName = message.data.signin.identifier.name
+        } 
         const signedHeaders = await signifyService.signHeaders(
-          message.data.signin.identifier.name,
+          aidName,
           origin
         );
         let jsonHeaders: { [key: string]: string } = {};

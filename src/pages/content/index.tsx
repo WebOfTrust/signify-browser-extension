@@ -32,10 +32,22 @@ window.addEventListener(
             type: "fetch-resource",
             subtype: "tab-signin",
           });
+          
+          let filteredSignins:any[] = [];
+          console.log(event.data.type)
+          tabSigninResp?.data?.signins.forEach((signin:any) => {
+            if (signin.identifier && (event.data.type===TAB_STATE.SELECT_IDENTIFIER || event.data.type===TAB_STATE.SELECT_ID_CRED)){
+              filteredSignins.push(signin)
+            }
+            if (signin.credential && (event.data.type===TAB_STATE.SELECT_CREDENTIAL || event.data.type===TAB_STATE.SELECT_ID_CRED)){
+              filteredSignins.push(signin)
+            }
+          })
+
           insertDialog(
             data.isConnected,
             data.tabUrl,
-            tabSigninResp?.data?.signins,
+            filteredSignins,
             event.data.type,
             tabSigninResp?.data?.autoSigninObj
           );
