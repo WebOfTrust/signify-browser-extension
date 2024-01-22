@@ -51,20 +51,19 @@ chrome.runtime.onMessage.addListener(function (
       ) {
         const origin = sender.tab.url!;
         console.log(message.data.signin)
-        // TODO, aidName should be the isuee from the credential
-        let aidName = 'holder'
-        if (message.data.signin.identifier) {
-          aidName = message.data.signin.identifier.name
-        } 
+
         const signedHeaders = await signifyService.signHeaders(
-          aidName,
+          message.data.signin.identifier? message.data.signin.identifier.name : message.data.signin.credential.issueeName,
           origin
         );
         let jsonHeaders: { [key: string]: string } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
         }
-        sendResponse({ data: { headers: jsonHeaders } });
+        sendResponse({ data: { 
+          headers: jsonHeaders,
+          credential: message.data.signin.credential? message.data.signin.credential: null
+        } });
       }
 
       if (

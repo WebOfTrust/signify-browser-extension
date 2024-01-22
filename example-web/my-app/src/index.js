@@ -14,7 +14,7 @@ window.addEventListener(
     }
     if (event.data.type && event.data.type === "signify-signature") {
 
-      alert("Signed headers received\n"+ JSON.stringify(event.data.data.headers, null, 2));
+      alert("Signed headers received\n"+ JSON.stringify(event.data.data, null, 2));
     }
   },
   false
