@@ -2,7 +2,7 @@ import logo from "./ACME_Corporation.png";
 import Button from "@mui/material/Button";
 import "./App.css";
 
-var extensionId = "fklmfbmpaimbgjplbambkdjphdadbmed";
+const extensionId = "fklmfbmpaimbgjplbambkdjphdadbmed";
 
 function App() {
 
