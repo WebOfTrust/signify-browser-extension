@@ -142,6 +142,20 @@ chrome.runtime.onMessage.addListener(function (
       sendResponse({ data: { signins: storageSignins } });
     }
     if (
+      message.type === "create-resource" &&
+      message.subtype === "identifier"
+    ) {
+      try {
+        const resp = await signifyService.createAID(message.data.name);
+        sendResponse({ data: { ...(resp ?? {}) } });
+      } catch (error) {
+        const errorMsg = JSON.parse(error?.message ?? "");
+        sendResponse({
+          error: { code: 404, message: errorMsg?.title },
+        });
+      }
+    }
+    if (
       message.type === "fetch-resource" &&
       message.subtype === "identifiers"
     ) {
