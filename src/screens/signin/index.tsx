@@ -65,16 +65,16 @@ export function Signin(props: ISignin): JSX.Element {
       )}
       <div className=" absolute bottom-2 w-full">
         <div className=" text-center">
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             Don't have a KERIA agent?
           </a>
         </div>
         <div className=" text-center">
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             docs
           </a>
           <strong>|</strong>
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             support
           </a>
         </div>

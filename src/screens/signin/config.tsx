@@ -47,7 +47,7 @@ export function Config(props: IConfig): JSX.Element {
         <input
           type="text"
           id="vendor_url"
-          className={`bg-gray-50 border text-black border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
+          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
             urlError ? " text-red border-red" : ""
           } `}
           placeholder="Enter Keria url"
@@ -62,7 +62,7 @@ export function Config(props: IConfig): JSX.Element {
         <button
           type="button"
           onClick={handleSetUrl}
-          className="text-white bg-green flex flex-row gap-x-1 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+          className="text-white bg-green flex flex-row gap-x-1 focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
           <p className="font-medium text-md">Save</p>
         </button>

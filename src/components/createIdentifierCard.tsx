@@ -51,7 +51,7 @@ export function CreateIdentifierCard(props): JSX.Element {
           <input
             type="text"
             id="vendor_url"
-            className={`bg-gray-50 border text-black border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
+            className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
               nameError ? " text-red border-red" : ""
             } `}
             placeholder="Enter unique name for identifier"

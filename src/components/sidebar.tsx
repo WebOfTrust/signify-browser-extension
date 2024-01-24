@@ -92,7 +92,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
           </div>
         </li>
       </ul>
-      <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto bg-gray-50">
+      <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto">
         <ul className="space-y-2 font-medium">
           {SIDEBAR.map((element, index) => (
             <li
@@ -104,7 +104,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
             >
               <div
                 onClick={() => !props.disabled && props.onClickLink(element.id)}
-                className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light  hover:bg-gray-100  group ${
+                className={`flex items-center p-2 rounded-lg hover:bg-gray-dark hover:text-gray-light group ${
                   element.id === props.active
                     ? " bg-gray-dark text-gray-light"
                     : ""
@@ -121,7 +121,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
         <li className="cursor-pointer">
           <div
             onClick={props.onSignout}
-            className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-red hover:text-gray-light group`}
+            className={`flex items-center p-2 rounded-lg hover:bg-red hover:text-gray-light group`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

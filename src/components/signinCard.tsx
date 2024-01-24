@@ -6,7 +6,7 @@ export function SigninCard({
   handleAutoSignin,
 }): JSX.Element {
   return (
-    <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
+    <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
           <p className="font-bold text-gray-dark">Website</p>
