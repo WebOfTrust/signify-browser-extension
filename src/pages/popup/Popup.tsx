@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { ThemeProvider } from "styled-components";
+import { default as defaultMeta } from "@src/config/meta.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
 import { Loader } from "@components/loader";
@@ -87,14 +89,16 @@ export default function Popup(): JSX.Element {
   }
 
   return (
-    <div>
-      {isConnected ? (
-        <Main handleDisconnect={handleDisconnect} />
-      ) : (
-        <div className="w-[300px]">
-          <Signin handleConnect={handleConnect} isLoading={isLoading} />
-        </div>
-      )}
-    </div>
+    <ThemeProvider theme={defaultMeta.theme}>
+      <div>
+        {isConnected ? (
+          <Main handleDisconnect={handleDisconnect} />
+        ) : (
+          <div className="w-[300px]">
+            <Signin handleConnect={handleConnect} isLoading={isLoading} />
+          </div>
+        )}
+      </div>
+    </ThemeProvider>
   );
 }

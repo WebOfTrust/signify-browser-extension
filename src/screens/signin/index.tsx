@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import logo from "@assets/img/128_keri_logo.png";
 import { configService } from "@pages/background/services/config";
 import { Config } from "./config";
 import { Signin as SigninComponent } from "./signin";
