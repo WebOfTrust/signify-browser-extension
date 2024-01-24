@@ -39,7 +39,6 @@ function App() {
   };
 
   const handleSyncRequest = async () => {
-    // TODO extension Id harcoded just for testing, need to find a way to get it dynamically
     const { data, error } = await chrome.runtime.sendMessage(extensionId, {
       type: "fetch-resource",
       subtype: "auto-signin-signature",

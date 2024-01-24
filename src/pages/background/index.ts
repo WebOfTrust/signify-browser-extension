@@ -249,7 +249,7 @@ chrome.runtime.onMessageExternal.addListener(function (
 
       const signedHeaders = await signifyService.signHeaders(
         // sigin can either have identifier or credential
-        autoSignin?.identifier.name ?? autoSignin?.credential?.schema?.title,
+        autoSignin?.identifier? autoSignin?.identifier.name : autoSignin?.credential?.issueeName,
         origin
       );
       let jsonHeaders: { [key: string]: string } = {};
