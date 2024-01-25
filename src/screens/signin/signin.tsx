@@ -21,11 +21,6 @@ export function Signin(props: ISignin): JSX.Element {
   };
 
   const handleConnect = async () => {
-    // fetch("https://my-json-server.typicode.com/HunnySajid/fake-db/db")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log("data", data);
-    //   });
     let hasError = false;
     if (!passcode) {
       setPasscodeError("Enter your passcode");

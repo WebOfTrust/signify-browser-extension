@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { configService } from "@pages/background/services/config";
 import { Text } from "@components/ui";
-import { Config } from "./config";
+import { Config } from "@src/screens/config";
 import { Signin as SigninComponent } from "./signin";
 
 interface ISignin {

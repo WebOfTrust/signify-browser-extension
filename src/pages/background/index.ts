@@ -106,10 +106,9 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "connect-agent"
       ) {
         await signifyService.connect(
-          message.data.vendorUrl,
+          message.data.agentUrl,
           message.data.passcode
         );
-        await configService.setUrl(message.data.vendorUrl);
         await userService.setPasscode(message.data.passcode);
         const state = await signifyService.isConnected();
         sendResponse({ data: { state } });
