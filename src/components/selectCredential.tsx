@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { CredentialCard } from "@components/credentialCard";
+import { Button } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 
@@ -48,13 +49,12 @@ export function SelectCredential(): JSX.Element {
         <div key={index} className="my-2 mx-4">
           <div className=" relative opacity-80 hover:opacity-100">
             <CredentialCard credential={credential} />
-            <button
-              type="button"
-              onClick={() => createSigninWithCredential(credential)}
-              className=" absolute right-0 bottom-0 text-white bg-green font-medium rounded-full text-xs px-2 py-1 text-center me-2 mb-2"
+            <Button
+              handleClick={() => createSigninWithCredential(credential)}
+              className="absolute right-0 bottom-0 text-white font-medium rounded-full text-xs px-2 py-1 "
             >
-              {"Select >"}
-            </button>
+              <>{"Select >"}</>
+            </Button>
           </div>
         </div>
       ))}

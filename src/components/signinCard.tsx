@@ -1,4 +1,5 @@
 import { CustomSwitch } from "@components/customSwitch";
+import { Button } from "@components/ui";
 
 export function SigninCard({
   signin,
@@ -53,13 +54,12 @@ export function SigninCard({
           />
         </div>
         <div className="flex items-end">
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="text-white bg-green hover:bg-red font-medium rounded-full text-xs px-2 py-1 text-center"
+          <Button
+            handleClick={handleDelete}
+            className="text-white hover:bg-red font-medium rounded-full text-xs px-2 py-1"
           >
-            {"Delete"}
-          </button>
+            <>Delete</>
+          </Button>
         </div>
       </div>
     </div>

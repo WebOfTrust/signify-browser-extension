@@ -3,10 +3,9 @@
   "logo": "",
   "theme": {
     "colors": {
-      "primary": "#61783E",
+      "primary": "#1e36ba",
       "secondary": "#273444",
-      "green": "#61783E",
-      "red": "#f55877",
+      "error": "#f55877",
       "gray-dark": "#273444",
       "gray": "#5A5252",
       "white": "#ffffff",

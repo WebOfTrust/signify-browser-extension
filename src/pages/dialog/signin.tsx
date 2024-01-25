@@ -1,4 +1,5 @@
 import { TAB_STATE } from "@pages/popup/constants";
+import { Button } from "@components/ui";
 import { setTabState } from "@pages/content/index";
 
 export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
@@ -59,14 +60,12 @@ export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
             </svg>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={handleClick}
-          className="text-white self-end bg-green font-medium rounded-full text-sm px-2 py-1 text-center"
+        <Button
+          handleClick={handleClick}
+          className="text-white self-end font-medium rounded-full text-sm px-2 py-1"
         >
-          Sign in
-        </button>
+          <>Sign in</>
+        </Button>
       </div>
     </div>
   );

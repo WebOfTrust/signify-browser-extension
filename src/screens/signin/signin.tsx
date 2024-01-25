@@ -60,10 +60,11 @@ export function Signin(props: ISignin): JSX.Element {
       <div className="flex flex-row justify-center">
         <Button
           handleClick={handleConnect}
-          text="Connect"
           isLoading={props.isLoading}
-          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm"
-        />
+          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-5 py-2.5"
+        >
+          <p className="font-medium text-md">Connect</p>
+        </Button>
       </div>
     </>
   );

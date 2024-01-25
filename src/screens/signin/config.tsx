@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { configService } from "@pages/background/services/config";
+import { Button } from "@components/ui";
 import { isValidUrl } from "@pages/background/utils";
 
 interface IConfig {
@@ -59,13 +60,12 @@ export function Config(props: IConfig): JSX.Element {
         {urlError ? <p className="text-red">{urlError}</p> : null}
       </div>
       <div className="flex flex-row justify-center">
-        <button
-          type="button"
-          onClick={handleSetUrl}
-          className="text-white bg-green flex flex-row gap-x-1 focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+        <Button
+          handleClick={handleSetUrl}
+          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm"
         >
           <p className="font-medium text-md">Save</p>
-        </button>
+        </Button>
       </div>
     </>
   );

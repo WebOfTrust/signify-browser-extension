@@ -1,6 +1,6 @@
 import { isValidElement, useState, useEffect } from "react";
+import { Button } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
-import { Loader } from "@components/loader";
 
 export function CreateIdentifierCard(props): JSX.Element {
   const [name, setName] = useState("");
@@ -69,14 +69,12 @@ export function CreateIdentifierCard(props): JSX.Element {
           ) : null}
         </div>
         <div className=" flex flex-row justify-center mt-2">
-          <button
-            type="button"
-            onClick={onCreateIdentifier}
-            className="text-white bg-green flex flex-row gap-x-1 font-medium rounded-full text-sm px-5 py-2 text-center"
+          <Button
+            handleClick={onCreateIdentifier}
+            className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
           >
-            {props.isLoading ? <Loader size={4} /> : null}
             <p className="font-medium text-md">Create</p>
-          </button>
+          </Button>
         </div>
       </div>
     </>
