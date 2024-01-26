@@ -1,3 +1,5 @@
+import { Text, Subtext } from "@components/ui";
+
 interface ICredential {
   credential: any;
 }
@@ -7,10 +9,12 @@ export function CredentialCard({ credential }: ICredential): JSX.Element {
     <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-gray-dark">{credential.schema.title}</p>
-          <p className="font-normal text-md text-gray">
+          <Text className="font-bold" $color="heading">
+            {credential.schema.title}
+          </Text>
+          <Text className="font-normal text-md" $color="text">
             {credential.schema.credentialType}
-          </p>
+          </Text>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -28,18 +32,26 @@ export function CredentialCard({ credential }: ICredential): JSX.Element {
         </svg>
       </div>
       <div className="">
-        <p className="font-normal text-md text-gray">
+        <Text className="font-normal text-md" $color="text">
           {credential.schema.description}
-        </p>
-        <p className="font-bold text-gray-dark">
-          Isuee:{" "}
-          <span className="font-normal text-gray">{credential.issueeName}</span>
-        </p>
+        </Text>
+        <Text className="font-bold" $color="heading">
+          <>
+            Isuee:{" "}
+            <Subtext className="font-normal" $color="text">
+              {credential.issueeName}
+            </Subtext>
+          </>
+        </Text>
       </div>
       <div className="flex flex-row justify-between">
         <div className="">
-          <p className="font-bold text-gray-dark">Last Used: </p>
-          <p className="font-normal text-gray">November 08, 2023</p>
+          <Text className="font-bold" $color="heading">
+            Last Used:{" "}
+          </Text>
+          <Text className="font-normal" $color="text">
+            November 08, 2023
+          </Text>
         </div>
         {credential.status?.et === "iss" ? (
           <div className="flex flex-col items-center text-green">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, styled } from "styled-components";
 import { default as defaultMeta } from "@src/config/meta.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
@@ -16,6 +16,10 @@ interface IConnect {
   vendorUrl?: string;
   bootUrl?: string;
 }
+
+const StyledLoader = styled.div`
+  background-color: ${(props) => props.theme?.colors?.primary};
+`;
 
 export default function Popup(): JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
@@ -81,9 +85,9 @@ export default function Popup(): JSX.Element {
   if (isCheckingInitialConnection) {
     return (
       <div className="w-[300px]">
-        <div className=" w-16 h-16 m-auto text-green">
+        <StyledLoader className=" w-16 h-16 m-auto">
           <Loader size={12} />
-        </div>
+        </StyledLoader>
       </div>
     );
   }

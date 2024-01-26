@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button } from "@components/ui";
-import { Drawer } from "@components/drawer";
+import { Button, Drawer } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { configService } from "@pages/background/services/config";
+import { Text } from "@components/ui";
 import { Config } from "./config";
 import { Signin as SigninComponent } from "./signin";
 
@@ -29,9 +30,9 @@ export function Signin(props: ISignin): JSX.Element {
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <p className="text-xl text-green capitalize font-bold">
+        <Text className="text-xl capitalize font-bold" $color="primary">
           {showConfig ? "Settings" : "KERI"}
-        </p>
+        </Text>
         <button onClick={() => setShowConfig(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,5 @@
 import { CustomSwitch } from "@components/customSwitch";
-import { Button } from "@components/ui";
+import { Button, Text } from "@components/ui";
 
 export function SigninCard({
   signin,
@@ -10,8 +10,12 @@ export function SigninCard({
     <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-gray-dark">Website</p>
-          <p className="font-normal text-md text-gray">{signin?.domain}</p>
+          <Text className="font-bold" $color="heading">
+            Website
+          </Text>
+          <Text className="font-normal text-md" $color="text">
+            {signin?.domain}
+          </Text>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -31,23 +35,27 @@ export function SigninCard({
 
       <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-gray-dark">
+          <Text className="font-bold" $color="heading">
             {signin?.identifier ? "Identifier Alias" : "Credential"}
-          </p>
-          <p className="font-normal text-md text-gray">
+          </Text>
+          <Text className="font-normal text-md" $color="text">
             {signin?.identifier?.name}
-          </p>
+          </Text>
         </div>
         <div>
-          <p className="font-bold text-gray-dark">Last Used</p>
-          <p className="font-normal text-md text-gray">
+          <Text className="font-bold" $color="heading">
+            Last Used
+          </Text>
+          <Text className="font-normal text-md" $color="text">
             {new Date(signin?.updatedAt).toDateString()}
-          </p>
+          </Text>
         </div>
       </div>
       <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-gray-dark">Auto Sign in</p>
+          <Text className="font-bold" $color="heading">
+            Auto Sign in
+          </Text>
           <CustomSwitch
             isChecked={signin.autoSignin}
             handleToggle={handleAutoSignin}

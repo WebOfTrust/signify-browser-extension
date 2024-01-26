@@ -4,12 +4,12 @@
   "theme": {
     "colors": {
       "primary": "#1e36ba",
-      "secondary": "#273444",
+      "secondary": "#273f33",
       "error": "#f55877",
-      "gray-dark": "#273444",
-      "gray": "#5A5252",
+      "heading": "#273444",
+      "text": "#5A5252",
+      "subtext": "#d3dce6",
       "white": "#ffffff",
-      "gray-light": "#d3dce6",
       "black": "#373e49"
     }
   }

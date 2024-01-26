@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { styled } from "styled-components";
 import { Sidebar } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
 import { SelectCredential } from "@components/selectCredential";
@@ -10,6 +11,11 @@ import { SigninList } from "@components/signinList";
 interface IMain {
   handleDisconnect: () => void;
 }
+
+const StyledMainContainer = styled.div`
+  background-color: ${(props) => props.theme?.colors?.secondary};
+  color: ${(props) => props.theme?.colors?.text};
+`;
 
 export function Main(props: IMain): JSX.Element {
   const [activeSidebar, setActiveSidebar] = useState("Identifiers");
@@ -90,12 +96,12 @@ export function Main(props: IMain): JSX.Element {
         onSignout={props.handleDisconnect}
         // disabled={isSidebarDisabled()}
       />
-      <div className="rounded p-2 sm:ml-48 sm:mt-4 bg-gray-dark text-gray-light mr-4">
+      <StyledMainContainer className="rounded p-2 sm:ml-48 sm:mt-4 mr-4">
         <div className="">
           <p className="text-xl capitalize font-bold">{activeSidebar}</p>
           <div className="m-5 max-h-[576px] overflow-auto">{renderItems()}</div>
         </div>
-      </div>
+      </StyledMainContainer>
     </main>
   );
 }

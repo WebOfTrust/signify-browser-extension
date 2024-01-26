@@ -17,17 +17,6 @@ const icon = (
 );
 
 export function CustomSwitch({ handleToggle, isChecked }): JSX.Element {
-  // const [isChecked, setIsChecked] = useState(false);
-  // const [selectedIcon, setSelectedIcon] = useState(icon);
-
-  // const handleToggle = () => {
-  //   const updateChecked = !isChecked;
-  //   setIsChecked(updateChecked);
-  //   // setTimeout(() => {
-  //   //   setSelectedIcon(updateChecked ? icon : icon);
-  //   // }, 250);
-  // };
-
   return (
     <button
       className={`w-12 h-6 rounded-full flex items-center transition duration-300 focus:outline-none shadow bg-gray-light ${

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "styled-components";
 import { default as defaultMeta } from "@src/config/meta.json";
+import { Button, Text, Subtext } from "@components/ui";
 import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
@@ -87,28 +88,35 @@ export default function Dialog({
         <div className="items-center justify-center rounded text-center p-3 bg-white">
           <div className="flex flex-row gap-x-2 mb-2">
             <img src={logo} className="h-8" alt="logo" />
-            <p className="text-2xl font-bold text-green">Sign in with KERI</p>
+            <Text className="text-2xl font-bold" $color="primary">
+              Sign in with KERI
+            </Text>
           </div>
           {showRequestAuthPrompt ? (
-            <p className="mt-2 text-sm text-green max-w-[280px] font-bold">
-              <span className="">{tabUrl}</span> requests authentication with{" "}
-              {getTextByEventType()}
-            </p>
+            <Text
+              className="mt-2 text-sm max-w-[280px] font-bold"
+              $color="primary"
+            >
+              <Subtext className="" $color="">
+                {tabUrl}
+              </Subtext>{" "}
+              requests authentication with {getTextByEventType()}
+            </Text>
           ) : (
             <>
               {signins?.map((signin) => (
                 <SigninItem signin={signin} />
               ))}
-              <button
-                onClick={handleClick}
-                className="text-green font-bold text-sm cursor-pointer"
+              <Button
+                handleClick={handleClick}
+                className="font-bold text-sm cursor-pointer"
               >
                 Open{" "}
                 <span className="inline-block">
                   <img src={logo} className="h-4" alt="logo" />
                 </span>{" "}
                 to select other {getTextByEventType()}
-              </button>
+              </Button>
             </>
           )}
         </div>

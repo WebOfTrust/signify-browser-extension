@@ -1,3 +1,4 @@
+import { styled } from "styled-components";
 import logo from "@assets/img/128_keri_logo.png";
 
 const SIDEBAR = [
@@ -70,6 +71,23 @@ interface ISidebar {
   onSignout: () => void;
 }
 
+const StyledMenu = styled.div`
+  background-color: ${({ $isActive, theme }) =>
+    $isActive ? theme?.colors?.secondary : ""};
+  color: ${({ $isActive, theme }) => ($isActive ? theme?.colors?.subtext : "")};
+  &:hover {
+    background-color: ${({ theme }) => theme?.colors?.secondary};
+    color: ${({ theme }) => theme?.colors?.subtext};
+  }
+`;
+
+const StyledBottomMenu = styled.div`
+  &:hover {
+    background-color: ${({ theme }) => theme?.colors?.error};
+    color: ${({ theme }) => theme?.colors?.subtext};
+  }
+`;
+
 export function Sidebar(props: ISidebar): JSX.Element {
   return (
     <aside
@@ -102,26 +120,23 @@ export function Sidebar(props: ISidebar): JSX.Element {
               }`}
               aria-disabled={props.disabled}
             >
-              <div
+              <StyledMenu
                 onClick={() => !props.disabled && props.onClickLink(element.id)}
-                className={`flex items-center p-2 rounded-lg hover:bg-gray-dark hover:text-gray-light group ${
-                  element.id === props.active
-                    ? " bg-gray-dark text-gray-light"
-                    : ""
-                }`}
+                className={`flex items-center p-2 rounded-lg group `}
+                $isActive={element.id === props.active}
               >
                 {element.icon}
                 <span className="ms-3">{element.title}</span>
-              </div>
+              </StyledMenu>
             </li>
           ))}
         </ul>
       </div>
       <ul className="px-3 font-medium">
         <li className="cursor-pointer">
-          <div
+          <StyledBottomMenu
             onClick={props.onSignout}
-            className={`flex items-center p-2 rounded-lg hover:bg-red hover:text-gray-light group`}
+            className={`flex items-center p-2 rounded-lg group`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +154,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
             </svg>
 
             <span className="ms-3">Disconnect</span>
-          </div>
+          </StyledBottomMenu>
         </li>
       </ul>
     </aside>

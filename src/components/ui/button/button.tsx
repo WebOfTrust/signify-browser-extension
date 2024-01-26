@@ -5,19 +5,19 @@ interface IButton {
   handleClick: () => void;
   isLoading?: boolean;
   className?: string;
-  children?: JSX.Element;
+  children?: JSX.Element | any;
 }
 
-const ButtonStyled = styled.button`
+const StyledButton = styled.button`
   background-color: ${(props) => props.theme?.colors?.primary};
   text-align: center;
 `;
 
 export function Button(props: IButton): JSX.Element {
   return (
-    <ButtonStyled onClick={props.handleClick} className={props.className}>
+    <StyledButton onClick={props.handleClick} className={props.className}>
       {props.isLoading ? <Loader size={4} /> : null}
       {props.children}
-    </ButtonStyled>
+    </StyledButton>
   );
 }

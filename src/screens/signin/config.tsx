@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { configService } from "@pages/background/services/config";
-import { Button } from "@components/ui";
+import { Button, Text } from "@components/ui";
 import { isValidUrl } from "@pages/background/utils";
 
 interface IConfig {
@@ -44,7 +44,9 @@ export function Config(props: IConfig): JSX.Element {
   return (
     <>
       <div className="px-4 py-2">
-        <p className="text-sm font-bold text-gray-dark">Agent Url:</p>
+        <Text className="text-sm font-bold" $color="heading">
+          Agent Url:
+        </Text>
         <input
           type="text"
           id="vendor_url"

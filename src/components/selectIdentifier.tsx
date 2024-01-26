@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button } from "@components/ui";
+import { Button, Drawer } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
-import { Drawer } from "@components/drawer";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
 export function SelectIdentifier(): JSX.Element {
