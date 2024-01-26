@@ -6,13 +6,16 @@ import { TAB_STATE } from "../popup/constants";
 
 var tabState = TAB_STATE.NONE;
 
-
 // Advertize extensionId to web page
-window.postMessage({ 
-  type: "signify-extension", 
-  data: {
-    extensionId: chrome.runtime.id,
-  } }, "*");
+window.postMessage(
+  {
+    type: "signify-extension",
+    data: {
+      extensionId: chrome.runtime.id,
+    },
+  },
+  "*"
+);
 
 // Handle messages from web page
 window.addEventListener(
@@ -30,6 +33,12 @@ window.addEventListener(
         case TAB_STATE.SELECT_ID_CRED:
         case TAB_STATE.SELECT_AUTO_SIGNIN:
           setTabState(TAB_STATE.DEFAULT);
+          const respVendorData = await chrome.runtime.sendMessage<
+            IMessage<void>
+          >({
+            type: "vendor-info",
+            subtype: "get-vendor-data",
+          });
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
             type: "authentication",
             subtype: "check-agent-connection",
@@ -40,24 +49,33 @@ window.addEventListener(
             type: "fetch-resource",
             subtype: "tab-signin",
           });
-          
-          let filteredSignins:any[] = [];
-          console.log(event.data.type)
-          tabSigninResp?.data?.signins.forEach((signin:any) => {
-            if (signin.identifier && (event.data.type===TAB_STATE.SELECT_IDENTIFIER || event.data.type===TAB_STATE.SELECT_ID_CRED)){
-              filteredSignins.push(signin)
+
+          let filteredSignins: any[] = [];
+          console.log(event.data.type);
+          tabSigninResp?.data?.signins.forEach((signin: any) => {
+            if (
+              signin.identifier &&
+              (event.data.type === TAB_STATE.SELECT_IDENTIFIER ||
+                event.data.type === TAB_STATE.SELECT_ID_CRED)
+            ) {
+              filteredSignins.push(signin);
             }
-            if (signin.credential && (event.data.type===TAB_STATE.SELECT_CREDENTIAL || event.data.type===TAB_STATE.SELECT_ID_CRED)){
-              filteredSignins.push(signin)
+            if (
+              signin.credential &&
+              (event.data.type === TAB_STATE.SELECT_CREDENTIAL ||
+                event.data.type === TAB_STATE.SELECT_ID_CRED)
+            ) {
+              filteredSignins.push(signin);
             }
-          })
+          });
 
           insertDialog(
             data.isConnected,
             data.tabUrl,
             filteredSignins,
             event.data.type,
-            tabSigninResp?.data?.autoSigninObj
+            tabSigninResp?.data?.autoSigninObj,
+            respVendorData?.data?.vendorData
           );
           break;
         default:
@@ -84,6 +102,13 @@ chrome.runtime.onMessage.addListener(async function (
     if (message.type === "tab" && message.subtype === "reload-state") {
       if (getTabState() !== TAB_STATE.NONE) {
         removeDialog();
+        const respVendorData = await chrome.runtime.sendMessage<IMessage<void>>(
+          {
+            type: "vendor-info",
+            subtype: "get-vendor-data",
+          }
+        );
+
         const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
           type: "authentication",
           subtype: "check-agent-connection",
@@ -97,7 +122,8 @@ chrome.runtime.onMessage.addListener(async function (
           data.tabUrl,
           tabSigninResp?.data?.signins,
           message.eventType ?? "",
-          tabSigninResp?.data?.autoSigninObj
+          tabSigninResp?.data?.autoSigninObj,
+          respVendorData?.data?.vendorData
         );
       }
     }
@@ -117,7 +143,8 @@ function insertDialog(
   tabUrl: string,
   signins: any,
   eventType: string,
-  autoSigninObj: any
+  autoSigninObj: any,
+  vendorData: any
 ) {
   const div = document.createElement("div");
   div.id = "__root";
@@ -128,6 +155,7 @@ function insertDialog(
   root.render(
     <Dialog
       isConnected={isConnected}
+      vendorData={vendorData}
       tabUrl={tabUrl}
       signins={signins}
       autoSigninObj={autoSigninObj}

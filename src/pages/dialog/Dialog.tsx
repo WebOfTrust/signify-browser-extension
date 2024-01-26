@@ -9,6 +9,7 @@ import { setTabState } from "@pages/content/index";
 
 export default function Dialog({
   isConnected = false,
+  vendorData,
   tabUrl = "",
   signins = [],
   autoSigninObj,
@@ -39,7 +40,7 @@ export default function Dialog({
     ) {
       setTabState(getEventTypeAppState());
       setShowPopupPrompt(true);
-    } else if (!isConnected) {
+    } else if (!isConnected || !vendorData) {
       setTabState(TAB_STATE.DEFAULT);
       setShowPopupPrompt(true);
     }
@@ -63,8 +64,8 @@ export default function Dialog({
   };
 
   return (
-    <ThemeProvider theme={defaultMeta.theme}>
-      <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7 ">
+    <ThemeProvider theme={vendorData?.theme ?? defaultMeta.theme}>
+      <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
         {showPopupPrompt ? (
           <PopupPrompt
             message={
@@ -85,41 +86,52 @@ export default function Dialog({
         >
           {"x"}
         </button>
-        <div className="items-center justify-center rounded text-center p-3 bg-white">
-          <div className="flex flex-row gap-x-2 mb-2">
-            <img src={logo} className="h-8" alt="logo" />
-            <Text className="text-2xl font-bold" $color="primary">
-              Sign in with KERI
-            </Text>
-          </div>
-          {showRequestAuthPrompt ? (
-            <Text
-              className="mt-2 text-sm max-w-[280px] font-bold"
-              $color="primary"
-            >
-              <Subtext className="" $color="">
-                {tabUrl}
-              </Subtext>{" "}
-              requests authentication with {getTextByEventType()}
-            </Text>
-          ) : (
-            <>
-              {signins?.map((signin) => (
-                <SigninItem signin={signin} />
-              ))}
-              <Button
-                handleClick={handleClick}
-                className="font-bold text-sm cursor-pointer"
+        {vendorData ? (
+          <div className="items-center justify-center rounded text-center p-3 bg-white">
+            <div className="flex flex-row gap-x-2 mb-2">
+              <img src={logo} className="h-8" alt="logo" />
+              <Text className="text-2xl font-bold" $color="primary">
+                Sign in with {vendorData?.title}
+              </Text>
+            </div>
+            {showRequestAuthPrompt ? (
+              <Text
+                className="mt-2 text-sm max-w-[280px] font-bold"
+                $color="primary"
               >
-                Open{" "}
-                <span className="inline-block">
-                  <img src={logo} className="h-4" alt="logo" />
-                </span>{" "}
-                to select other {getTextByEventType()}
-              </Button>
-            </>
-          )}
-        </div>
+                <Subtext className="" $color="">
+                  {tabUrl}
+                </Subtext>{" "}
+                requests authentication with {getTextByEventType()}
+              </Text>
+            ) : (
+              <>
+                {signins?.map((signin) => (
+                  <SigninItem signin={signin} />
+                ))}
+                <Button
+                  handleClick={handleClick}
+                  className="font-bold text-sm cursor-pointer"
+                >
+                  Open{" "}
+                  <span className="inline-block">
+                    <img src={logo} className="h-4" alt="logo" />
+                  </span>{" "}
+                  to select other {getTextByEventType()}
+                </Button>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="items-center justify-center rounded text-center p-3 bg-white">
+            <div className="flex flex-row gap-x-2 mb-2">
+              <img src={logo} className="h-8" alt="logo" />
+              <p className="text-xl font-bold text-red">
+                Vendor url is not set
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </ThemeProvider>
   );

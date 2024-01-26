@@ -4,13 +4,13 @@ interface IPopupPrompt {
   message: JSX.Element;
 }
 
-const StyledComtainer = styled.div`
+const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme?.colors?.secondary};
 `;
 
 export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {
   return (
-    <StyledComtainer className="absolute top-0 right-0 flex justify-center max-w-[280px] flex-row border  p-2 rounded">
+    <StyledContainer className="absolute top-0 right-0 flex justify-center max-w-[280px] flex-row border  p-2 rounded">
       {message}
       <svg
         className="ml-2 h-4 w-4 rounded border-green animate-bounce"
@@ -32,6 +32,6 @@ export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {
           </g>
         </g>
       </svg>
-    </StyledComtainer>
+    </StyledContainer>
   );
 };

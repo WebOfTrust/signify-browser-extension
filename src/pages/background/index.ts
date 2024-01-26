@@ -38,6 +38,14 @@ chrome.runtime.onMessage.addListener(function (
       );
 
       if (
+        message.type === "vendor-info" &&
+        message.subtype === "get-vendor-data"
+      ) {
+        const vendorData = await configService.getData();
+        sendResponse({ data: { vendorData } });
+      }
+
+      if (
         message.type === "authentication" &&
         message.subtype === "check-agent-connection"
       ) {
