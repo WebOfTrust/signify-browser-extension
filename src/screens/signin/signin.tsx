@@ -1,11 +1,11 @@
 import { useState } from "react";
-import logo from "@assets/img/128_keri_logo.png";
 import { Button } from "@components/ui";
 
 interface ISignin {
   passcode?: string;
   handleConnect: (passcode?: string) => void;
   isLoading?: boolean;
+  logo?: string;
 }
 
 export function Signin(props: ISignin): JSX.Element {
@@ -35,7 +35,7 @@ export function Signin(props: ISignin): JSX.Element {
   return (
     <>
       <div className="flex flex-row justify-center">
-        <img src={logo} className="w-32 h-32" alt="logo" />
+        <img src={props.logo} className="w-32 h-32" alt="logo" />
       </div>
       <div className=" px-4 py-2">
         <input

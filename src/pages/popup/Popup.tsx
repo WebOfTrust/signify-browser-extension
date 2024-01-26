@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { createGlobalStyle } from "styled-components";
 import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { IMessage } from "@pages/background/types";
@@ -18,6 +19,13 @@ interface IConnect {
   bootUrl?: string;
 }
 
+export const GlobalStyles = createGlobalStyle`
+  body {
+    background: ${({ theme }) => theme?.colors?.body};
+    transition: background 0.2s ease-in, color 0.2s ease-in;
+  }
+`;
+
 const StyledLoader = styled.div`
   color: ${(props) => props.theme?.colors?.primary};
 `;
@@ -33,7 +41,6 @@ export default function Popup(): JSX.Element {
     const _vendorData = await configService.getData();
     if (_vendorData) {
       setVendorData(_vendorData);
-      document.body.style.background = _vendorData?.theme?.colors?.body;
     }
   };
 
@@ -106,6 +113,7 @@ export default function Popup(): JSX.Element {
 
   return (
     <ThemeProvider theme={vendorData.theme}>
+      <GlobalStyles />
       <div>
         {isCheckingInitialConnection ? (
           <div className="w-[300px]">
@@ -116,10 +124,20 @@ export default function Popup(): JSX.Element {
         ) : (
           <>
             {isConnected ? (
-              <Main handleDisconnect={handleDisconnect} />
+              <Main
+                handleDisconnect={handleDisconnect}
+                logo={vendorData?.logo}
+                title={vendorData?.title}
+              />
             ) : (
               <div className="w-[300px]">
-                <Signin handleConnect={handleConnect} isLoading={isLoading} />
+                <Signin
+                  handleConnect={handleConnect}
+                  isLoading={isLoading}
+                  logo={vendorData?.logo}
+                  title={vendorData?.title}
+                  afterSetUrl={checkIfVendorDataExists}
+                />
               </div>
             )}
           </>

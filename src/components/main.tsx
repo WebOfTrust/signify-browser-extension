@@ -10,6 +10,8 @@ import { SigninList } from "@components/signinList";
 
 interface IMain {
   handleDisconnect: () => void;
+  logo?: string;
+  title?: string;
 }
 
 const StyledMainContainer = styled.div`
@@ -94,6 +96,8 @@ export function Main(props: IMain): JSX.Element {
         active={activeSidebar}
         onClickLink={setActiveSidebar}
         onSignout={props.handleDisconnect}
+        logo={props?.logo}
+        title={props?.title}
         // disabled={isSidebarDisabled()}
       />
       <StyledMainContainer className="rounded p-2 sm:ml-48 sm:mt-4 mr-4">

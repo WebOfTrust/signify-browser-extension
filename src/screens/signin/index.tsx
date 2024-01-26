@@ -9,6 +9,9 @@ interface ISignin {
   passcode?: string;
   handleConnect: (passcode?: string) => void;
   isLoading?: boolean;
+  logo?: string;
+  title?: string;
+  afterSetUrl?: () => void;
 }
 
 export function Signin(props: ISignin): JSX.Element {
@@ -25,13 +28,16 @@ export function Signin(props: ISignin): JSX.Element {
 
   const afterSetUrl = async () => {
     setShowConfig(false);
+    if (props.afterSetUrl) {
+      props?.afterSetUrl();
+    }
   };
 
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
         <Text className="text-xl capitalize font-bold" $color="primary">
-          {showConfig ? "Settings" : "KERI"}
+          {showConfig ? "Settings" : props.title}
         </Text>
         <button onClick={() => setShowConfig(true)}>
           <svg
@@ -61,6 +67,7 @@ export function Signin(props: ISignin): JSX.Element {
         <SigninComponent
           isLoading={props?.isLoading}
           handleConnect={props.handleConnect}
+          logo={props.logo}
         />
       )}
       <div className=" absolute bottom-2 w-full">

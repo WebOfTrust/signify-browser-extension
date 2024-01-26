@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-import logo from "@assets/img/128_keri_logo.png";
 
 const SIDEBAR = [
   {
@@ -69,6 +68,8 @@ interface ISidebar {
   onClickLink: (active: string) => void;
   disabled?: boolean;
   onSignout: () => void;
+  title?: string;
+  logo?: string;
 }
 
 const StyledMenu = styled.div`
@@ -102,9 +103,9 @@ export function Sidebar(props: ISidebar): JSX.Element {
               href="https://github.com/WebOfTrust/signify-browser-extension"
               className="flex items-center space-x-3 rtl:space-x-reverse"
             >
-              <img src={logo} className="h-8" alt="logo" />
+              <img src={props?.logo} className="h-8" alt="logo" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                KERI
+                {props?.title}
               </span>
             </a>
           </div>
