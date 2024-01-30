@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import logo from "@assets/img/128_keri_logo.png";
 import { configService } from "@pages/background/services/config";
-import { Config } from "./config";
+import { Text } from "@components/ui";
+import { Config } from "@src/screens/config";
 import { Signin as SigninComponent } from "./signin";
 
 interface ISignin {
@@ -9,6 +9,9 @@ interface ISignin {
   passcode?: string;
   handleConnect: (passcode?: string) => void;
   isLoading?: boolean;
+  logo?: string;
+  title?: string;
+  afterSetUrl?: () => void;
 }
 
 export function Signin(props: ISignin): JSX.Element {
@@ -25,14 +28,17 @@ export function Signin(props: ISignin): JSX.Element {
 
   const afterSetUrl = async () => {
     setShowConfig(false);
+    if (props.afterSetUrl) {
+      props?.afterSetUrl();
+    }
   };
 
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <p className="text-xl text-green capitalize font-bold">
-          {showConfig ? "Settings" : "KERI"}
-        </p>
+        <Text className="text-xl capitalize font-bold" $color="primary">
+          {showConfig ? "Settings" : props.title}
+        </Text>
         <button onClick={() => setShowConfig(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -61,20 +67,21 @@ export function Signin(props: ISignin): JSX.Element {
         <SigninComponent
           isLoading={props?.isLoading}
           handleConnect={props.handleConnect}
+          logo={props.logo}
         />
       )}
       <div className=" absolute bottom-2 w-full">
         <div className=" text-center">
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             Don't have a KERIA agent?
           </a>
         </div>
         <div className=" text-center">
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             docs
           </a>
           <strong>|</strong>
-          <a href="#" className="font-medium text-blue-600 hover:underline">
+          <a href="#" className="font-medium hover:underline">
             support
           </a>
         </div>

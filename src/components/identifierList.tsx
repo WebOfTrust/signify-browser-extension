@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { IdentifierCard } from "@components/identifierCard";
-import { Drawer } from "@components/drawer";
+import { Button, Drawer } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
@@ -59,13 +59,12 @@ export function IdentifierList(): JSX.Element {
         </div>
       ) : null}
       <div className=" flex flex-row-reverse">
-        <button
-          type="button"
-          onClick={() => setShowDrawer(true)}
-          className="text-white bg-green font-medium rounded-full text-xs px-2 py-1 text-center"
+        <Button
+          handleClick={() => setShowDrawer(true)}
+          className="text-white font-medium rounded-full text-xs px-2 py-1"
         >
-          {"+ Create New"}
-        </button>
+          <>{"+ Create New"}</>
+        </Button>
       </div>
       <Drawer
         isOpen={showDrawer}

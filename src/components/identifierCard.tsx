@@ -1,15 +1,19 @@
 import { obfuscateString } from "@pages/background/utils";
+import { Text, Subtext } from "@components/ui";
+
 interface IIdentifier {}
 
 export function IdentifierCard({ aid }): JSX.Element {
   return (
-    <div className="m-auto max-w-sm px-4 py-2 bg-white border border-gray-200 rounded-lg shadow text-gray-900">
+    <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
-          <p className="font-bold text-gray-dark">
+          <Text className="font-bold" $color="heading">
             Alias:{" "}
-            <span className="font-normal text-gray max-w">{aid.name}</span>
-          </p>
+            <Subtext className="font-normal max-w" $color="text">
+              {aid.name}
+            </Subtext>
+          </Text>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -27,21 +31,26 @@ export function IdentifierCard({ aid }): JSX.Element {
         </svg>
       </div>
       <div className="">
-        <p className="font-bold text-gray-dark">AID:{" "}
-        <span className="font-normal text-gray max-w-[200px] break-words">
-          {obfuscateString(aid.prefix)}</span>
-        </p>
+        <Text className="font-bold" $color="heading">
+          AID:{" "}
+          <Subtext
+            className="font-normal max-w-[200px] break-words"
+            $color="text"
+          >
+            {obfuscateString(aid.prefix)}
+          </Subtext>
+        </Text>
       </div>
 
       {/* COMMENTED OUT FOR THE DEMO
       <div className="flex flex-row justify-between">
         <div className="">
-          <p className="font-bold text-gray-dark">Credentials Received: </p>
-          <p className="font-normal text-gray">13</p>
+          <Text className="font-bold" $color="heading">Credentials Received: </Text>
+          <Text className="font-normal" $color="text">13</Text>
         </div>
         <div className="">
-          <p className="font-bold text-gray-dark">Last Used: </p>
-          <p className="font-normal text-gray">November 08, 2023</p>
+          <Text className="font-bold" $color="heading">Last Used: </Text>
+          <Text className="font-normal" $color="text">November 08, 2023</Text>
         </div>
       </div> */}
     </div>

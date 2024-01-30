@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { IdentifierCard } from "@components/identifierCard";
+import { Button, Drawer } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
-import { Drawer } from "@components/drawer";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
 export function SelectIdentifier(): JSX.Element {
@@ -70,13 +70,12 @@ export function SelectIdentifier(): JSX.Element {
         </div>
       ) : null}
       <div className=" flex flex-row-reverse">
-        <button
-          type="button"
-          onClick={() => setShowDrawer(true)}
-          className="text-white bg-green font-medium rounded-full text-xs px-2 py-1 text-center"
+        <Button
+          handleClick={() => setShowDrawer(true)}
+          className=" text-white font-medium rounded-full text-xs px-2 py-1"
         >
-          {"+ Create New"}
-        </button>
+          <>{"+ Create New"}</>
+        </Button>
       </div>
       <Drawer
         isOpen={showDrawer}
@@ -93,13 +92,12 @@ export function SelectIdentifier(): JSX.Element {
         <div key={index} className="my-2 mx-4">
           <div className=" relative opacity-80 hover:opacity-100">
             <IdentifierCard aid={aid} />
-            <button
-              type="button"
-              onClick={() => createSigninWithIdentifiers(aid)}
-              className=" absolute right-0 bottom-0 text-white bg-green font-medium rounded-full text-xs px-2 py-1 text-center me-2 mb-2"
+            <Button
+              handleClick={() => createSigninWithIdentifiers(aid)}
+              className=" absolute right-0 bottom-0 text-white font-medium rounded-full text-xs px-2 py-1"
             >
-              {"Select >"}
-            </button>
+              <>{"Select >"}</>
+            </Button>
           </div>
         </div>
       ))}

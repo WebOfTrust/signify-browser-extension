@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { createGlobalStyle } from "styled-components";
+import { configService } from "@pages/background/services/config";
+import { ThemeProvider, styled } from "styled-components";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
+import { Config } from "@src/screens/config";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
@@ -11,15 +15,34 @@ const password = "CqjYb60NT9gZl8itwuttD9";
 
 interface IConnect {
   passcode?: string;
-  vendorUrl?: string;
+  agentUrl?: string;
   bootUrl?: string;
 }
 
+export const GlobalStyles = createGlobalStyle`
+  body {
+    background: ${({ theme }) => theme?.colors?.body};
+    transition: background 0.2s ease-in, color 0.2s ease-in;
+  }
+`;
+
+const StyledLoader = styled.div`
+  color: ${(props) => props.theme?.colors?.primary};
+`;
+
 export default function Popup(): JSX.Element {
+  const [vendorData, setVendorData] = useState();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
+
+  const checkIfVendorDataExists = async () => {
+    const _vendorData = await configService.getData();
+    if (_vendorData) {
+      setVendorData(_vendorData);
+    }
+  };
 
   const checkInitialConnection = async () => {
     setIsCheckingInitialConnection(true);
@@ -48,8 +71,14 @@ export default function Popup(): JSX.Element {
   };
 
   useEffect(() => {
-    checkInitialConnection();
+    checkIfVendorDataExists();
   }, []);
+
+  useEffect(() => {
+    if (vendorData) {
+      checkInitialConnection();
+    }
+  }, [vendorData]);
 
   const handleConnect = async (passcode?: string) => {
     setIsLoading(true);
@@ -58,9 +87,7 @@ export default function Popup(): JSX.Element {
       subtype: "connect-agent",
       data: {
         passcode: password,
-        // TODO: vendorUrl willbe fetched by config service
-        // const vendorUrl = await configService.getUrl()
-        vendorUrl: url,
+        agentUrl: url,
         bootUrl: boot_url,
       },
     });
@@ -76,25 +103,46 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
-  if (isCheckingInitialConnection) {
+  if (!vendorData) {
     return (
       <div className="w-[300px]">
-        <div className=" w-16 h-16 m-auto text-green">
-          <Loader size={12} />
-        </div>
+        <Config afterSetUrl={checkIfVendorDataExists} />
       </div>
     );
   }
 
   return (
-    <div>
-      {isConnected ? (
-        <Main handleDisconnect={handleDisconnect} />
-      ) : (
-        <div className="w-[300px]">
-          <Signin handleConnect={handleConnect} isLoading={isLoading} />
-        </div>
-      )}
-    </div>
+    <ThemeProvider theme={vendorData.theme}>
+      <GlobalStyles />
+      <div>
+        {isCheckingInitialConnection ? (
+          <div className="w-[300px]">
+            <StyledLoader className=" w-16 h-16 m-auto">
+              <Loader size={12} />
+            </StyledLoader>
+          </div>
+        ) : (
+          <>
+            {isConnected ? (
+              <Main
+                handleDisconnect={handleDisconnect}
+                logo={vendorData?.logo}
+                title={vendorData?.title}
+              />
+            ) : (
+              <div className="w-[300px]">
+                <Signin
+                  handleConnect={handleConnect}
+                  isLoading={isLoading}
+                  logo={vendorData?.logo}
+                  title={vendorData?.title}
+                  afterSetUrl={checkIfVendorDataExists}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 }

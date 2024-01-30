@@ -1,4 +1,4 @@
-import logo from "@assets/img/128_keri_logo.png";
+import { styled } from "styled-components";
 
 const SIDEBAR = [
   {
@@ -68,7 +68,26 @@ interface ISidebar {
   onClickLink: (active: string) => void;
   disabled?: boolean;
   onSignout: () => void;
+  title?: string;
+  logo?: string;
 }
+
+const StyledMenu = styled.div`
+  background-color: ${({ $isActive, theme }) =>
+    $isActive ? theme?.colors?.secondary : ""};
+  color: ${({ $isActive, theme }) => ($isActive ? theme?.colors?.subtext : "")};
+  &:hover {
+    background-color: ${({ theme }) => theme?.colors?.secondary};
+    color: ${({ theme }) => theme?.colors?.subtext};
+  }
+`;
+
+const StyledBottomMenu = styled.div`
+  &:hover {
+    background-color: ${({ theme }) => theme?.colors?.error};
+    color: ${({ theme }) => theme?.colors?.subtext};
+  }
+`;
 
 export function Sidebar(props: ISidebar): JSX.Element {
   return (
@@ -84,15 +103,15 @@ export function Sidebar(props: ISidebar): JSX.Element {
               href="https://github.com/WebOfTrust/signify-browser-extension"
               className="flex items-center space-x-3 rtl:space-x-reverse"
             >
-              <img src={logo} className="h-8" alt="logo" />
+              <img src={props?.logo} className="h-8" alt="logo" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                KERI
+                {props?.title}
               </span>
             </a>
           </div>
         </li>
       </ul>
-      <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto bg-gray-50">
+      <div className="flex flex-col justify-between px-3 py-4 overflow-y-auto">
         <ul className="space-y-2 font-medium">
           {SIDEBAR.map((element, index) => (
             <li
@@ -102,26 +121,23 @@ export function Sidebar(props: ISidebar): JSX.Element {
               }`}
               aria-disabled={props.disabled}
             >
-              <div
+              <StyledMenu
                 onClick={() => !props.disabled && props.onClickLink(element.id)}
-                className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-dark hover:text-gray-light  hover:bg-gray-100  group ${
-                  element.id === props.active
-                    ? " bg-gray-dark text-gray-light"
-                    : ""
-                }`}
+                className={`flex items-center p-2 rounded-lg group `}
+                $isActive={element.id === props.active}
               >
                 {element.icon}
                 <span className="ms-3">{element.title}</span>
-              </div>
+              </StyledMenu>
             </li>
           ))}
         </ul>
       </div>
       <ul className="px-3 font-medium">
         <li className="cursor-pointer">
-          <div
+          <StyledBottomMenu
             onClick={props.onSignout}
-            className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-red hover:text-gray-light group`}
+            className={`flex items-center p-2 rounded-lg group`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +155,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
             </svg>
 
             <span className="ms-3">Disconnect</span>
-          </div>
+          </StyledBottomMenu>
         </li>
       </ul>
     </aside>

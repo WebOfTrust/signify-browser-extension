@@ -1,6 +1,6 @@
 import { isValidElement, useState, useEffect } from "react";
+import { Button } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
-import { Loader } from "@components/loader";
 
 export function CreateIdentifierCard(props): JSX.Element {
   const [name, setName] = useState("");
@@ -51,7 +51,7 @@ export function CreateIdentifierCard(props): JSX.Element {
           <input
             type="text"
             id="vendor_url"
-            className={`bg-gray-50 border text-black border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
+            className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
               nameError ? " text-red border-red" : ""
             } `}
             placeholder="Enter unique name for identifier"
@@ -69,14 +69,12 @@ export function CreateIdentifierCard(props): JSX.Element {
           ) : null}
         </div>
         <div className=" flex flex-row justify-center mt-2">
-          <button
-            type="button"
-            onClick={onCreateIdentifier}
-            className="text-white bg-green flex flex-row gap-x-1 font-medium rounded-full text-sm px-5 py-2 text-center"
+          <Button
+            handleClick={onCreateIdentifier}
+            className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
           >
-            {props.isLoading ? <Loader size={4} /> : null}
             <p className="font-medium text-md">Create</p>
-          </button>
+          </Button>
         </div>
       </div>
     </>
