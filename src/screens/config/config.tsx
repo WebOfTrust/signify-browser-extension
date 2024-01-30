@@ -33,6 +33,18 @@ export function Config(props): JSX.Element {
     try {
       const resp = await (await fetch(vendorUrl)).json();
       await configService.setData(resp);
+      const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
+      const bitmap = await createImageBitmap(imageBlob);
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      const context = canvas.getContext("2d");
+      context?.drawImage(bitmap, 0, 0);
+      const imageData = context?.getImageData(
+        0,
+        0,
+        bitmap.width,
+        bitmap.height
+      );
+      chrome.action.setIcon({ imageData: imageData });
     } catch (error) {
       setUrlError("Invalid url, Vendor configuration not found");
       hasError = true;

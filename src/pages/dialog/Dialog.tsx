@@ -16,9 +16,10 @@ export default function Dialog({
   eventType = "",
   removeDialog,
 }): JSX.Element {
-  const logo = chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
+  const logo =
+    vendorData?.logo ??
+    chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
-
   const showRequestAuthPrompt =
     !signins.length ||
     (!autoSigninObj && eventType === TAB_STATE.SELECT_AUTO_SIGNIN) ||
