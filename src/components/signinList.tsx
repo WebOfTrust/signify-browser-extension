@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { TAB_STATE } from "@pages/popup/constants";
 import { SigninCard } from "@components/signinCard";
 import { Loader } from "@components/loader";
@@ -7,13 +8,13 @@ import { IMessage } from "@pages/background/types";
 export function SigninList(): JSX.Element {
   const [signins, setSignins] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { formatMessage } = useIntl();
   const fetchSignins = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "fetch-resource",
       subtype: "signins",
     });
-    console.log("signins", data?.signins);
     setSignins(data?.signins);
     setIsLoading(false);
   };
@@ -81,7 +82,7 @@ export function SigninList(): JSX.Element {
         </div>
       ))}
       {!isLoading && !signins?.length ? (
-        <p className="">No items to show</p>
+        <p className="">{formatMessage({ id: "message.noItems" })}</p>
       ) : (
         <></>
       )}

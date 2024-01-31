@@ -1,15 +1,18 @@
 import { obfuscateString } from "@pages/background/utils";
+import { useIntl } from "react-intl";
 import { Text, Subtext } from "@components/ui";
 
 interface IIdentifier {}
 
 export function IdentifierCard({ aid }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   return (
     <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
           <Text className="font-bold" $color="heading">
-            Alias:{" "}
+            {formatMessage({ id: "identifier.alias.label" })}{" "}
             <Subtext className="font-normal max-w" $color="text">
               {aid.name}
             </Subtext>
@@ -32,7 +35,7 @@ export function IdentifierCard({ aid }): JSX.Element {
       </div>
       <div className="">
         <Text className="font-bold" $color="heading">
-          AID:{" "}
+          {formatMessage({ id: "identifier.aid.label" })}{" "}
           <Subtext
             className="font-normal max-w-[200px] break-words"
             $color="text"

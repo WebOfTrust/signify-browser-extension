@@ -97,7 +97,7 @@ export function Config(props): JSX.Element {
       <div className="flex flex-row justify-center">
         <button
           onClick={handleSetUrl}
-          className="text-white bg-green flex flex-row focus:outline-none font-medium rounded-full text-sm"
+          className="text-white bg-green p-2 flex flex-row focus:outline-none font-medium rounded-full text-sm"
         >
           <p className="font-medium text-md">
             {formatMessage({ id: "action.save" })}

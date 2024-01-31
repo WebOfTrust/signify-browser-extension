@@ -1,3 +1,4 @@
+import { useIntl } from "react-intl";
 import { styled } from "styled-components";
 
 const SIDEBAR = [
@@ -90,6 +91,7 @@ const StyledBottomMenu = styled.div`
 `;
 
 export function Sidebar(props: ISidebar): JSX.Element {
+  const { formatMessage } = useIntl();
   return (
     <aside
       id="default-sidebar"
@@ -154,7 +156,9 @@ export function Sidebar(props: ISidebar): JSX.Element {
               />
             </svg>
 
-            <span className="ms-3">Disconnect</span>
+            <span className="ms-3">
+              {formatMessage({ id: "action.disconnect" })}
+            </span>
           </StyledBottomMenu>
         </li>
       </ul>

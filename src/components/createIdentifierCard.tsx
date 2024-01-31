@@ -1,17 +1,20 @@
 import { isValidElement, useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { Button } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 
 export function CreateIdentifierCard(props): JSX.Element {
   const [name, setName] = useState("");
-  const [nameError, setNameError] = useState("");
+  const [nameError, setNameError] = useState<string | JSX.Element>("");
+  const { formatMessage } = useIntl();
+  const emptyNameError = formatMessage({ id: "identifier.error.emptyName" });
 
   useEffect(() => {
     setNameError(props.error);
   }, [props.error]);
   const onBlurName = () => {
     if (!name) {
-      setNameError("Name can not be empty");
+      setNameError(emptyNameError);
     } else {
       setNameError("");
     }
@@ -24,17 +27,17 @@ export function CreateIdentifierCard(props): JSX.Element {
   const onCreateIdentifier = async () => {
     let hasError = false;
     if (!name) {
-      setNameError("Name can not be empty");
+      setNameError(emptyNameError);
       hasError = true;
     } else if (hasWhiteSpace(name)) {
       setNameError(
         <div className="text-red mt-1">
-          No white spaces allowed.{" "}
+          {formatMessage({ id: "identifier.error.noWhiteSpace" })}{" "}
           <button
             className=" underline cursor-pointer"
             onClick={handleRemoveWhiteSpace}
           >
-            click to remove
+            {formatMessage({ id: "action.clickToRemove" })}
           </button>
         </div>
       );
@@ -54,7 +57,7 @@ export function CreateIdentifierCard(props): JSX.Element {
             className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
               nameError ? " text-red border-red" : ""
             } `}
-            placeholder="Enter unique name for identifier"
+            placeholder={formatMessage({ id: "identifier.uniqueName" })}
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -73,7 +76,9 @@ export function CreateIdentifierCard(props): JSX.Element {
             handleClick={onCreateIdentifier}
             className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
           >
-            <p className="font-medium text-md">Create</p>
+            <p className="font-medium text-md">
+              {formatMessage({ id: "action.create" })}
+            </p>
           </Button>
         </div>
       </div>

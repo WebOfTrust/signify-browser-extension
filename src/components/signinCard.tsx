@@ -1,3 +1,4 @@
+import { useIntl } from "react-intl";
 import { CustomSwitch } from "@components/customSwitch";
 import { Button, Text } from "@components/ui";
 
@@ -6,12 +7,13 @@ export function SigninCard({
   handleDelete,
   handleAutoSignin,
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   return (
     <div className="m-auto max-w-sm px-4 py-2 bg-white border rounded-lg shadow">
       <div className="flex flex-row justify-between">
         <div>
           <Text className="font-bold" $color="heading">
-            Website
+            {formatMessage({ id: "signin.website" })}
           </Text>
           <Text className="font-normal text-md" $color="text">
             {signin?.domain}
@@ -36,7 +38,9 @@ export function SigninCard({
       <div className="flex flex-row justify-between">
         <div>
           <Text className="font-bold" $color="heading">
-            {signin?.identifier ? "Identifier Alias" : "Credential"}
+            {signin?.identifier
+              ? formatMessage({ id: "signin.identifierAlias" })
+              : formatMessage({ id: "credential.title" })}
           </Text>
           <Text className="font-normal text-md" $color="text">
             {signin?.identifier?.name}
@@ -44,7 +48,7 @@ export function SigninCard({
         </div>
         <div>
           <Text className="font-bold" $color="heading">
-            Last Used
+            {formatMessage({ id: "signin.lastUsed.label" })}
           </Text>
           <Text className="font-normal text-md" $color="text">
             {new Date(signin?.updatedAt).toDateString()}
@@ -54,7 +58,7 @@ export function SigninCard({
       <div className="flex flex-row justify-between">
         <div>
           <Text className="font-bold" $color="heading">
-            Auto Sign in
+            {formatMessage({ id: "signin.autoSignin" })}
           </Text>
           <CustomSwitch
             isChecked={signin.autoSignin}
@@ -66,7 +70,7 @@ export function SigninCard({
             handleClick={handleDelete}
             className="text-white hover:bg-red font-medium rounded-full text-xs px-2 py-1"
           >
-            <>Delete</>
+            <>{formatMessage({ id: "action.delete" })}</>
           </Button>
         </div>
       </div>

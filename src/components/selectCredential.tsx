@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
 import { Button } from "@components/ui";
 import { Loader } from "@components/loader";
@@ -7,6 +8,7 @@ import { IMessage } from "@pages/background/types";
 export function SelectCredential(): JSX.Element {
   const [credentials, setCredentials] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { formatMessage } = useIntl();
   const fetchCredentials = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
@@ -53,7 +55,7 @@ export function SelectCredential(): JSX.Element {
               handleClick={() => createSigninWithCredential(credential)}
               className="absolute right-0 bottom-0 text-white font-medium rounded-full text-xs px-2 py-1 "
             >
-              <>{"Select >"}</>
+              <>{`${formatMessage({ id: "action.select" })} >`}</>
             </Button>
           </div>
         </div>

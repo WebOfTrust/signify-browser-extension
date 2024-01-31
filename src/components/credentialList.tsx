@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
@@ -6,13 +7,13 @@ import { IMessage } from "@pages/background/types";
 export function CredentialList(): JSX.Element {
   const [credentials, setCredentials] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { formatMessage } = useIntl();
   const fetchCredentials = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "fetch-resource",
       subtype: "credentials",
     });
-    console.log("credentials", data);
     setCredentials(data.credentials);
     setIsLoading(false);
   };
@@ -34,7 +35,7 @@ export function CredentialList(): JSX.Element {
         </div>
       ))}
       {!isLoading && !credentials?.length ? (
-        <p className="">No items to show</p>
+        <p className="">{formatMessage({ id: "message.noItems" })}</p>
       ) : (
         <></>
       )}
