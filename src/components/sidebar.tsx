@@ -1,9 +1,15 @@
-import { useIntl } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 import { styled } from "styled-components";
 
-const SIDEBAR = [
+export const SIDEBAR_KEYS = {
+  identifiers: "identifiers",
+  credentials: "credentials",
+  signin: "sign-ins",
+};
+
+export const SIDEBAR = [
   {
-    id: "Identifiers",
+    id: SIDEBAR_KEYS.identifiers,
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -20,10 +26,10 @@ const SIDEBAR = [
         />
       </svg>
     ),
-    title: "Identifiers",
+    title: <FormattedMessage id="identifiers.title" />,
   },
   {
-    id: "Credentials",
+    id: SIDEBAR_KEYS.credentials,
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -40,10 +46,10 @@ const SIDEBAR = [
         />
       </svg>
     ),
-    title: "Credentials",
+    title: <FormattedMessage id="credentials.title" />,
   },
   {
-    id: "Sign Ins",
+    id: SIDEBAR_KEYS.signin,
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -60,13 +66,13 @@ const SIDEBAR = [
         />
       </svg>
     ),
-    title: "Sign Ins",
+    title: <FormattedMessage id="signins.title" />,
   },
 ];
 
 interface ISidebar {
-  active: string;
-  onClickLink: (active: string) => void;
+  active: any;
+  onClickLink: (active: any) => void;
   disabled?: boolean;
   onSignout: () => void;
   title?: string;
@@ -124,9 +130,9 @@ export function Sidebar(props: ISidebar): JSX.Element {
               aria-disabled={props.disabled}
             >
               <StyledMenu
-                onClick={() => !props.disabled && props.onClickLink(element.id)}
+                onClick={() => !props.disabled && props.onClickLink(element)}
                 className={`flex items-center p-2 rounded-lg group `}
-                $isActive={element.id === props.active}
+                $isActive={element.id === props.active?.id}
               >
                 {element.icon}
                 <span className="ms-3">{element.title}</span>

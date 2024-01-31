@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { Sidebar } from "@components/sidebar";
+import { Sidebar, SIDEBAR, SIDEBAR_KEYS } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
 import { SelectCredential } from "@components/selectCredential";
 import { TAB_STATE } from "@pages/popup/constants";
@@ -20,7 +20,7 @@ const StyledMainContainer = styled.div`
 `;
 
 export function Main(props: IMain): JSX.Element {
-  const [activeSidebar, setActiveSidebar] = useState("Identifiers");
+  const [activeSidebar, setActiveSidebar] = useState(SIDEBAR[0]);
   const [tabState, setTabState] = useState(TAB_STATE.DEFAULT);
 
   const fetchTabState = async () => {
@@ -43,12 +43,12 @@ export function Main(props: IMain): JSX.Element {
             setActiveSidebar(
               data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
                 data?.appState === TAB_STATE.SELECT_ID_CRED
-                ? "Identifiers"
-                : "Credentials"
+                ? SIDEBAR[0]
+                : SIDEBAR[1]
             );
           }
           if (data?.appState === TAB_STATE.SELECT_AUTO_SIGNIN) {
-            setActiveSidebar("Sign Ins");
+            setActiveSidebar(SIDEBAR[2]);
           }
         }
       }
@@ -60,8 +60,8 @@ export function Main(props: IMain): JSX.Element {
   }, []);
 
   const renderItems = () => {
-    switch (activeSidebar) {
-      case "Credentials":
+    switch (activeSidebar?.id) {
+      case SIDEBAR_KEYS.credentials:
         if (
           tabState === TAB_STATE.SELECT_CREDENTIAL ||
           tabState === TAB_STATE.SELECT_ID_CRED
@@ -69,7 +69,7 @@ export function Main(props: IMain): JSX.Element {
           return <SelectCredential />;
 
         return <CredentialList />;
-      case "Sign Ins":
+      case SIDEBAR_KEYS.signin:
         return <SigninList />;
 
       default:
@@ -102,7 +102,7 @@ export function Main(props: IMain): JSX.Element {
       />
       <StyledMainContainer className="rounded p-2 sm:ml-48 sm:mt-4 mr-4">
         <div className="">
-          <p className="text-xl capitalize font-bold">{activeSidebar}</p>
+          <p className="text-xl capitalize font-bold">{activeSidebar?.title}</p>
           <div className="m-5 max-h-[576px] overflow-auto">{renderItems()}</div>
         </div>
       </StyledMainContainer>
