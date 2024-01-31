@@ -1,0 +1,13 @@
+{
+  "account.docs": "docs",
+  "account.enterPasscode": "Enter your passcode",
+  "account.onboard.cta": "Don't have a KERIA agent?",
+  "account.settings": "Settings",
+  "account.support": "support",
+  "action.connect": "Connect",
+  "action.save": "Save",
+  "config.error.enterUrl": "Enter a valid url",
+  "config.error.invalidUrl": "Invalid url, Vendor configuration not found",
+  "config.vendorUrl.label": "Vendor Url:",
+  "config.vendorUrl.placeholder": "Enter vendor url"
+}

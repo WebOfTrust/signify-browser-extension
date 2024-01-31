@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
 import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
+import { LocaleProvider } from "@src/_locales";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
 import { Config } from "@src/screens/config";
@@ -105,44 +106,48 @@ export default function Popup(): JSX.Element {
 
   if (!vendorData) {
     return (
-      <div className="w-[300px]">
-        <Config afterSetUrl={checkIfVendorDataExists} />
-      </div>
+      <LocaleProvider>
+        <div className="w-[300px]">
+          <Config afterSetUrl={checkIfVendorDataExists} />
+        </div>
+      </LocaleProvider>
     );
   }
 
   return (
-    <ThemeProvider theme={vendorData.theme}>
-      <GlobalStyles />
-      <div>
-        {isCheckingInitialConnection ? (
-          <div className="w-[300px]">
-            <StyledLoader className=" w-16 h-16 m-auto">
-              <Loader size={12} />
-            </StyledLoader>
-          </div>
-        ) : (
-          <>
-            {isConnected ? (
-              <Main
-                handleDisconnect={handleDisconnect}
-                logo={vendorData?.logo}
-                title={vendorData?.title}
-              />
-            ) : (
-              <div className="w-[300px]">
-                <Signin
-                  handleConnect={handleConnect}
-                  isLoading={isLoading}
+    <LocaleProvider>
+      <ThemeProvider theme={vendorData.theme}>
+        <GlobalStyles />
+        <div>
+          {isCheckingInitialConnection ? (
+            <div className="w-[300px]">
+              <StyledLoader className=" w-16 h-16 m-auto">
+                <Loader size={12} />
+              </StyledLoader>
+            </div>
+          ) : (
+            <>
+              {isConnected ? (
+                <Main
+                  handleDisconnect={handleDisconnect}
                   logo={vendorData?.logo}
                   title={vendorData?.title}
-                  afterSetUrl={checkIfVendorDataExists}
                 />
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </ThemeProvider>
+              ) : (
+                <div className="w-[300px]">
+                  <Signin
+                    handleConnect={handleConnect}
+                    isLoading={isLoading}
+                    logo={vendorData?.logo}
+                    title={vendorData?.title}
+                    afterSetUrl={checkIfVendorDataExists}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </ThemeProvider>
+    </LocaleProvider>
   );
 }

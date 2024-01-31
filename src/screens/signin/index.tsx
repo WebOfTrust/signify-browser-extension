@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { Text } from "@components/ui";
 import { Config } from "@src/screens/config";
@@ -15,6 +16,7 @@ interface ISignin {
 }
 
 export function Signin(props: ISignin): JSX.Element {
+  const { formatMessage } = useIntl();
   const [showConfig, setShowConfig] = useState(false);
 
   const checkIfVendorUrlExist = async () => {
@@ -37,7 +39,7 @@ export function Signin(props: ISignin): JSX.Element {
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
         <Text className="text-xl capitalize font-bold" $color="primary">
-          {showConfig ? "Settings" : props.title}
+          {showConfig ? formatMessage({ id: "account.settings" }) : props.title}
         </Text>
         <button onClick={() => setShowConfig(true)}>
           <svg
@@ -73,16 +75,16 @@ export function Signin(props: ISignin): JSX.Element {
       <div className=" absolute bottom-2 w-full">
         <div className=" text-center">
           <a href="#" className="font-medium hover:underline">
-            Don't have a KERIA agent?
+            {formatMessage({ id: "account.onboard.cta" })}
           </a>
         </div>
         <div className=" text-center">
           <a href="#" className="font-medium hover:underline">
-            docs
+            {formatMessage({ id: "account.docs" })}
           </a>
           <strong>|</strong>
           <a href="#" className="font-medium hover:underline">
-            support
+            {formatMessage({ id: "account.support" })}
           </a>
         </div>
       </div>
