@@ -1,0 +1,14 @@
+{
+    "account.docs": "documentos",
+    "account.enterPasscode": "Introduzca su código de acceso",
+    "account.onboard.cta": "¿No tienes un agente de KERIA?",
+    "account.settings": "Ajustes",
+    "account.support": "apoyo",
+    "action.connect": "Conectar",
+    "action.save": "Ahorrar",
+    "config.error.enterUrl": "Introduce una URL válida",
+    "config.error.invalidUrl": "URL no válida, configuración del proveedor no encontrada",
+    "config.vendorUrl.label": "URL del proveedor:",
+    "config.vendorUrl.placeholder": "Ingrese la URL del proveedor"
+  }
+  

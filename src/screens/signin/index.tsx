@@ -82,7 +82,7 @@ export function Signin(props: ISignin): JSX.Element {
           <a href="#" className="font-medium hover:underline">
             {formatMessage({ id: "account.docs" })}
           </a>
-          <strong>|</strong>
+          <strong> | </strong>
           <a href="#" className="font-medium hover:underline">
             {formatMessage({ id: "account.support" })}
           </a>
