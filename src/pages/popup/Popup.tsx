@@ -22,7 +22,10 @@ interface IConnect {
 
 export const GlobalStyles = createGlobalStyle`
   body {
-    background: ${({ theme }) => theme?.colors?.body};
+    background: ${({ theme }) => theme?.colors?.bodyBg};
+    color: ${({ theme }) => theme?.colors?.bodyColor};
+    border: ${({ theme }) =>
+      `1px solid ${theme?.colors?.bodyBorder ?? theme?.colors?.bodyBg}`};
     transition: background 0.2s ease-in, color 0.2s ease-in;
   }
 `;

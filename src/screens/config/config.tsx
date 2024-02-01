@@ -83,7 +83,7 @@ export function Config(props): JSX.Element {
         />
         {urlError ? <p className="text-red">{urlError}</p> : null}
       </div>
-      <div>
+      <div className="px-4 py-2">
         <Text className="font-bold" $color="heading">
           Select Spanish
         </Text>

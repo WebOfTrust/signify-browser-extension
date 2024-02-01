@@ -1,17 +1,20 @@
 {
-  "title": "KERI",
-  "logo": "",
+  "title": "FaceBook",
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Facebook_Logo_2023.png/1200px-Facebook_Logo_2023.png",
+  "icon":"https://cdn-icons-png.flaticon.com/128/3955/3955011.png",
   "theme": {
     "colors": {
-      "primary": "#1e36ba",
-      "secondary": "#273f33",
+      "primary": "#4c6edf",
+      "secondary": "#2ad881",
       "error": "#f55877",
       "heading": "#273444",
       "text": "#5A5252",
       "subtext": "#d3dce6",
       "white": "#ffffff",
       "black": "#373e49",
-      "body": "purple"
+      "bodyBg": "#252430",
+      "bodyBorder": "#252430",
+      "bodyColor": "#eeff04"
     }
   }
 }
