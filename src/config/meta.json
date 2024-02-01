@@ -14,7 +14,9 @@
       "black": "#373e49",
       "bodyBg": "#252430",
       "bodyBorder": "#252430",
-      "bodyColor": "#eeff04"
+      "bodyColor": "#eeff04",
+      "cardColor": "blue",
+      "cardBg": "green"
     }
   }
 }
