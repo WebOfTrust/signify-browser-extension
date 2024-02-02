@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
-import { LocaleProvider } from "@src/_locales";
+import { useIntl } from "react-intl";
 import { default as defaultMeta } from "@src/config/meta.json";
-import { Button, Text, Subtext } from "@components/ui";
+import { Text, Subtext } from "@components/ui";
 import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
@@ -26,6 +26,7 @@ export default function Dialog({
   eventType = "",
   removeDialog,
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const logo =
     vendorData?.logo ??
     chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
@@ -61,91 +62,91 @@ export default function Dialog({
     removeDialog();
   };
 
-  const getTextByEventType = () => {
+  const getTextKeyByEventType = () => {
     switch (eventType) {
       case TAB_STATE.SELECT_CREDENTIAL:
-        return "Credential";
+        return "credential.title";
       case TAB_STATE.SELECT_ID_CRED:
-        return "AID or Credential";
+        return "signin.aidOrCredential";
       case TAB_STATE.SELECT_AUTO_SIGNIN:
-        return "Auto Signin";
+        return "signin.autoSignin";
       default:
-        return "AID";
+        return "identifier.title";
     }
   };
 
   return (
-    <LocaleProvider>
-      <ThemeProvider theme={vendorData?.theme ?? defaultMeta.theme}>
-        <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
-          {showPopupPrompt ? (
-            <PopupPrompt
-              message={
-                <p className="text-sm text-white">
-                  Open{" "}
+    <ThemeProvider theme={vendorData?.theme ?? defaultMeta.theme}>
+      <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
+        {showPopupPrompt ? (
+          <PopupPrompt
+            message={
+              <p className="text-sm text-white">
+                {formatMessage({ id: "action.open" })}{" "}
+                <span className="inline-block">
+                  <img src={logo} className="h-4" alt="logo" />
+                </span>{" "}
+                {formatMessage({ id: "action.toProceed" })}
+              </p>
+            }
+          />
+        ) : null}
+        <button
+          type="button"
+          onClick={handleRemove}
+          className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
+        >
+          {"x"}
+        </button>
+        {vendorData ? (
+          <StyledMain className="items-center justify-center rounded text-center p-3">
+            <div className="flex flex-row gap-x-2 mb-2">
+              <img src={logo} className="h-8" alt="logo" />
+              <Text className="text-2xl font-bold" $color="bodyColor">
+                {formatMessage({ id: "signin.with" })} {vendorData?.title}
+              </Text>
+            </div>
+            {showRequestAuthPrompt ? (
+              <Text
+                className="mt-2 text-sm max-w-[280px] font-bold"
+                $color="bodyColor"
+              >
+                <Subtext className="" $color="">
+                  {tabUrl}
+                </Subtext>{" "}
+                {formatMessage({ id: "signin.requestAuth" })}{" "}
+                {formatMessage({ id: getTextKeyByEventType() })}
+              </Text>
+            ) : (
+              <>
+                {signins?.map((signin) => (
+                  <SigninItem signin={signin} />
+                ))}
+                <div
+                  onClick={handleClick}
+                  className="font-bold text-sm cursor-pointer"
+                >
+                  {formatMessage({ id: "action.open" })}{" "}
                   <span className="inline-block">
                     <img src={logo} className="h-4" alt="logo" />
                   </span>{" "}
-                  to proceed
-                </p>
-              }
-            />
-          ) : null}
-          <button
-            type="button"
-            onClick={handleRemove}
-            className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
-          >
-            {"x"}
-          </button>
-          {vendorData ? (
-            <StyledMain className="items-center justify-center rounded text-center p-3">
-              <div className="flex flex-row gap-x-2 mb-2">
-                <img src={logo} className="h-8" alt="logo" />
-                <Text className="text-2xl font-bold" $color="bodyColor">
-                  Sign in with {vendorData?.title}
-                </Text>
-              </div>
-              {showRequestAuthPrompt ? (
-                <Text
-                  className="mt-2 text-sm max-w-[280px] font-bold"
-                  $color="bodyColor"
-                >
-                  <Subtext className="" $color="">
-                    {tabUrl}
-                  </Subtext>{" "}
-                  requests authentication with {getTextByEventType()}
-                </Text>
-              ) : (
-                <>
-                  {signins?.map((signin) => (
-                    <SigninItem signin={signin} />
-                  ))}
-                  <div
-                    onClick={handleClick}
-                    className="font-bold text-sm cursor-pointer"
-                  >
-                    Open{" "}
-                    <span className="inline-block">
-                      <img src={logo} className="h-4" alt="logo" />
-                    </span>{" "}
-                    to select other {getTextByEventType()}
-                  </div>
-                </>
-              )}
-            </StyledMain>
-          ) : (
-            <div className="items-center justify-center rounded text-center p-3 bg-white">
-              <div className="flex flex-row gap-x-2 mb-2">
-                <img src={logo} className="h-8" alt="logo" />
-                <p className="text-xl font-bold text-red">
-                  Vendor url is not set
-                </p>
-              </div>
+                  {formatMessage({ id: "action.toSelectOther" })}{" "}
+                  {formatMessage({ id: getTextKeyByEventType() })}
+                </div>
+              </>
+            )}
+          </StyledMain>
+        ) : (
+          <div className="items-center justify-center rounded text-center p-3 bg-white">
+            <div className="flex flex-row gap-x-2 mb-2">
+              <img src={logo} className="h-8" alt="logo" />
+              <p className="text-xl font-bold text-red">
+                {formatMessage({ id: "config.error.setUrl" })}
+              </p>
             </div>
-          )}
-        </div>
-      </ThemeProvider>
-    </LocaleProvider>
+          </div>
+        )}
+      </div>
+    </ThemeProvider>
   );
 }
