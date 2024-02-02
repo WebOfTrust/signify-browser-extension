@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultMeta } from "@src/config/meta.json";
 import { Button, Text, Subtext } from "@components/ui";
@@ -7,6 +7,15 @@ import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 import { setTabState } from "@pages/content/index";
+
+const StyledMain = styled.div`
+  border: ${(props) =>
+    `1px solid ${
+      props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
+    }`};
+  background-color: ${(props) => props.theme?.colors?.bodyBg};
+  color: ${(props) => props.theme?.colors?.bodyColor};
+`;
 
 export default function Dialog({
   isConnected = false,
@@ -90,17 +99,17 @@ export default function Dialog({
             {"x"}
           </button>
           {vendorData ? (
-            <div className="items-center justify-center rounded text-center p-3 bg-white">
+            <StyledMain className="items-center justify-center rounded text-center p-3">
               <div className="flex flex-row gap-x-2 mb-2">
                 <img src={logo} className="h-8" alt="logo" />
-                <Text className="text-2xl font-bold" $color="primary">
+                <Text className="text-2xl font-bold" $color="bodyColor">
                   Sign in with {vendorData?.title}
                 </Text>
               </div>
               {showRequestAuthPrompt ? (
                 <Text
                   className="mt-2 text-sm max-w-[280px] font-bold"
-                  $color="primary"
+                  $color="bodyColor"
                 >
                   <Subtext className="" $color="">
                     {tabUrl}
@@ -112,8 +121,8 @@ export default function Dialog({
                   {signins?.map((signin) => (
                     <SigninItem signin={signin} />
                   ))}
-                  <Button
-                    handleClick={handleClick}
+                  <div
+                    onClick={handleClick}
                     className="font-bold text-sm cursor-pointer"
                   >
                     Open{" "}
@@ -121,10 +130,10 @@ export default function Dialog({
                       <img src={logo} className="h-4" alt="logo" />
                     </span>{" "}
                     to select other {getTextByEventType()}
-                  </Button>
+                  </div>
                 </>
               )}
-            </div>
+            </StyledMain>
           ) : (
             <div className="items-center justify-center rounded text-center p-3 bg-white">
               <div className="flex flex-row gap-x-2 mb-2">
