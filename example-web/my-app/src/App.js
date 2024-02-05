@@ -12,7 +12,6 @@ function App() {
   const handleAutoSignin = async () => {
     try {
       const resp = await attemptAutoSignin();
-      console.log("data", resp);
       if (resp?.data) {
         alert(
           "Signed headers received\n" +
