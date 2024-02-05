@@ -1,56 +1,25 @@
+import {
+  requestAid,
+  requestCredential,
+  requestAidORCred,
+  attemptAutoSignin,
+} from "polaris-web";
 import logo from "./ACME_Corporation.png";
 import Button from "@mui/material/Button";
 import "./App.css";
 
-var extensionId = "";
-
 function App() {
-
-  window.addEventListener(
-    "message",
-    async (event) => {
-      // Accept messages only from same window
-      if (event.source !== window) {
-        return;
+  const handleAutoSignin = async () => {
+    try {
+      const resp = await attemptAutoSignin();
+      console.log("data", resp);
+      if (resp?.data) {
+        alert(
+          "Signed headers received\n" +
+            JSON.stringify(resp?.data.headers, null, 2)
+        );
       }
-      
-      if (event.data.type && event.data.type === "signify-extension") {
-        console.log("Content scrip loaded");
-        extensionId = event.data.data.extensionId;
-      }
-    },
-    false
-  );
-
-  const handleRequestIdentifier = () => {
-    window.postMessage({ type: "select-identifier" }, "*");
-  };
-
-  const handleRequestCredential = () => {
-    window.postMessage({ type: "select-credential" }, "*");
-  };
-
-  const handleRequestIdORCred = () => {
-    window.postMessage({ type: "select-aid-or-credential" }, "*");
-  };
-
-  const handleRequestAutoSignin = () => {
-    window.postMessage({ type: "select-auto-signin" }, "*");
-  };
-
-  const handleSyncRequest = async () => {
-    const { data, error } = await chrome.runtime.sendMessage(extensionId, {
-      type: "fetch-resource",
-      subtype: "auto-signin-signature",
-    });
-
-    if (error) {
-      handleRequestAutoSignin();
-    } else {
-      alert(
-        "Signed headers received\n" + JSON.stringify(data.headers, null, 2)
-      );
-    }
+    } catch (error) {}
   };
 
   return (
@@ -59,33 +28,29 @@ function App() {
         <img src={logo} alt="logo" />
         <div className="flex flex-col gap-y-2 mt-2">
           <p className=" text-lg font-bold">Authenticate with</p>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={handleRequestIdentifier}
-          >
+          <Button variant="contained" color="success" onClick={requestAid}>
             AID
           </Button>
           <Button
             variant="contained"
             color="success"
-            onClick={handleRequestCredential}
+            onClick={requestCredential}
           >
             Credential
           </Button>
           <Button
             variant="contained"
             color="success"
-            onClick={handleRequestIdORCred}
+            onClick={requestAidORCred}
           >
             AID or CRED
           </Button>
           <Button
             variant="contained"
             color="success"
-            onClick={handleSyncRequest}
+            onClick={handleAutoSignin}
           >
-            Synchronous
+            Auto Sign in
           </Button>
         </div>
       </header>
