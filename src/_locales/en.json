@@ -18,6 +18,7 @@
   "config.error.enterUrl": "Enter a valid url",
   "config.error.invalidUrl": "Invalid url, Vendor configuration not found",
   "config.error.setUrl": "Vendor url is not set",
+  "config.language.label": "Language",
   "config.vendorUrl.label": "Vendor Url:",
   "config.vendorUrl.placeholder": "Enter vendor url",
   "credential.issue.label": "Isuee:",

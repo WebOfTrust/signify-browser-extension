@@ -18,6 +18,7 @@
   "config.error.enterUrl": "Introduce una URL válida",
   "config.error.invalidUrl": "URL no válida, configuración del proveedor no encontrada",
   "config.error.setUrl": "La URL del proveedor no está configurada",
+  "config.language.label": "Idioma",
   "config.vendorUrl.label": "URL del proveedor:",
   "config.vendorUrl.placeholder": "Ingrese la URL del proveedor",
   "credential.issue.label": "Asunto:",

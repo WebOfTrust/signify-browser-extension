@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
-import { useLocale } from "@src/_locales";
+import { useLocale, languageCodeMap } from "@src/_locales";
 import { isValidUrl } from "@pages/background/utils";
-import { Text } from "@components/ui";
-import { CustomSwitch } from "@components/customSwitch";
+import { Dropdown } from "@components/ui";
+
+const langMap = Object.entries(languageCodeMap).map((s) => ({
+  label: s[1],
+  value: s[0],
+}));
 
 // This screen should not be styled with theme as it does not depend on the vendor configuration
 export function Config(props): JSX.Element {
@@ -84,14 +88,13 @@ export function Config(props): JSX.Element {
         {urlError ? <p className="text-red">{urlError}</p> : null}
       </div>
       <div className="px-4 py-2">
-        <Text className="font-bold" $color="heading">
-          Select Spanish
-        </Text>
-        <CustomSwitch
-          isChecked={currentLocale == "es"}
-          handleToggle={() => {
-            changeLocale(currentLocale == "es" ? "en" : "es");
-          }}
+        <p className="text-sm font-bold">
+          {formatMessage({ id: "config.language.label" })}
+        </p>
+        <Dropdown
+          selectedOption={langMap.find((s) => s.value === currentLocale)}
+          options={langMap}
+          onSelect={(option) => changeLocale(option.value)}
         />
       </div>
       <div className="flex flex-row justify-center">
