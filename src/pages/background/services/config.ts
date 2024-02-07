@@ -2,7 +2,8 @@ import { browserStorageService } from "@pages/background/services/browser-storag
 
 const CONFIG_ENUMS = {
     VENDOR_URL: "vendor-url",
-    VENDOR_DATA: "vendor-data"
+    VENDOR_DATA: "vendor-data",
+    VENDOR_LANG: "vendor-lang",
 }
 
 const Config = () => {
@@ -30,13 +31,23 @@ const Config = () => {
         await browserStorageService.setValue(CONFIG_ENUMS.VENDOR_DATA, data)
     }
 
+    const getLanguage = async (): Promise<string> => {
+        return await browserStorageService.getValue(CONFIG_ENUMS.VENDOR_LANG) as string;
+    }
+
+    const setLanguage = async (lang: string) =>  {
+        await browserStorageService.setValue(CONFIG_ENUMS.VENDOR_LANG, lang)
+    }
+
     return {
         setUrl,
         removeUrl,
         getUrl,
         getData,
         removeData,
-        setData
+        setData,
+        getLanguage,
+        setLanguage
     }
 }
 

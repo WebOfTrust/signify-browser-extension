@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { IdentifierCard } from "@components/identifierCard";
 import { Button, Drawer } from "@components/ui";
 import { Loader } from "@components/loader";
@@ -11,6 +12,7 @@ export function SelectIdentifier(): JSX.Element {
   const [isCreating, setIsCreating] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [errCreate, setErrCreate] = useState("");
+  const { formatMessage } = useIntl();
 
   const fetchIdentifiers = async () => {
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
@@ -74,13 +76,13 @@ export function SelectIdentifier(): JSX.Element {
           handleClick={() => setShowDrawer(true)}
           className=" text-white font-medium rounded-full text-xs px-2 py-1"
         >
-          <>{"+ Create New"}</>
+          <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
       </div>
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
-        header="Create Identifier"
+        header={formatMessage({ id: "identifier.create.title" })}
       >
         <CreateIdentifierCard
           isLoading={isCreating}
@@ -96,7 +98,7 @@ export function SelectIdentifier(): JSX.Element {
               handleClick={() => createSigninWithIdentifiers(aid)}
               className=" absolute right-0 bottom-0 text-white font-medium rounded-full text-xs px-2 py-1"
             >
-              <>{"Select >"}</>
+              <>{`${formatMessage({ id: "action.select" })} >`}</>
             </Button>
           </div>
         </div>

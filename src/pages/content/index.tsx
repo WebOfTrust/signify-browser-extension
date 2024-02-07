@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { LocaleProvider } from "@src/_locales";
 import { IMessage } from "@pages/background/types";
 import "./style.css";
 import Dialog from "../dialog/Dialog";
@@ -153,15 +154,17 @@ function insertDialog(
   const rootContainer = document.querySelector("#__root");
   const root = createRoot(rootContainer!);
   root.render(
-    <Dialog
-      isConnected={isConnected}
-      vendorData={vendorData}
-      tabUrl={tabUrl}
-      signins={signins}
-      autoSigninObj={autoSigninObj}
-      eventType={eventType}
-      removeDialog={removeDialog}
-    />
+    <LocaleProvider>
+      <Dialog
+        isConnected={isConnected}
+        vendorData={vendorData}
+        tabUrl={tabUrl}
+        signins={signins}
+        autoSigninObj={autoSigninObj}
+        eventType={eventType}
+        removeDialog={removeDialog}
+      />
+    </LocaleProvider>
   );
 }
 
