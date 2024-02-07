@@ -81,13 +81,13 @@ export default function Dialog({
         {showPopupPrompt ? (
           <PopupPrompt
             message={
-              <p className="text-sm text-white">
+              <Text className="text-sm" $color="bodyColor">
                 {formatMessage({ id: "action.open" })}{" "}
                 <span className="inline-block">
                   <img src={logo} className="h-4" alt="logo" />
                 </span>{" "}
                 {formatMessage({ id: "action.toProceed" })}
-              </p>
+              </Text>
             }
           />
         ) : null}
