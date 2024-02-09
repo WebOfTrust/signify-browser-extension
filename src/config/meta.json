@@ -1,22 +1,22 @@
 {
-  "title": "FaceBook",
-  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Facebook_Logo_2023.png/1200px-Facebook_Logo_2023.png",
-  "icon":"https://cdn-icons-png.flaticon.com/128/3955/3955011.png",
+  "title": "Keria",
+  "logo": "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png",
+    "icon":"https://cdn-icons-png.flaticon.com/128/3291/3291695.png",
   "theme": {
     "colors": {
-      "primary": "#4c6edf",
-      "secondary": "#2ad881",
-      "error": "#f55877",
-      "heading": "#273444",
-      "text": "#5A5252",
-      "subtext": "#d3dce6",
+      "primary": "green",
+      "secondary": "#2d0457",
+      "error": "red",
+      "heading": "#5e2b8f",
+      "text": "grey",
+      "subtext": "brown",
       "white": "#ffffff",
       "black": "#373e49",
-      "bodyBg": "#252430",
-      "bodyBorder": "#252430",
+      "bodyBg": "linear-gradient(90deg, rgba(2,0,36,1) 1%, rgba(125,67,214,1) 100%, rgba(0,212,255,1) 100%)",
+      "bodyBorder": "#eeff04",
       "bodyColor": "#eeff04",
-      "cardColor": "blue",
-      "cardBg": "green"
+      "cardColor": "green",
+      "cardBg": "blue"
     }
   }
 }

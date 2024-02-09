@@ -3,6 +3,7 @@ import { createGlobalStyle } from "styled-components";
 import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
+import { default as defaultMeta } from "@src/config/meta.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
 import { Config } from "@src/screens/config";
@@ -110,9 +111,12 @@ export default function Popup(): JSX.Element {
   if (!vendorData) {
     return (
       <LocaleProvider>
-        <div className="w-[300px]">
-          <Config afterSetUrl={checkIfVendorDataExists} />
-        </div>
+        <ThemeProvider theme={defaultMeta?.theme}>
+          <GlobalStyles />
+          <div className="w-[300px]">
+            <Config afterSetUrl={checkIfVendorDataExists} />
+          </div>
+        </ThemeProvider>
       </LocaleProvider>
     );
   }

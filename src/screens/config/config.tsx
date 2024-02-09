@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
 import { isValidUrl } from "@pages/background/utils";
-import { Dropdown } from "@components/ui";
+import { Button, Dropdown } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({
   label: s[1],
@@ -98,14 +98,14 @@ export function Config(props): JSX.Element {
         />
       </div>
       <div className="flex flex-row justify-center">
-        <button
-          onClick={handleSetUrl}
-          className="text-white bg-green p-2 flex flex-row focus:outline-none font-medium rounded-full text-sm"
+        <Button
+          handleClick={handleSetUrl}
+          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-5 py-2.5"
         >
           <p className="font-medium text-md">
             {formatMessage({ id: "action.save" })}
           </p>
-        </button>
+        </Button>
       </div>
     </>
   );

@@ -13,7 +13,7 @@ const StyledMain = styled.div`
     `1px solid ${
       props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
     }`};
-  background-color: ${(props) => props.theme?.colors?.bodyBg};
+  background: ${(props) => props.theme?.colors?.bodyBg};
   color: ${(props) => props.theme?.colors?.bodyColor};
 `;
 
