@@ -13,7 +13,7 @@ const StyledMain = styled.div`
     `1px solid ${
       props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
     }`};
-  background-color: ${(props) => props.theme?.colors?.bodyBg};
+  background: ${(props) => props.theme?.colors?.bodyBg};
   color: ${(props) => props.theme?.colors?.bodyColor};
 `;
 
@@ -81,13 +81,13 @@ export default function Dialog({
         {showPopupPrompt ? (
           <PopupPrompt
             message={
-              <p className="text-sm text-white">
+              <Text className="text-sm" $color="bodyColor">
                 {formatMessage({ id: "action.open" })}{" "}
                 <span className="inline-block">
                   <img src={logo} className="h-4" alt="logo" />
                 </span>{" "}
                 {formatMessage({ id: "action.toProceed" })}
-              </p>
+              </Text>
             }
           />
         ) : null}

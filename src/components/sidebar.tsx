@@ -112,7 +112,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
               className="flex items-center space-x-3 rtl:space-x-reverse"
             >
               <img src={props?.logo} className="h-8" alt="logo" />
-              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+              <span className="self-center text-2xl font-semibold whitespace-nowrap">
                 {props?.title}
               </span>
             </a>

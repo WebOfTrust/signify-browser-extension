@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button, Drawer } from "@components/ui";
+import { Button, Drawer, Text } from "@components/ui";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
@@ -71,7 +71,11 @@ export function IdentifierList(): JSX.Element {
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
-        header={formatMessage({ id: "identifier.create.title" })}
+        header={
+          <Text $color="subtext" className="text-xl capitalize font-bold">
+            {formatMessage({ id: "identifier.create.title" })}
+          </Text>
+        }
       >
         <CreateIdentifierCard
           isLoading={isCreating}
