@@ -1,8 +1,8 @@
-## UI Developer | Vendor JSON Guide 
+## Vendor customization guide
 
-As a vendor the first thing required is to host a json with following structure and provide the link to the customers.
+As a vendor the first thing required is to host a URL that returns JSON with the following structure and provide the link to the customers.
 
-In this example we have a json hosted at following link:
+In this example we have a JSON hosted at following link:
 
 Hosted JSON Link: https://www.npoint.io/docs/d59bd3ab0b31de863a20
 
@@ -78,7 +78,9 @@ To keep it simplistic, the colors are designed to work in a two-tone fashion.
 ### Content Script Dialog
 <img width="339" alt="Screenshot 2024-02-08 at 3 24 39 AM" src="https://github.com/WebOfTrust/signify-browser-extension/assets/19255438/a2ca3782-19de-47ae-92b1-05f07cdf9afd">
 
-The following set of JSON can be analyzed as multiple vendors (use the bin link provided at the bottom of the page).
+To compare some examples of different vendor JSON customizations, see these links below:
 - https://www.npoint.io/docs/1d388b8942c4ec3ed763
 - https://www.npoint.io/docs/a75a0383d2820a2153c1
 - https://www.npoint.io/docs/d59bd3ab0b31de863a20
+  
+You can click the 'bin' link at the bottom of those pages to see the raw JSON

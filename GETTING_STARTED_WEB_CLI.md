@@ -1,8 +1,8 @@
-## UI Developer | Web Cli Guide
+## Web application integration guide
 
 ### Installation
 
-1. Install [polaris-web-extension](EXTENSTION_LINK_HERE) from [Chrome Web Store](https://chromewebstore.google.com/category/extensions)
+1. Install [polaris-web-extension](FUTURE_DEPLOYED_EXTENSION_LINK) from [Chrome Web Store](https://chromewebstore.google.com/category/extensions)
 2. Install [polaris-web](https://www.npmjs.com/package/polaris-web) from npm
 `npm install polaris-web --save`
 
