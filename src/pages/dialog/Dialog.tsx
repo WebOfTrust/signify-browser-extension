@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { default as defaultMeta } from "@src/config/meta.json";
+import { default as defaultVendor } from "@src/config/vendor.json";
 import { Text, Subtext } from "@components/ui";
 import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
@@ -76,7 +76,7 @@ export default function Dialog({
   };
 
   return (
-    <ThemeProvider theme={vendorData?.theme ?? defaultMeta.theme}>
+    <ThemeProvider theme={vendorData?.theme ?? defaultVendor.theme}>
       <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
         {showPopupPrompt ? (
           <PopupPrompt

@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
-import { default as defaultMeta } from "@src/config/meta.json";
+import { default as defaultVendor } from "@src/config/vendor.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
 import { Config } from "@src/screens/config";
@@ -102,6 +102,7 @@ export default function Popup(): JSX.Element {
     if (error) {
       setConnectError(error?.message);
     } else {
+      setConnectError("");
       await checkConnection();
     }
   };
@@ -117,10 +118,12 @@ export default function Popup(): JSX.Element {
   if (!vendorData) {
     return (
       <LocaleProvider>
-        <ThemeProvider theme={defaultMeta?.theme}>
+        <ThemeProvider theme={defaultVendor?.theme}>
           <GlobalStyles />
           <div className="w-[300px]">
-            <Config afterSetUrl={checkIfVendorDataExists} />
+            <div className="grid grid-cols-1 gap-2">
+              <Config afterSetUrl={checkIfVendorDataExists} />
+            </div>
           </div>
         </ThemeProvider>
       </LocaleProvider>
