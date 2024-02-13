@@ -11,14 +11,12 @@ import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
 // TODO Harcoded for initial development. Will be removed soon
-const url = "https://keria-dev.rootsid.cloud/admin";
-const boot_url = "https://keria-dev.rootsid.cloud";
-const password = "CqjYb60NT9gZl8itwuttD9";
+const defaultAgentUrl = "https://keria-dev.rootsid.cloud/admin";
+const defaultPassword = "CqjYb60NT9gZl8itwuttD9";
 
 interface IConnect {
   passcode?: string;
   agentUrl?: string;
-  bootUrl?: string;
 }
 
 export const GlobalStyles = createGlobalStyle`
@@ -39,6 +37,7 @@ export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [connectError, setConnectError] = useState("");
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
 
@@ -85,19 +84,26 @@ export default function Popup(): JSX.Element {
     }
   }, [vendorData]);
 
-  const handleConnect = async (passcode?: string) => {
+  const handleConnect = async (passcode: string) => {
     setIsLoading(true);
-    await chrome.runtime.sendMessage<IMessage<IConnect>>({
+    const agentUrl = await configService.getAgentUrl();
+    const { data, error } = await chrome.runtime.sendMessage<
+      IMessage<IConnect>
+    >({
       type: "authentication",
       subtype: "connect-agent",
       data: {
-        passcode: password,
-        agentUrl: url,
-        bootUrl: boot_url,
+        passcode,
+        agentUrl,
       },
     });
-    await checkConnection();
+
     setIsLoading(false);
+    if (error) {
+      setConnectError(error?.message);
+    } else {
+      await checkConnection();
+    }
   };
 
   const handleDisconnect = async () => {
@@ -143,6 +149,7 @@ export default function Popup(): JSX.Element {
               ) : (
                 <div className="w-[300px]">
                   <Signin
+                    signinError={connectError}
                     handleConnect={handleConnect}
                     isLoading={isLoading}
                     logo={vendorData?.logo}

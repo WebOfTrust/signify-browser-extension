@@ -8,7 +8,8 @@ import { Signin as SigninComponent } from "./signin";
 interface ISignin {
   vendorUrl?: string;
   passcode?: string;
-  handleConnect: (passcode?: string) => void;
+  signinError?: string;
+  handleConnect: (passcode: string) => void;
   isLoading?: boolean;
   logo?: string;
   title?: string;
@@ -64,9 +65,20 @@ export function Signin(props: ISignin): JSX.Element {
         </button>
       </div>
       {showConfig ? (
-        <Config afterSetUrl={afterSetUrl} />
+        <>
+          <div className="flex flex-row justify-between px-2">
+            <button
+              onClick={() => setShowConfig(false)}
+              className=" cursor-pointer underline font-medium"
+            >
+              {formatMessage({ id: "action.back" })}
+            </button>
+          </div>
+          <Config afterSetUrl={afterSetUrl} />
+        </>
       ) : (
         <SigninComponent
+          signinError={props?.signinError}
           isLoading={props?.isLoading}
           handleConnect={props.handleConnect}
           logo={props.logo}

@@ -1,48 +1,57 @@
 export const getSyncStorage = () => {
-    return chrome.storage.sync;
-}
+  return chrome.storage.sync;
+};
 
 export const getNonSyncStorage = () => {
-    return chrome.storage.local;
-}
+  return chrome.storage.local;
+};
 
 const BrowserStorage = (storage = getNonSyncStorage()) => {
-    const _storage = storage;
+  const _storage = storage;
 
-    const getAllKeys = () => {
-        return new Promise(resolve => {
-            _storage.get(null, allItems => {
-                resolve(Object.keys(allItems));
-            });
-        });
-    }
+  const getAllKeys = () => {
+    return new Promise((resolve) => {
+      _storage.get(null, (allItems) => {
+        resolve(Object.keys(allItems));
+      });
+    });
+  };
 
-    const getValue = (name:string) => {
-        return new Promise(resolve => {
-            _storage.get(name, items => {
-                resolve(items[name]);
-            });
-        });
-    }
+  const getValue = (name: string) => {
+    return new Promise((resolve) => {
+      _storage.get(name, (items) => {
+        resolve(items[name]);
+      });
+    });
+  };
 
-    const removeKey = (name:string) => {
-        return new Promise<void>(resolve => {
-            _storage.remove(name, () => resolve());
-        });
-    }
+  const getValues = (names: string[]) => {
+    return new Promise((resolve) => {
+      _storage.get(names, (items) => {
+        resolve(items);
+      });
+    });
+  };
 
-    const setValue = (name:string, value:any) =>  {
-        return new Promise<void>(resolve => {
-            _storage.set({ [name]: value }, () => resolve());
-        });
-    }
+  const removeKey = (name: string) => {
+    return new Promise<void>((resolve) => {
+      _storage.remove(name, () => resolve());
+    });
+  };
 
-    return {
-        getAllKeys,
-        getValue,
-        removeKey,
-        setValue
-    }
-}
+  const setValue = (name: string, value: any) => {
+    return new Promise<void>((resolve) => {
+      _storage.set({ [name]: value }, () => resolve());
+    });
+  };
 
-export const browserStorageService = BrowserStorage()
+  return {
+    getAllKeys,
+    getValue,
+    getValues,
+    removeKey,
+    setValue,
+  };
+};
+
+export const browserStorageService = BrowserStorage();

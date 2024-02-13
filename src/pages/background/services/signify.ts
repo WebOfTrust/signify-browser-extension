@@ -27,10 +27,16 @@ const Signify = () => {
   };
 
   const connect = async (url: string, passcode: string) => {
-    await ready();
-    _client = new SignifyClient(url, passcode, Tier.low);
-    await _client.connect();
-    setTimeoutAlarm();
+    try {
+      await ready();
+      _client = new SignifyClient(url, passcode, Tier.low);
+      await _client.connect();
+      setTimeoutAlarm();
+    } catch (error) {
+      console.error(error);
+      _client = null;
+      return { error };
+    }
   };
 
   const isConnected = async () => {
@@ -44,7 +50,7 @@ const Signify = () => {
     console.log(
       _client
         ? "Signify client is connected"
-        : "Signify client is not connected"
+        : "Signify client is not connected", _client
     );
     return _client ? true : false;
   };
