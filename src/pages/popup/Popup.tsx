@@ -9,10 +9,6 @@ import { Signin } from "@src/screens/signin";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
-// TODO Harcoded for initial development. Will be removed soon
-const defaultAgentUrl = "https://keria-dev.rootsid.cloud/admin";
-const defaultPassword = "CqjYb60NT9gZl8itwuttD9";
-
 interface IConnect {
   passcode?: string;
   agentUrl?: string;
@@ -104,8 +100,10 @@ export default function Popup(): JSX.Element {
     setIsLoading(false);
     if (error) {
       setConnectError(error?.message);
+      setTimeout(() => {
+        setConnectError("");
+      }, 3000);
     } else {
-      setConnectError("");
       await checkConnection();
     }
   };

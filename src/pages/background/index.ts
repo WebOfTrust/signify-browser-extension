@@ -133,7 +133,7 @@ chrome.runtime.onMessage.addListener(function (
           sendResponse({
             error: {
               code: 404,
-              message: "Either agent url or passcode is not correct",
+              message: "either agent url or passcode is not correct",
             },
           });
         } else {
