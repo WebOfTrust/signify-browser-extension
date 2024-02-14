@@ -56,14 +56,16 @@ const Config = () => {
     await browserStorageService.setValue(CONFIG_ENUMS.AGENT_URL, token);
   };
 
-  const getAgentAndVendorUrl = async (): Promise<any> => {
+  const getAgentAndVendorInfo = async (): Promise<any> => {
     const resp = await browserStorageService.getValues([
       CONFIG_ENUMS.AGENT_URL,
       CONFIG_ENUMS.VENDOR_URL,
+      CONFIG_ENUMS.VENDOR_DATA
     ]);
     return {
       vendorUrl: resp[CONFIG_ENUMS.VENDOR_URL],
       agentUrl: resp[CONFIG_ENUMS.AGENT_URL],
+      vendorData: resp[CONFIG_ENUMS.VENDOR_DATA]
     };
   };
 
@@ -78,7 +80,7 @@ const Config = () => {
     setLanguage,
     getAgentUrl,
     setAgentUrl,
-    getAgentAndVendorUrl
+    getAgentAndVendorInfo
   };
 };
 

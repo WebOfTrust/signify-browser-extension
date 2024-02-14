@@ -11,13 +11,11 @@ const langMap = Object.entries(languageCodeMap).map((s) => ({
 }));
 
 export function Config(props): JSX.Element {
-  const [savedVendorUrl, setSavedVendorUrl] = useState("");
   const [vendorUrl, setVendorUrl] = useState("");
   const [vendorUrlError, setVendorUrlError] = useState("");
 
-  const [savedAgentUrl, setSavedAgentUrl] = useState("");
   const [agentUrl, setAgentUrl] = useState("");
-  const [agentUrlError, setAgentUrlError] = useState("");
+  const [mappedAgentUrls, setMappedAgentUrls] = useState();
 
   const { formatMessage } = useIntl();
   const { changeLocale, currentLocale } = useLocale();
@@ -26,16 +24,19 @@ export function Config(props): JSX.Element {
     id: "config.error.invalidVendorUrl",
   });
 
-  const getUrls = async () => {
-    const response = await configService.getAgentAndVendorUrl();
-    setSavedVendorUrl(response.vendorUrl);
-    setSavedAgentUrl(response.agentUrl);
+  const getVendorInfo = async () => {
+    const response = await configService.getAgentAndVendorInfo();
     setVendorUrl(response.vendorUrl);
     setAgentUrl(response.agentUrl);
+    const _agentUrls = response?.vendorData?.agentUrls?.map((url) => ({
+      label: url,
+      value: url,
+    }));
+    setMappedAgentUrls(_agentUrls);
   };
 
   useEffect(() => {
-    getUrls();
+    getVendorInfo();
   }, []);
 
   const checkErrorVendorUrl = () => {
@@ -48,40 +49,36 @@ export function Config(props): JSX.Element {
     }
   };
 
-  const checkErrorAgentUrl = () => {
-    if (!agentUrl || !isValidUrl(agentUrl)) {
-      setAgentUrlError(validUrlMsg);
-      return true;
-    } else {
-      setAgentUrlError("");
-      return false;
-    }
-  };
-
-  const handleSetAgentUrl = async () => {
-    const hasError = checkErrorAgentUrl();
-    if (!hasError) {
-      await configService.setAgentUrl(agentUrl);
-    }
+  const handleSetAgentUrl = async (_url) => {
+    await configService.setAgentUrl(_url);
+    setAgentUrl(_url);
   };
 
   const handleSetVendorUrl = async () => {
     let hasError = checkErrorVendorUrl();
     try {
       const resp = await (await fetch(vendorUrl)).json();
-      await configService.setData(resp);
-      const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
-      const bitmap = await createImageBitmap(imageBlob);
-      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-      const context = canvas.getContext("2d");
-      context?.drawImage(bitmap, 0, 0);
-      const imageData = context?.getImageData(
-        0,
-        0,
-        bitmap.width,
-        bitmap.height
-      );
-      chrome.action.setIcon({ imageData: imageData });
+      if (!resp?.agentUrls?.length) {
+        setVendorUrlError(
+          formatMessage({ id: "config.error.vendorData.agentUrls" })
+        );
+        hasError = true;
+      } else {
+        handleSetAgentUrl(resp?.agentUrls[0]);
+        await configService.setData(resp);
+        const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
+        const bitmap = await createImageBitmap(imageBlob);
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+        const context = canvas.getContext("2d");
+        context?.drawImage(bitmap, 0, 0);
+        const imageData = context?.getImageData(
+          0,
+          0,
+          bitmap.width,
+          bitmap.height
+        );
+        chrome.action.setIcon({ imageData: imageData });
+      }
     } catch (error) {
       setVendorUrlError(invalidVendorUrlError);
       hasError = true;
@@ -93,19 +90,14 @@ export function Config(props): JSX.Element {
   };
 
   const handleSave = async () => {
-    const hasError = checkErrorAgentUrl() || checkErrorVendorUrl();
+    const hasError = checkErrorVendorUrl();
     if (hasError) return;
-    if (savedAgentUrl !== agentUrl) {
-      await handleSetAgentUrl();
-    }
-    if (savedVendorUrl !== vendorUrl) {
-      await handleSetVendorUrl();
-    }
+    await handleSetVendorUrl();
   };
 
   return (
     <>
-      <div className="px-4">
+      <div className="px-4 relative mb-2">
         <p className="text-sm font-bold">
           {formatMessage({ id: "config.vendorUrl.label" })}
         </p>
@@ -122,25 +114,32 @@ export function Config(props): JSX.Element {
           onBlur={checkErrorVendorUrl}
         />
         {vendorUrlError ? <p className="text-red">{vendorUrlError}</p> : null}
+        <div className="absolute right-[16px] bottom-[-28px]">
+          <Button
+            handleClick={handleSave}
+            className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
+          >
+            <p className="font-medium text-md">
+              {formatMessage({ id: "action.save" })}
+            </p>
+          </Button>
+        </div>
       </div>
-      <div className="px-4">
-        <p className="text-sm font-bold">
-          {formatMessage({ id: "config.agentUrl.label" })}
-        </p>
-        <input
-          type="text"
-          id="agent_url"
-          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
-            agentUrlError ? " text-red border-red" : ""
-          } `}
-          placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
-          required
-          value={agentUrl}
-          onChange={(e) => setAgentUrl(e.target.value)}
-          onBlur={checkErrorAgentUrl}
-        />
-        {agentUrlError ? <p className="text-red">{agentUrlError}</p> : null}
-      </div>
+      {mappedAgentUrls?.length ? (
+        <div className="px-4">
+          <p className="text-sm font-bold">
+            {formatMessage({ id: "config.agentUrl.label" })}
+          </p>
+          <Dropdown
+            zIndex={10}
+            selectedOption={mappedAgentUrls?.find((s) => s.value === agentUrl)}
+            options={mappedAgentUrls}
+            onSelect={(option) => handleSetAgentUrl(option.value)}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="px-4">
         <p className="text-sm font-bold">
           {formatMessage({ id: "config.language.label" })}
@@ -150,16 +149,6 @@ export function Config(props): JSX.Element {
           options={langMap}
           onSelect={(option) => changeLocale(option.value)}
         />
-      </div>
-      <div className="flex flex-row justify-center">
-        <Button
-          handleClick={handleSave}
-          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-5 py-2.5"
-        >
-          <p className="font-medium text-md">
-            {formatMessage({ id: "action.save" })}
-          </p>
-        </Button>
       </div>
     </>
   );
