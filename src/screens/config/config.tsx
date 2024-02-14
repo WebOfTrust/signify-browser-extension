@@ -13,9 +13,8 @@ const langMap = Object.entries(languageCodeMap).map((s) => ({
 export function Config(props): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState("");
   const [vendorUrlError, setVendorUrlError] = useState("");
-
   const [agentUrl, setAgentUrl] = useState("");
-  const [mappedAgentUrls, setMappedAgentUrls] = useState();
+  const [agentUrlError, setAgentUrlError] = useState("");
 
   const { formatMessage } = useIntl();
   const { changeLocale, currentLocale } = useLocale();
@@ -28,11 +27,6 @@ export function Config(props): JSX.Element {
     const response = await configService.getAgentAndVendorInfo();
     setVendorUrl(response.vendorUrl);
     setAgentUrl(response.agentUrl);
-    const _agentUrls = response?.vendorData?.agentUrls?.map((url) => ({
-      label: url,
-      value: url,
-    }));
-    setMappedAgentUrls(_agentUrls);
   };
 
   useEffect(() => {
@@ -50,35 +44,32 @@ export function Config(props): JSX.Element {
   };
 
   const handleSetAgentUrl = async (_url) => {
+    if (!_url || !isValidUrl(_url)) {
+      setAgentUrlError(validUrlMsg);
+    }
     await configService.setAgentUrl(_url);
     setAgentUrl(_url);
+    setAgentUrlError("");
   };
 
   const handleSetVendorUrl = async () => {
     let hasError = checkErrorVendorUrl();
     try {
       const resp = await (await fetch(vendorUrl)).json();
-      if (!resp?.agentUrls?.length) {
-        setVendorUrlError(
-          formatMessage({ id: "config.error.vendorData.agentUrls" })
-        );
-        hasError = true;
-      } else {
-        handleSetAgentUrl(resp?.agentUrls[0]);
-        await configService.setData(resp);
-        const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
-        const bitmap = await createImageBitmap(imageBlob);
-        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-        const context = canvas.getContext("2d");
-        context?.drawImage(bitmap, 0, 0);
-        const imageData = context?.getImageData(
-          0,
-          0,
-          bitmap.width,
-          bitmap.height
-        );
-        chrome.action.setIcon({ imageData: imageData });
-      }
+      handleSetAgentUrl(resp?.agentUrl);
+      await configService.setData(resp);
+      const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
+      const bitmap = await createImageBitmap(imageBlob);
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      const context = canvas.getContext("2d");
+      context?.drawImage(bitmap, 0, 0);
+      const imageData = context?.getImageData(
+        0,
+        0,
+        bitmap.width,
+        bitmap.height
+      );
+      chrome.action.setIcon({ imageData: imageData });
     } catch (error) {
       setVendorUrlError(invalidVendorUrlError);
       hasError = true;
@@ -125,21 +116,23 @@ export function Config(props): JSX.Element {
           </Button>
         </div>
       </div>
-      {mappedAgentUrls?.length ? (
-        <div className="px-4">
-          <p className="text-sm font-bold">
-            {formatMessage({ id: "config.agentUrl.label" })}
-          </p>
-          <Dropdown
-            zIndex={10}
-            selectedOption={mappedAgentUrls?.find((s) => s.value === agentUrl)}
-            options={mappedAgentUrls}
-            onSelect={(option) => handleSetAgentUrl(option.value)}
-          />
-        </div>
-      ) : (
-        <></>
-      )}
+      <div className="px-4">
+        <p className="text-sm font-bold">
+          {formatMessage({ id: "config.agentUrl.label" })}
+        </p>
+        <input
+          type="text"
+          id="agent_url"
+          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
+            agentUrlError ? " text-red border-red" : ""
+          } `}
+          placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
+          required
+          value={agentUrl}
+          onChange={(e) => setAgentUrl(e.target.value)}
+          onBlur={() => handleSetAgentUrl(agentUrl)}
+        />
+      </div>
       <div className="px-4">
         <p className="text-sm font-bold">
           {formatMessage({ id: "config.language.label" })}
