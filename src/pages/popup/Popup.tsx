@@ -6,7 +6,6 @@ import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
-import { Config } from "@src/screens/config";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
 
@@ -35,6 +34,8 @@ const StyledLoader = styled.div`
 
 export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState();
+  const [showConfig, setShowConfig] = useState(false);
+
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [connectError, setConnectError] = useState("");
@@ -45,6 +46,8 @@ export default function Popup(): JSX.Element {
     const _vendorData = await configService.getData();
     if (_vendorData) {
       setVendorData(_vendorData);
+    } else {
+      setShowConfig(true);
     }
   };
 
@@ -115,24 +118,9 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
-  if (!vendorData) {
-    return (
-      <LocaleProvider>
-        <ThemeProvider theme={defaultVendor?.theme}>
-          <GlobalStyles />
-          <div className="w-[300px]">
-            <div className="grid grid-cols-1 gap-2">
-              <Config afterSetUrl={checkIfVendorDataExists} />
-            </div>
-          </div>
-        </ThemeProvider>
-      </LocaleProvider>
-    );
-  }
-
   return (
     <LocaleProvider>
-      <ThemeProvider theme={vendorData.theme}>
+      <ThemeProvider theme={vendorData?.theme ?? defaultVendor?.theme}>
         <GlobalStyles />
         <div>
           {isCheckingInitialConnection ? (
@@ -158,6 +146,9 @@ export default function Popup(): JSX.Element {
                     logo={vendorData?.logo}
                     title={vendorData?.title}
                     afterSetUrl={checkIfVendorDataExists}
+                    vendorData={vendorData}
+                    showConfig={showConfig}
+                    setShowConfig={setShowConfig}
                   />
                 </div>
               )}

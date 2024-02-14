@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { configService } from "@pages/background/services/config";
 import { Text } from "@components/ui";
 import { Config } from "@src/screens/config";
 import { Signin as SigninComponent } from "./signin";
@@ -14,35 +13,22 @@ interface ISignin {
   logo?: string;
   title?: string;
   afterSetUrl?: () => void;
+  showConfig: boolean;
+  setShowConfig: (state: boolean) => void;
 }
 
 export function Signin(props: ISignin): JSX.Element {
   const { formatMessage } = useIntl();
-  const [showConfig, setShowConfig] = useState(false);
-
-  const checkIfVendorUrlExist = async () => {
-    const _vendorUrl = await configService.getUrl();
-    setShowConfig(!_vendorUrl);
-  };
-
-  useEffect(() => {
-    checkIfVendorUrlExist();
-  }, []);
-
-  const afterSetUrl = async () => {
-    setShowConfig(false);
-    if (props.afterSetUrl) {
-      props?.afterSetUrl();
-    }
-  };
 
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
         <Text className="text-xl capitalize font-bold" $color="primary">
-          {showConfig ? formatMessage({ id: "account.settings" }) : props.title}
+          {props.showConfig
+            ? formatMessage({ id: "account.settings" })
+            : props.title}
         </Text>
-        <button onClick={() => setShowConfig(true)}>
+        <button onClick={() => props.setShowConfig(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -64,17 +50,21 @@ export function Signin(props: ISignin): JSX.Element {
           </svg>
         </button>
       </div>
-      {showConfig ? (
+      {props.showConfig ? (
         <>
-          <div className="flex flex-row justify-between px-2">
-            <button
-              onClick={() => setShowConfig(false)}
-              className=" cursor-pointer underline font-medium"
-            >
-              {formatMessage({ id: "action.back" })}
-            </button>
-          </div>
-          <Config afterSetUrl={afterSetUrl} />
+          {props?.vendorData ? (
+            <div className="flex flex-row justify-between px-2">
+              <button
+                onClick={() => props.setShowConfig(false)}
+                className=" cursor-pointer underline font-medium"
+              >
+                {formatMessage({ id: "action.back" })}
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+          <Config afterSetUrl={props?.afterSetUrl} />
         </>
       ) : (
         <SigninComponent
