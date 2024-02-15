@@ -83,7 +83,7 @@ export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
         </div>
         <Button
           handleClick={handleClick}
-          className="text-white self-end font-medium rounded-full text-sm px-2 py-1"
+          className="text-white self-end font-medium rounded-full text-xs px-2 py-1"
         >
           <>Sign in</>
         </Button>
