@@ -26,10 +26,10 @@ const Signify = () => {
     setTimeoutAlarm();
   };
 
-  const connect = async (url: string, passcode: string) => {
+  const connect = async (agentUrl: string, passcode: string) => {
     try {
       await ready();
-      _client = new SignifyClient(url, passcode, Tier.low);
+      _client = new SignifyClient(agentUrl, passcode, Tier.low);
       await _client.connect();
       setTimeoutAlarm();
     } catch (error) {
@@ -41,7 +41,7 @@ const Signify = () => {
 
   const isConnected = async () => {
     const passcode = await userService.getPasscode();
-    const url = await configService.getUrl();
+    const url = await configService.getAgentUrl();
     if (url && passcode && !_client) {
       await connect(url, passcode);
       await resetTimeoutAlarm();
