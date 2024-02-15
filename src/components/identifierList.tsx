@@ -24,7 +24,7 @@ export function IdentifierList(): JSX.Element {
 
   const initialFetchIdentifiers = async () => {
     setIsLoading(true);
-    fetchIdentifiers();
+    await fetchIdentifiers();
     setIsLoading(false);
   };
 
@@ -55,11 +55,6 @@ export function IdentifierList(): JSX.Element {
 
   return (
     <>
-      {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
-          <Loader size={6} />
-        </div>
-      ) : null}
       <div className=" flex flex-row-reverse">
         <Button
           handleClick={() => setShowDrawer(true)}
@@ -68,6 +63,11 @@ export function IdentifierList(): JSX.Element {
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
       </div>
+      {isLoading ? (
+        <div className="flex flex-row justify-center items-center">
+          <Loader size={6} />
+        </div>
+      ) : null}
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}

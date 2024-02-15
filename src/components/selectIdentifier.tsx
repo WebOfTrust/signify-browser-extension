@@ -15,11 +15,13 @@ export function SelectIdentifier(): JSX.Element {
   const { formatMessage } = useIntl();
 
   const fetchIdentifiers = async () => {
+    setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
       type: "fetch-resource",
       subtype: "identifiers",
     });
     console.log("data", data);
+    setIsLoading(false);
     setAids(data.aids);
   };
 
@@ -66,11 +68,6 @@ export function SelectIdentifier(): JSX.Element {
 
   return (
     <>
-      {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
-          <Loader size={6} />
-        </div>
-      ) : null}
       <div className=" flex flex-row-reverse">
         <Button
           handleClick={() => setShowDrawer(true)}
@@ -79,6 +76,11 @@ export function SelectIdentifier(): JSX.Element {
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
       </div>
+      {isLoading ? (
+        <div className="flex flex-row justify-center items-center">
+          <Loader size={6} />
+        </div>
+      ) : null}
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
