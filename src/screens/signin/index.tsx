@@ -76,16 +76,28 @@ export function Signin(props: ISignin): JSX.Element {
       )}
       <div className=" absolute bottom-2 w-full">
         <div className=" text-center">
-          <a href="#" className="font-medium hover:underline">
+          <a
+            href={props?.vendorData?.onboardingUrl}
+            className="font-medium hover:underline"
+            target="_blank"
+          >
             {formatMessage({ id: "account.onboard.cta" })}
           </a>
         </div>
         <div className=" text-center">
-          <a href="#" className="font-medium hover:underline">
+          <a
+            href={props?.vendorData?.docsUrl}
+            target="_blank"
+            className="font-medium hover:underline"
+          >
             {formatMessage({ id: "account.docs" })}
           </a>
           <strong> | </strong>
-          <a href="#" className="font-medium hover:underline">
+          <a
+            href={props?.vendorData?.supportUrl}
+            className="font-medium hover:underline"
+            target="_blank"
+          >
             {formatMessage({ id: "account.support" })}
           </a>
         </div>
