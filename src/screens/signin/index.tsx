@@ -51,21 +51,10 @@ export function Signin(props: ISignin): JSX.Element {
         </button>
       </div>
       {props.showConfig ? (
-        <>
-          {props?.vendorData ? (
-            <div className="flex flex-row justify-between px-2">
-              <button
-                onClick={() => props.setShowConfig(false)}
-                className=" cursor-pointer underline font-medium"
-              >
-                {formatMessage({ id: "action.back" })}
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-          <Config afterSetUrl={props?.afterSetUrl} />
-        </>
+        <Config
+          handleBack={() => props.setShowConfig(false)}
+          afterSetUrl={props?.afterSetUrl}
+        />
       ) : (
         <SigninComponent
           signinError={props?.signinError}

@@ -16,6 +16,8 @@ export function Config(props): JSX.Element {
   const [agentUrl, setAgentUrl] = useState("");
   const [agentUrlError, setAgentUrlError] = useState("");
 
+  const [vendorData, setVendorData] = useState();
+
   const { formatMessage } = useIntl();
   const { changeLocale, currentLocale } = useLocale();
   const validUrlMsg = formatMessage({ id: "config.error.enterUrl" });
@@ -27,6 +29,7 @@ export function Config(props): JSX.Element {
     const response = await configService.getAgentAndVendorInfo();
     setVendorUrl(response.vendorUrl);
     setAgentUrl(response.agentUrl);
+    setVendorData(response.vendorData);
   };
 
   useEffect(() => {
@@ -43,13 +46,20 @@ export function Config(props): JSX.Element {
     }
   };
 
-  const handleSetAgentUrl = async (_url) => {
+  const checkErrorAgentUrl = (_url) => {
     if (!_url || !isValidUrl(_url)) {
       setAgentUrlError(validUrlMsg);
+      return true;
     }
-    await configService.setAgentUrl(_url);
-    setAgentUrl(_url);
-    setAgentUrlError("");
+  };
+
+  const handleSetAgentUrl = async (_url) => {
+    const hasError = checkErrorAgentUrl(_url);
+    if (!hasError) {
+      await configService.setAgentUrl(_url);
+      setAgentUrl(_url);
+      setAgentUrlError("");
+    }
   };
 
   const handleSetVendorUrl = async () => {
@@ -86,8 +96,26 @@ export function Config(props): JSX.Element {
     await handleSetVendorUrl();
   };
 
+  const handleBack = async () => {
+    const hasError = checkErrorAgentUrl(agentUrl);
+    if (hasError) return;
+    props.handleBack();
+  };
+
   return (
     <>
+      {vendorData ? (
+        <div className="flex flex-row justify-between px-2">
+          <button
+            onClick={handleBack}
+            className="cursor-pointer underline font-medium"
+          >
+            {formatMessage({ id: "action.back" })}
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="px-4 relative mb-2">
         <p className="text-sm font-bold">
           {formatMessage({ id: "config.vendorUrl.label" })}
@@ -132,6 +160,7 @@ export function Config(props): JSX.Element {
           onChange={(e) => setAgentUrl(e.target.value)}
           onBlur={() => handleSetAgentUrl(agentUrl)}
         />
+        {agentUrlError ? <p className="text-red">{agentUrlError}</p> : null}
       </div>
       <div className="px-4">
         <p className="text-sm font-bold">

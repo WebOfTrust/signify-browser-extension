@@ -39,10 +39,12 @@ export default function Popup(): JSX.Element {
     useState(false);
 
   const checkIfVendorDataExists = async () => {
-    const _vendorData = await configService.getData();
-    if (_vendorData) {
-      setVendorData(_vendorData);
-    } else {
+    const resp = await configService.getAgentAndVendorInfo();
+    if (resp.vendorData) {
+      setVendorData(resp.vendorData);
+    }
+
+    if (!resp.agentUrl || !resp.vendorData) {
       setShowConfig(true);
     }
   };
