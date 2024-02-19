@@ -11,12 +11,42 @@ import following methods from `polaris-web`
 
 ```
 import {
+  subscribeToSignature, // subscribe to receive signature
+  unsubscribeFromSignature, // can be used to unsubscribe
   requestAid, // call to select aid for signing in
   requestCredential, // call to select credential for signing in
   requestAidORCred, // call to select either aid of credential
-  attemptAutoSignin, // call for auto signin
+  requestAutoSignin, // call for auto signin
 } from "polaris-web";
 ```
+
+### Usage subscribeToSignature
+`subscribeToSignature` is a mandatory subscription call that receives a function to return signature, e.g:
+```
+
+const handleSignifyData = (data) => {
+    console.log("signature", data);
+};
+
+useEffect(() => {
+    subscribeToSignature(handleSignifyData);
+    return () => {
+      unsubscribeFromSignature();
+    };
+  }, []);
+```
+
+### Usage unsubscribeFromSignature
+`unsubscribeFromSignature` to unsubscription e.g:
+```
+useEffect(() => {
+    subscribeToSignature(handleSignifyData);
+    return () => {
+      unsubscribeFromSignature();
+    };
+  }, []);
+```
+
 ### Usage requestAid
 `requestAid` is called when authentication with AID is required, e.g:
 ```
@@ -35,18 +65,10 @@ import {
 <button onClick={requestAidORCred}>Request AID or CREDENTIAL</button>
 ```
 
-### Usage attemptAutoSignin
-`attemptAutoSignin` is called to auto-signin with an already selected pair. The app asks to select one from the extension if there is no auto sign-in pair exists. 
+### Usage requestAutoSignin
+`requestAutoSignin` is called to auto-signin with an already selected pair. The app asks to select one from the extension if there is no auto sign-in pair exists. 
 ```
-const handleAutoSignin = async () => {
-    const resp = await attemptAutoSignin();
-    if (resp?.data) {
-       alert(
-          "Signed headers received\n" +
-            JSON.stringify(resp?.data.headers, null, 2)
-       );
-     }
-  };  
+<button onClick={requestAutoSignin}>Auto Sign in</button>  
 ```
 
 ### Example Usage
