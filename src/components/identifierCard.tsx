@@ -1,5 +1,6 @@
 import { obfuscateString } from "@pages/background/utils";
 import { useIntl } from "react-intl";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { Card, Text, Subtext } from "@components/ui";
 
 interface IIdentifier {}
@@ -34,18 +35,42 @@ export function IdentifierCard({ aid }): JSX.Element {
             />
           </svg>
         </div>
-        <div className="">
+        <div>
           <Text className="font-bold" $color="heading">
             {formatMessage({ id: "identifier.aid.label" })}{" "}
-            <Subtext
-              className="font-normal max-w-[200px] break-words"
-              $color="text"
-            >
-              {obfuscateString(aid.prefix)}
-            </Subtext>
+            <span data-tooltip-id={aid.prefix}>
+              <Subtext
+                className="cursor-pointer font-normal max-w-[200px] break-words"
+                $color="text"
+              >
+                {obfuscateString(aid.prefix)}
+              </Subtext>
+            </span>
           </Text>
         </div>
-
+        <ReactTooltip id={aid.prefix} clickable>
+          <div className="flex flex-row gap-x-1">
+            <p>{aid.prefix}</p>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(aid.prefix);
+              }}
+            >
+              <svg
+                className="w-3 h-3"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+              >
+                <path
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  d="M4 2a2 2 0 00-2 2v9a2 2 0 002 2h2v2a2 2 0 002 2h9a2 2 0 002-2V8a2 2 0 00-2-2h-2V4a2 2 0 00-2-2H4zm9 4V4H4v9h2V8a2 2 0 012-2h5zM8 8h9v9H8V8z"
+                />
+              </svg>
+            </button>
+          </div>
+        </ReactTooltip>
         {/* COMMENTED OUT FOR THE DEMO
       <div className="flex flex-row justify-between">
         <div className="">

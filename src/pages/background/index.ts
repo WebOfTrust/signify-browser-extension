@@ -58,20 +58,26 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "get-signed-headers"
       ) {
         const origin = sender.tab.url!;
-        console.log(message.data.signin)
+        console.log(message.data.signin);
 
         const signedHeaders = await signifyService.signHeaders(
-          message.data.signin.identifier? message.data.signin.identifier.name : message.data.signin.credential.issueeName,
+          message.data.signin.identifier
+            ? message.data.signin.identifier.name
+            : message.data.signin.credential.issueeName,
           origin
         );
         let jsonHeaders: { [key: string]: string } = {};
         for (const pair of signedHeaders.entries()) {
           jsonHeaders[pair[0]] = pair[1];
         }
-        sendResponse({ data: { 
-          headers: jsonHeaders,
-          credential: message.data.signin.credential? message.data.signin.credential: null
-        } });
+        sendResponse({
+          data: {
+            headers: jsonHeaders,
+            credential: message.data.signin.credential
+              ? message.data.signin.credential
+              : null,
+          },
+        });
       }
 
       if (
@@ -113,13 +119,27 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "authentication" &&
         message.subtype === "connect-agent"
       ) {
-        await signifyService.connect(
+        const resp = await signifyService.connect(
           message.data.agentUrl,
           message.data.passcode
         );
-        await userService.setPasscode(message.data.passcode);
-        const state = await signifyService.isConnected();
-        sendResponse({ data: { state } });
+        if (resp?.error) {
+          // TODO: improve error messages
+          // Current messages are not descrptive enough e.g
+          // bran must be 21 characters
+          // agent does not exist for controller <controller-id>
+          // using custom error message for now instead of resp?.error?.message
+
+          sendResponse({
+            error: {
+              code: 404,
+              message: resp?.error?.message,
+            },
+          });
+        } else {
+          await userService.setPasscode(message.data.passcode);
+          sendResponse({ data: { success: true } });
+        }
       }
     }
 
@@ -209,16 +229,15 @@ chrome.runtime.onMessage.addListener(function (
     ) {
       var credentials = await signifyService.listCredentials();
       const indentifiers = await signifyService.listIdentifiers();
-      console.log(indentifiers.aids)
+      console.log(indentifiers.aids);
       // Add holder name to credential
       credentials?.forEach((credential) => {
-        const issueePrefix = credential.sad.a.i
-        const aidIssuee = indentifiers.aids.find(aid => {
-          return aid.prefix === issueePrefix
-        })
-        credential.issueeName = aidIssuee.name
+        const issueePrefix = credential.sad.a.i;
+        const aidIssuee = indentifiers.aids.find((aid) => {
+          return aid.prefix === issueePrefix;
+        });
+        credential.issueeName = aidIssuee.name;
       });
-      
 
       sendResponse({ data: { credentials: credentials ?? [] } });
     }
@@ -236,7 +255,6 @@ chrome.runtime.onMessageExternal.addListener(function (
   (async () => {
     console.log("Message received from external source: ", sender);
     console.log("Message received from external request: ", message);
-
 
     if (
       message.type === "fetch-resource" &&
@@ -256,7 +274,9 @@ chrome.runtime.onMessageExternal.addListener(function (
 
       const signedHeaders = await signifyService.signHeaders(
         // sigin can either have identifier or credential
-        autoSignin?.identifier? autoSignin?.identifier.name : autoSignin?.credential?.issueeName,
+        autoSignin?.identifier
+          ? autoSignin?.identifier.name
+          : autoSignin?.credential?.issueeName,
         origin
       );
       let jsonHeaders: { [key: string]: string } = {};

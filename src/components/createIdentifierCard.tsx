@@ -74,6 +74,7 @@ export function CreateIdentifierCard(props): JSX.Element {
         <div className=" flex flex-row justify-center mt-2">
           <Button
             handleClick={onCreateIdentifier}
+            isLoading={props.isLoading}
             className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
           >
             <p className="font-medium text-md">

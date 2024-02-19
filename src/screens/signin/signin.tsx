@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@components/ui";
 import { useIntl } from "react-intl";
 
 interface ISignin {
   passcode?: string;
-  handleConnect: (passcode?: string) => void;
+  signinError?: string;
+  handleConnect: (passcode: string) => void;
   isLoading?: boolean;
   logo?: string;
 }
@@ -15,6 +16,12 @@ export function Signin(props: ISignin): JSX.Element {
   const [passcodeError, setPasscodeError] = useState("");
   const passcodeMessage = formatMessage({ id: "account.enterPasscode" });
   const connectMessage = formatMessage({ id: "action.connect" });
+
+  useEffect(() => {
+    if (props.signinError) {
+      setPasscodeError(props.signinError);
+    }
+  }, [props.signinError]);
 
   const onBlurPasscode = () => {
     if (!passcode) {

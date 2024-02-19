@@ -53,7 +53,7 @@ export function SelectCredential(): JSX.Element {
             <CredentialCard credential={credential} />
             <Button
               handleClick={() => createSigninWithCredential(credential)}
-              className="absolute right-0 bottom-0 text-white font-medium rounded-full text-xs px-2 py-1 "
+              className="absolute right-[2px] bottom-[2px] text-white font-medium rounded-full text-xs px-2 py-1 "
             >
               <>{`${formatMessage({ id: "action.select" })} >`}</>
             </Button>

@@ -5,6 +5,7 @@ const DropdownWrapper = styled.div`
   position: relative;
   display: inline-block;
   width: 100%;
+  z-index: ${({ zIndex }) => 50 + (zIndex ?? 0)};
 `;
 
 const DropdownButton = styled.button`
@@ -42,7 +43,7 @@ const DropdownItem = styled.li`
   }
 `;
 
-export const Dropdown = ({ selectedOption, options, onSelect }) => {
+export const Dropdown = ({ selectedOption, options, onSelect, zIndex }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDropdownClick = () => {
@@ -55,7 +56,7 @@ export const Dropdown = ({ selectedOption, options, onSelect }) => {
   };
 
   return (
-    <DropdownWrapper>
+    <DropdownWrapper zIndex={zIndex}>
       <DropdownButton onClick={handleDropdownClick}>
         {selectedOption?.label}
       </DropdownButton>

@@ -3,22 +3,15 @@ import { createGlobalStyle } from "styled-components";
 import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
-import { default as defaultMeta } from "@src/config/meta.json";
+import { default as defaultVendor } from "@src/config/vendor.json";
 import { IMessage } from "@pages/background/types";
 import { Signin } from "@src/screens/signin";
-import { Config } from "@src/screens/config";
 import { Loader } from "@components/loader";
 import { Main } from "@components/main";
-
-// TODO Harcoded for initial development. Will be removed soon
-const url = "https://keria-dev.rootsid.cloud/admin";
-const boot_url = "https://keria-dev.rootsid.cloud";
-const password = "CqjYb60NT9gZl8itwuttD9";
 
 interface IConnect {
   passcode?: string;
   agentUrl?: string;
-  bootUrl?: string;
 }
 
 export const GlobalStyles = createGlobalStyle`
@@ -37,15 +30,22 @@ const StyledLoader = styled.div`
 
 export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState();
+  const [showConfig, setShowConfig] = useState(false);
+
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [connectError, setConnectError] = useState("");
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
 
   const checkIfVendorDataExists = async () => {
-    const _vendorData = await configService.getData();
-    if (_vendorData) {
-      setVendorData(_vendorData);
+    const resp = await configService.getAgentAndVendorInfo();
+    if (resp.vendorData) {
+      setVendorData(resp.vendorData);
+    }
+
+    if (!resp.agentUrl || !resp.vendorData) {
+      setShowConfig(true);
     }
   };
 
@@ -85,19 +85,29 @@ export default function Popup(): JSX.Element {
     }
   }, [vendorData]);
 
-  const handleConnect = async (passcode?: string) => {
+  const handleConnect = async (passcode: string) => {
     setIsLoading(true);
-    await chrome.runtime.sendMessage<IMessage<IConnect>>({
+    const agentUrl = await configService.getAgentUrl();
+    const { data, error } = await chrome.runtime.sendMessage<
+      IMessage<IConnect>
+    >({
       type: "authentication",
       subtype: "connect-agent",
       data: {
-        passcode: password,
-        agentUrl: url,
-        bootUrl: boot_url,
+        passcode,
+        agentUrl,
       },
     });
-    await checkConnection();
+
     setIsLoading(false);
+    if (error) {
+      setConnectError(error?.message);
+      setTimeout(() => {
+        setConnectError("");
+      }, 3000);
+    } else {
+      await checkConnection();
+    }
   };
 
   const handleDisconnect = async () => {
@@ -108,22 +118,9 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
-  if (!vendorData) {
-    return (
-      <LocaleProvider>
-        <ThemeProvider theme={defaultMeta?.theme}>
-          <GlobalStyles />
-          <div className="w-[300px]">
-            <Config afterSetUrl={checkIfVendorDataExists} />
-          </div>
-        </ThemeProvider>
-      </LocaleProvider>
-    );
-  }
-
   return (
     <LocaleProvider>
-      <ThemeProvider theme={vendorData.theme}>
+      <ThemeProvider theme={vendorData?.theme ?? defaultVendor?.theme}>
         <GlobalStyles />
         <div>
           {isCheckingInitialConnection ? (
@@ -143,11 +140,15 @@ export default function Popup(): JSX.Element {
               ) : (
                 <div className="w-[300px]">
                   <Signin
+                    signinError={connectError}
                     handleConnect={handleConnect}
                     isLoading={isLoading}
                     logo={vendorData?.logo}
                     title={vendorData?.title}
                     afterSetUrl={checkIfVendorDataExists}
+                    vendorData={vendorData}
+                    showConfig={showConfig}
+                    setShowConfig={setShowConfig}
                   />
                 </div>
               )}
