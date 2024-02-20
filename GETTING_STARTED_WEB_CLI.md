@@ -73,3 +73,5 @@ useEffect(() => {
 
 ### Example Usage
 Visit [example-web/my-app](./example-web/my-app/src/App.js) to see example.
+
+Visit [Live Demo](https://signify-browser-extension.vercel.app/) for production demo.
