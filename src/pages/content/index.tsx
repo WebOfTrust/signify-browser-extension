@@ -66,7 +66,9 @@ window.addEventListener(
               (event.data.type === TAB_STATE.SELECT_CREDENTIAL ||
                 event.data.type === TAB_STATE.SELECT_ID_CRED)
             ) {
-              filteredSignins.push(signin);
+              if (!event.data.schema || signin.credential.schema.id === event.data.schema){
+                filteredSignins.push(signin);
+              }
             }
           });
 
