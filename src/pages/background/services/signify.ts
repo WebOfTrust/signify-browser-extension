@@ -2,16 +2,26 @@ import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 
-const PASSCODE_TIMEOUT = 5;
+const PASSCODE_TIMEOUT = 1;
 
 const Signify = () => {
   let _client: SignifyClient | null;
 
   chrome.alarms.onAlarm.addListener(async (alarm) => {
     if (alarm.name == "passcode-timeout") {
-      console.log("Timer expired, client and passcode zeroed out");
-      _client = null;
-      await userService.removePasscode();
+      
+      try {
+        const response = await chrome.runtime.sendMessage({type: "popup", subtype: "isOpened"});
+        if (response.data.isOpened) {
+          console.log("Timer expired, but extsenion is open. Resetting timer.");
+          resetTimeoutAlarm();
+        }
+      } catch (error) {
+          console.log("Timer expired, client and passcode zeroed out");
+          _client = null;
+          await userService.removePasscode();
+      }
+            
     }
   });
 
