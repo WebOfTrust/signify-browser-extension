@@ -13,11 +13,13 @@ import "./App.css";
 
 function App() {
   const [signifyData, setSignifyData] = useState();
+  const [parsedSignifyData, setParsedSignifyData] = useState();
 
   const fetchData = () => {
     const data = localStorage.getItem("signify-data");
     if (data) {
       setSignifyData(data);
+      setParsedSignifyData(JSON.parse(data));
     }
   };
 
@@ -40,25 +42,25 @@ function App() {
   const removeData = () => {
     localStorage.removeItem("signify-data");
     setSignifyData(null);
+    setParsedSignifyData(null);
   };
 
   return (
     <div className="App">
       <header className="App-header">
         {signifyData ? (
-          <div className="w-full p-4">
-            <div>
-              <label
-                htmlFor="message"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Signify Header Data
+          <div className="Welcome">
+            <div className="">
+              <h3>Welcome!</h3>
+              <label htmlFor="message" className="">
+                Signed in with{" "}
+                {parsedSignifyData?.credential ? "Credential" : "AID"}
               </label>
               <textarea
                 id="message"
                 rows="16"
                 defaultValue={signifyData}
-                className="block p-2.5 w-full text-black text-sm rounded-lg border border-gray-300"
+                className="w-full block p-2.5 text-black text-sm rounded-lg border border-gray-300"
                 placeholder="Write your thoughts here..."
               ></textarea>
             </div>
