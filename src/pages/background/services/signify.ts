@@ -2,7 +2,7 @@ import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 
-const PASSCODE_TIMEOUT = 1;
+const PASSCODE_TIMEOUT = 5;
 
 const Signify = () => {
   let _client: SignifyClient | null;
