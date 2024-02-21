@@ -29,7 +29,7 @@ const StyledLoader = styled.div`
 `;
 
 export default function Popup(): JSX.Element {
-  const [vendorData, setVendorData] = useState();
+  const [vendorData, setVendorData] = useState(defaultVendor);
   const [showConfig, setShowConfig] = useState(false);
 
   const [isConnected, setIsConnected] = useState(false);
@@ -44,7 +44,7 @@ export default function Popup(): JSX.Element {
       setVendorData(resp.vendorData);
     }
 
-    if (!resp.agentUrl || !resp.vendorData) {
+    if (!resp.agentUrl || !resp.hasOnboarded) {
       setShowConfig(true);
     }
   };
@@ -118,9 +118,10 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
+  const logo = vendorData?.logo ?? "/128_keri_logo.png";
   return (
     <LocaleProvider>
-      <ThemeProvider theme={vendorData?.theme ?? defaultVendor?.theme}>
+      <ThemeProvider theme={vendorData?.theme}>
         <GlobalStyles />
         <div>
           {isCheckingInitialConnection ? (
@@ -134,7 +135,7 @@ export default function Popup(): JSX.Element {
               {isConnected ? (
                 <Main
                   handleDisconnect={handleDisconnect}
-                  logo={vendorData?.logo}
+                  logo={logo}
                   title={vendorData?.title}
                 />
               ) : (
@@ -143,7 +144,7 @@ export default function Popup(): JSX.Element {
                     signinError={connectError}
                     handleConnect={handleConnect}
                     isLoading={isLoading}
-                    logo={vendorData?.logo}
+                    logo={logo}
                     title={vendorData?.title}
                     afterSetUrl={checkIfVendorDataExists}
                     vendorData={vendorData}

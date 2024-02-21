@@ -32,6 +32,31 @@
   color: #61dafb;
 }
 
+.auth-btn-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.auth-heading {
+  font-size: 1.125rem/* 18px */;
+  line-height: 1.75rem/* 28px */;
+  font-weight: 700;
+}
+
+.signify-data {
+  width: 100%;
+  display: block;
+  padding: 0.625rem;
+  color: black;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.5rem;
+  border-width: 1px;
+
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
