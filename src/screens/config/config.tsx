@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
-import { isValidUrl } from "@pages/background/utils";
+import { isValidUrl, setActionIcon } from "@pages/background/utils";
 import { Button, Dropdown } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({
@@ -16,7 +16,7 @@ export function Config(props): JSX.Element {
   const [agentUrl, setAgentUrl] = useState("");
   const [agentUrlError, setAgentUrlError] = useState("");
 
-  const [vendorData, setVendorData] = useState();
+  const [hasOnboarded, setHasOnboarded] = useState();
 
   const { formatMessage } = useIntl();
   const { changeLocale, currentLocale } = useLocale();
@@ -29,7 +29,7 @@ export function Config(props): JSX.Element {
     const response = await configService.getAgentAndVendorInfo();
     setVendorUrl(response.vendorUrl);
     setAgentUrl(response.agentUrl);
-    setVendorData(response.vendorData);
+    setHasOnboarded(response.hasOnboarded);
   };
 
   useEffect(() => {
@@ -55,10 +55,15 @@ export function Config(props): JSX.Element {
 
   const handleSetAgentUrl = async (_url) => {
     const hasError = checkErrorAgentUrl(_url);
-    if (!hasError) {
-      await configService.setAgentUrl(_url);
-      setAgentUrl(_url);
-      setAgentUrlError("");
+    if (hasError) return;
+
+    await configService.setAgentUrl(_url);
+    setAgentUrl(_url);
+    setAgentUrlError("");
+
+    if (!hasOnboarded) {
+      await configService.setHasOnboarded(true);
+      props.handleBack();
     }
   };
 
@@ -66,20 +71,13 @@ export function Config(props): JSX.Element {
     let hasError = checkErrorVendorUrl();
     try {
       const resp = await (await fetch(vendorUrl)).json();
-      handleSetAgentUrl(resp?.agentUrl);
+      if (resp?.agentUrl) {
+        await handleSetAgentUrl(resp?.agentUrl);
+      }
       await configService.setData(resp);
-      const imageBlob = await fetch(resp?.icon).then((r) => r.blob());
-      const bitmap = await createImageBitmap(imageBlob);
-      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-      const context = canvas.getContext("2d");
-      context?.drawImage(bitmap, 0, 0);
-      const imageData = context?.getImageData(
-        0,
-        0,
-        bitmap.width,
-        bitmap.height
-      );
-      chrome.action.setIcon({ imageData: imageData });
+      if (resp?.icon) {
+        await setActionIcon(resp?.icon);
+      }
     } catch (error) {
       setVendorUrlError(invalidVendorUrlError);
       hasError = true;
@@ -104,7 +102,7 @@ export function Config(props): JSX.Element {
 
   return (
     <>
-      {vendorData ? (
+      {hasOnboarded ? (
         <div className="flex flex-row justify-between px-2">
           <button
             onClick={handleBack}
@@ -139,14 +137,14 @@ export function Config(props): JSX.Element {
             className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
           >
             <p className="font-medium text-md">
-              {formatMessage({ id: "action.save" })}
+              {formatMessage({ id: "action.load" })}
             </p>
           </Button>
         </div>
       </div>
       <div className="px-4">
         <p className="text-sm font-bold">
-          {formatMessage({ id: "config.agentUrl.label" })}
+          {formatMessage({ id: "config.agentUrl.label" })} *
         </p>
         <input
           type="text"

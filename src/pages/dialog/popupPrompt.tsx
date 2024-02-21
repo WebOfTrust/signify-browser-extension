@@ -6,7 +6,7 @@ interface IPopupPrompt {
 
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme?.colors?.secondary};
-  color: ${({ theme }) => theme?.colors?.bodyColor};
+  color: ${({ theme }) => theme?.colors?.subtext};
 `;
 
 export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {

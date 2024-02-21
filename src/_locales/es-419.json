@@ -11,6 +11,7 @@
   "action.createNew": "Crear nuevo",
   "action.delete": "Borrar",
   "action.disconnect": "Desconectar",
+  "action.load": "Carga",
   "action.open": "Abrir",
   "action.save": "Guardar",
   "action.select": "Seleccionar",

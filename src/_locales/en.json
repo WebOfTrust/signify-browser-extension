@@ -11,6 +11,7 @@
   "action.createNew": "Create New",
   "action.delete": "Delete",
   "action.disconnect": "Disconnect",
+  "action.load": "Load",
   "action.open": "Open",
   "action.save": "Save",
   "action.select": "Select",

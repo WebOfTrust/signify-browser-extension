@@ -41,14 +41,24 @@ export const obfuscateString = (inputString: string) => {
   return `${prefix}...${suffix}`;
 };
 
-export const removeSlash = (site:string) => {
+export const removeSlash = (site: string) => {
   return site.replace(/\/$/, "");
 };
 
 export const hasWhiteSpace = (s: string) => {
-  return s.indexOf(' ') >= 0;
-}
+  return s.indexOf(" ") >= 0;
+};
 
-export const removeWhiteSpace = (s: string, replace="") => {
+export const removeWhiteSpace = (s: string, replace = "") => {
   return s.replace(/\s/g, replace);
-}
+};
+
+export const setActionIcon = async (iconUrl: string) => {
+  const imageBlob = await fetch(iconUrl).then((r) => r.blob());
+  const bitmap = await createImageBitmap(imageBlob);
+  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+  const context = canvas.getContext("2d");
+  context?.drawImage(bitmap, 0, 0);
+  const imageData = context?.getImageData(0, 0, bitmap.width, bitmap.height);
+  chrome.action.setIcon({ imageData: imageData });
+};
