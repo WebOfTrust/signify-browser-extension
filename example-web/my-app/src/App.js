@@ -50,9 +50,9 @@ function App() {
       <header className="App-header">
         {signifyData ? (
           <div className="Welcome">
-            <div className="">
+            <div>
               <h3>Welcome!</h3>
-              <label htmlFor="message" className="">
+              <label htmlFor="message">
                 Signed in with{" "}
                 {parsedSignifyData?.credential ? "Credential" : "AID"}
               </label>
@@ -60,7 +60,7 @@ function App() {
                 id="message"
                 rows="16"
                 defaultValue={signifyData}
-                className="w-full block p-2.5 text-black text-sm rounded-lg border border-gray-300"
+                className="signify-data"
                 placeholder="Write your thoughts here..."
               ></textarea>
             </div>
@@ -70,9 +70,28 @@ function App() {
           </div>
         ) : (
           <>
-            <img src={logo} alt="logo" />
-            <div className="flex flex-col gap-y-2 mt-2">
-              <p className=" text-lg font-bold">Authenticate with</p>
+            {/* <img src={logo} alt="logo" /> */}
+            <div className="auth-btn-container">
+              <Button
+                href="https://drive.google.com/drive/folders/1VmBAs3ba6qWT1I9y1Uk7hxvU_i-TKQTN?usp=sharing"
+                target="_blank"
+                size="md"
+                variant="contained"
+              >
+                Download Extension
+              </Button>
+              <Button
+                target="_blank"
+                href="https://www.loom.com/share/2b4208bf57de4eb89b0950865497a817?sid=faa098d8-4e8a-4938-9ba5-6f3780983d09"
+                size="md"
+                variant="contained"
+                onClick={requestAid}
+              >
+                See Video
+              </Button>
+            </div>
+            <div className="auth-btn-container">
+              <p className="auth-heading">Authenticate with</p>
               <Button variant="contained" color="success" onClick={requestAid}>
                 AID
               </Button>
