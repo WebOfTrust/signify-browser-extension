@@ -37,7 +37,7 @@ function App() {
     return () => {
       unsubscribeFromSignature();
     };
-  }, []);
+  });
 
   const removeData = () => {
     localStorage.removeItem("signify-data");

@@ -10,7 +10,7 @@ const langMap = Object.entries(languageCodeMap).map((s) => ({
   value: s[0],
 }));
 
-export function Config(props): JSX.Element {
+export function Config(props:any): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState("");
   const [vendorUrlError, setVendorUrlError] = useState("");
   const [agentUrl, setAgentUrl] = useState("");
@@ -54,7 +54,7 @@ export function Config(props): JSX.Element {
   };
 
   const handleSetAgentUrl = async (_url) => {
-    const hasError = checkErrorAgentUrl(_url);
+    const hasError = (_url);
     if (!hasError) {
       await configService.setAgentUrl(_url);
       setAgentUrl(_url);
