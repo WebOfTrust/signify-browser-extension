@@ -54,7 +54,7 @@ export function Config(props:any): JSX.Element {
   };
 
   const handleSetAgentUrl = async (_url) => {
-    const hasError = (_url);
+    const hasError = checkErrorAgentUrl(_url);
     if (!hasError) {
       await configService.setAgentUrl(_url);
       setAgentUrl(_url);
