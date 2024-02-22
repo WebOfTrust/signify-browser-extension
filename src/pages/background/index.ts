@@ -19,7 +19,7 @@ chrome.runtime.onInstalled.addListener(function (object) {
   }
 });
 
-// Handle messages
+// Listener to handle internal messages from content scripts from active tab and popup
 chrome.runtime.onMessage.addListener(function (
   message: IMessage<any>,
   sender,
@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
       }
 
-      // Handle messages from Popup
+    // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
       console.log(
         "Message received from browser extension: " +
@@ -247,6 +247,7 @@ chrome.runtime.onMessage.addListener(function (
   return true;
 });
 
+// Listener to handle external messages from allowed web pages with auto signin
 chrome.runtime.onMessageExternal.addListener(function (
   message,
   sender,

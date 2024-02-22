@@ -17,6 +17,9 @@ Following is the JSON structure
   "title": "Provenant",
   "logo": "https://media.licdn.com/dms/image/C4E0BAQG2_zXeSh-Qdw/company-logo_200_200/0/1663180132032/provenant_inc_logo?e=1715212800&v=beta&t=yINW7CaXVG50h3Ay7vu13OpY4mAu30qpijZwJAe5g-I",
   "icon":"https://cdn-icons-png.flaticon.com/128/3291/3291695.png",
+  "onboardingUrl": "https://github.com/signup",
+  "docsUrl": "https://docs.github.com",
+  "supportUrl": "https://support.github.com",
   "theme": {
     "colors": {
       "primary": "#004DB5",
@@ -57,6 +60,15 @@ This attribute is used to indicate the vendor icon.
 
 ### icon
 This attribute is used to set the icon provided by the vendor as extension icon.
+
+### onboardingUrl
+Hyperlink asociated to the text "Don't have a KERIA agent?"
+
+### docsUrl
+Hyperlink asociated to the text "docs"
+
+### supportUrl
+Hyperlink asociated to the text "support"
 
 ### theme
 this attribute is the essence of colors (and others e.g. spacing, fonts, etc in the FUTURE) customization. 

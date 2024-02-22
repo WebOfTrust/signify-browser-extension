@@ -10,7 +10,7 @@ const langMap = Object.entries(languageCodeMap).map((s) => ({
   value: s[0],
 }));
 
-export function Config(props): JSX.Element {
+export function Config(props:any): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState("");
   const [vendorUrlError, setVendorUrlError] = useState("");
   const [agentUrl, setAgentUrl] = useState("");
