@@ -3,9 +3,16 @@ import { useIntl } from "react-intl";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { Card, Text, Subtext } from "@components/ui";
 
-interface IIdentifier {}
+interface IIdentifier {
+  name: string;
+  prefix: string;
+}
 
-export function IdentifierCard({ aid }): JSX.Element {
+interface IIdentifierCard {
+  aid: IIdentifier;
+}
+
+export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
   const { formatMessage } = useIntl();
 
   return (

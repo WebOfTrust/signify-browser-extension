@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { TAB_STATE } from "@pages/popup/constants";
-import { SigninCard } from "@components/signinCard";
+import { SigninCard, ISignin } from "@components/signinCard";
 import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 
+interface IResourceSignin {
+  index: number;
+  signin?: ISignin;
+}
+
 export function SigninList(): JSX.Element {
-  const [signins, setSignins] = useState([]);
+  const [signins, setSignins] = useState<ISignin[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { formatMessage } = useIntl();
   const fetchSignins = async () => {
@@ -20,7 +25,9 @@ export function SigninList(): JSX.Element {
   };
 
   const deleteSignin = async (index: number) => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await chrome.runtime.sendMessage<
+      IMessage<IResourceSignin>
+    >({
       type: "delete-resource",
       subtype: "signins",
       data: {
@@ -39,9 +46,11 @@ export function SigninList(): JSX.Element {
     }
   };
 
-  const updateAutoSignin = async (index: number, signin) => {
+  const updateAutoSignin = async (index: number, signin: ISignin) => {
     console.log("signin", signin, index);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await chrome.runtime.sendMessage<
+      IMessage<IResourceSignin>
+    >({
       type: "update-resource",
       subtype: "auto-signin",
       data: {

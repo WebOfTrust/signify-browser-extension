@@ -6,6 +6,10 @@ import { Loader } from "@components/loader";
 import { IMessage } from "@pages/background/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
+interface ICreateIdentifier {
+  name: string;
+}
+
 export function IdentifierList(): JSX.Element {
   const [aids, setAids] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +41,11 @@ export function IdentifierList(): JSX.Element {
     initialFetchIdentifiers();
   }, []);
 
-  const handleCreateIdentifier = async (name) => {
+  const handleCreateIdentifier = async (name: string) => {
     setIsCreating(true);
-    const { data, error } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data, error } = await chrome.runtime.sendMessage<
+      IMessage<ICreateIdentifier>
+    >({
       type: "create-resource",
       subtype: "identifier",
       data: { name },

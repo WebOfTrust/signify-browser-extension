@@ -2,11 +2,25 @@ import { useIntl } from "react-intl";
 import { CustomSwitch } from "@components/customSwitch";
 import { Card, Button, Text } from "@components/ui";
 
+export interface ISignin {
+  domain: string;
+  identifier?: {
+    name?: string;
+  };
+  updatedAt: string;
+  autoSignin: boolean;
+}
+interface ISigninCard {
+  signin: ISignin;
+  handleDelete: () => void;
+  handleAutoSignin: () => void;
+}
+
 export function SigninCard({
   signin,
   handleDelete,
   handleAutoSignin,
-}): JSX.Element {
+}: ISigninCard): JSX.Element {
   const { formatMessage } = useIntl();
   return (
     <Card>

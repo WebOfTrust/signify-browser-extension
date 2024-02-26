@@ -79,7 +79,11 @@ interface ISidebar {
   logo?: string;
 }
 
-const StyledMenu = styled.div`
+interface IStyledMenu {
+  $isActive?: boolean;
+}
+
+const StyledMenu = styled.div<IStyledMenu>`
   background-color: ${({ $isActive, theme }) =>
     $isActive ? theme?.colors?.secondary : ""};
   color: ${({ $isActive, theme }) => ($isActive ? theme?.colors?.subtext : "")};
