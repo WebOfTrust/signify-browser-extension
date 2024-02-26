@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-// import { default as defaultVendor } from "@src/config/vendor.json";
 import { Text, Subtext } from "@components/ui";
+import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
@@ -17,15 +17,25 @@ const StyledMain = styled.div`
   color: ${(props) => props.theme?.colors?.bodyColor};
 `;
 
-export default function Dialog({
+interface IDialog {
+  isConnected: boolean;
+  tabUrl: string;
+  eventType: string;
+  removeDialog: () => void;
+  signins: ISignin[];
+  vendorData: IVendorData;
+  autoSigninObjExists?: boolean;
+}
+
+export function Dialog({
   isConnected = false,
   vendorData,
   tabUrl = "",
   signins = [],
-  autoSigninObj,
+  autoSigninObjExists,
   eventType = "",
   removeDialog,
-}): JSX.Element {
+}: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const logo =
     vendorData?.logo ??
@@ -33,7 +43,7 @@ export default function Dialog({
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
   const showRequestAuthPrompt =
     !signins.length ||
-    (!autoSigninObj && eventType === TAB_STATE.SELECT_AUTO_SIGNIN) ||
+    (!autoSigninObjExists && eventType === TAB_STATE.SELECT_AUTO_SIGNIN) ||
     !isConnected;
 
   const getEventTypeAppState = () => {
@@ -48,7 +58,7 @@ export default function Dialog({
   useEffect(() => {
     if (
       !signins?.length ||
-      (!autoSigninObj && eventType === TAB_STATE.SELECT_AUTO_SIGNIN)
+      (!autoSigninObjExists && eventType === TAB_STATE.SELECT_AUTO_SIGNIN)
     ) {
       setTabState(getEventTypeAppState());
       setShowPopupPrompt(true);
@@ -137,54 +147,6 @@ export default function Dialog({
             </>
           )}
         </StyledMain>
-        {/* {vendorData ? (
-          <StyledMain className="items-center justify-center rounded text-center p-3">
-            <div className="flex flex-row gap-x-2 mb-2">
-              <img src={logo} className="h-8" alt="logo" />
-              <Text className="text-2xl font-bold" $color="bodyColor">
-                {formatMessage({ id: "signin.with" })} {vendorData?.title}
-              </Text>
-            </div>
-            {showRequestAuthPrompt ? (
-              <Text
-                className="mt-2 text-sm max-w-[280px] font-bold"
-                $color="bodyColor"
-              >
-                <Subtext className="" $color="">
-                  {tabUrl}
-                </Subtext>{" "}
-                {formatMessage({ id: "signin.requestAuth" })}{" "}
-                {formatMessage({ id: getTextKeyByEventType() })}
-              </Text>
-            ) : (
-              <>
-                {signins?.map((signin) => (
-                  <SigninItem signin={signin} />
-                ))}
-                <div
-                  onClick={handleClick}
-                  className="font-bold text-sm cursor-pointer"
-                >
-                  {formatMessage({ id: "action.open" })}{" "}
-                  <span className="inline-block">
-                    <img src={logo} className="h-4" alt="logo" />
-                  </span>{" "}
-                  {formatMessage({ id: "action.toSelectOther" })}{" "}
-                  {formatMessage({ id: getTextKeyByEventType() })}
-                </div>
-              </>
-            )}
-          </StyledMain>
-        ) : (
-          <div className="items-center justify-center rounded text-center p-3 bg-white">
-            <div className="flex flex-row gap-x-2 mb-2">
-              <img src={logo} className="h-8" alt="logo" />
-              <p className="text-xl font-bold text-red">
-                {formatMessage({ id: "config.error.setUrl" })}
-              </p>
-            </div>
-          </div>
-        )} */}
       </div>
     </ThemeProvider>
   );

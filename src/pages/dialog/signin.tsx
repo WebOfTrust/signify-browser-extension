@@ -2,6 +2,7 @@ import { TAB_STATE } from "@pages/popup/constants";
 import { styled } from "styled-components";
 import { Button, Text, Subtext } from "@components/ui";
 import { setTabState } from "@pages/content/index";
+import { ISignin } from "@config/types";
 
 const StyledSigninItem = styled.div`
   background-color: ${(props) => props.theme?.colors?.cardBg};
@@ -9,7 +10,7 @@ const StyledSigninItem = styled.div`
 `;
 
 // TODO do not pass the full signins stored object (only AID name, schema name, web url)
-export const SigninItem = ({ signin }: { signin: any }): JSX.Element => {
+export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
   const handleClick = async () => {
     const headers = await chrome.runtime.sendMessage({
       type: "authentication",

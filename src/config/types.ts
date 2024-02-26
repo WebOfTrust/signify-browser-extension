@@ -29,3 +29,17 @@ export interface IVendorData {
     };
   };
 }
+
+export interface ISignin {
+  domain: string;
+  identifier?: {
+    name?: string;
+  };
+  credential?: {
+    schema?: {
+      title: string
+    }
+  };
+  updatedAt: string;
+  autoSignin: boolean;
+}

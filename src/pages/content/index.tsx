@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { IMessage } from "@config/types";
 import "./style.css";
-import Dialog from "../dialog/Dialog";
+import { Dialog } from "../dialog/Dialog";
 import { TAB_STATE } from "../popup/constants";
 
 var tabState = TAB_STATE.NONE;
@@ -165,7 +165,7 @@ function insertDialog(
         vendorData={vendorData}
         tabUrl={tabUrl}
         signins={signins}
-        autoSigninObj={autoSigninObj}
+        autoSigninObjExists={!!autoSigninObj}
         eventType={eventType}
         removeDialog={removeDialog}
       />

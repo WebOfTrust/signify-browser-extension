@@ -1,14 +1,7 @@
 import { useIntl } from "react-intl";
 import { Card, Button, Text, Switch } from "@components/ui";
+import { ISignin } from "@config/types";
 
-export interface ISignin {
-  domain: string;
-  identifier?: {
-    name?: string;
-  };
-  updatedAt: string;
-  autoSignin: boolean;
-}
 interface ISigninCard {
   signin: ISignin;
   handleDelete: () => void;
