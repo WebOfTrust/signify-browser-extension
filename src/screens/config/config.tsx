@@ -10,7 +10,7 @@ const langMap = Object.entries(languageCodeMap).map((s) => ({
   value: s[0],
 }));
 
-export function Config(props:any): JSX.Element {
+export function Config(props: any): JSX.Element {
   const [vendorUrl, setVendorUrl] = useState("");
   const [vendorUrlError, setVendorUrlError] = useState("");
   const [agentUrl, setAgentUrl] = useState("");
@@ -46,14 +46,14 @@ export function Config(props:any): JSX.Element {
     }
   };
 
-  const checkErrorAgentUrl = (_url) => {
+  const checkErrorAgentUrl = (_url: string) => {
     if (!_url || !isValidUrl(_url)) {
       setAgentUrlError(validUrlMsg);
       return true;
     }
   };
 
-  const handleSetAgentUrl = async (_url) => {
+  const handleSetAgentUrl = async (_url: string) => {
     const hasError = checkErrorAgentUrl(_url);
     if (hasError) return;
 

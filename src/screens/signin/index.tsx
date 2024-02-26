@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { Text } from "@components/ui";
 import { Config } from "@src/screens/config";
+import { IVendorData } from "@config/types";
 import { Signin as SigninComponent } from "./signin";
 
 interface ISignin {
   vendorUrl?: string;
+  vendorData?: IVendorData;
   passcode?: string;
   signinError?: string;
   handleConnect: (passcode: string) => void;

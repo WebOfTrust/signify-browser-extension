@@ -2,7 +2,7 @@ import { browserStorageService } from "@pages/background/services/browser-storag
 import { configService } from "@pages/background/services/config";
 import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
-import { IMessage } from "@pages/background/types";
+import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { removeSlash, getCurrentDomain } from "@pages/background/utils";
 import {
@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
       }
 
-    // Handle messages from Popup
+      // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
       console.log(
         "Message received from browser extension: " +
