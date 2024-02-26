@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
-import { Button } from "@components/ui";
-import { Loader } from "@components/loader";
+import { Button, Loader } from "@components/ui";
 import { IMessage } from "@pages/background/types";
 
 export function SelectCredential(): JSX.Element {

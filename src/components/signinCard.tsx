@@ -1,6 +1,5 @@
 import { useIntl } from "react-intl";
-import { CustomSwitch } from "@components/customSwitch";
-import { Card, Button, Text } from "@components/ui";
+import { Card, Button, Text, Switch } from "@components/ui";
 
 export interface ISignin {
   domain: string;
@@ -75,7 +74,7 @@ export function SigninCard({
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "signin.autoSignin" })}
             </Text>
-            <CustomSwitch
+            <Switch
               isChecked={signin.autoSignin}
               handleToggle={handleAutoSignin}
             />

@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Loader } from "@components/loader";
+import { Loader } from "@components/ui";
 
 interface IButton {
   handleClick: () => void;

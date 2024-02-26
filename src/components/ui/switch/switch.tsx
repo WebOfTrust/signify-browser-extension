@@ -16,15 +16,12 @@ const icon = (
   </svg>
 );
 
-interface ICustomSwitch {
+interface ISwitch {
   isChecked: boolean;
   handleToggle: () => void;
 }
 
-export function CustomSwitch({
-  handleToggle,
-  isChecked,
-}: ICustomSwitch): JSX.Element {
+export function Switch({ handleToggle, isChecked }: ISwitch): JSX.Element {
   return (
     <button
       className={`w-12 h-6 rounded-full flex items-center transition duration-300 focus:outline-none shadow bg-gray-light ${

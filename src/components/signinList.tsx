@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { TAB_STATE } from "@pages/popup/constants";
 import { SigninCard, ISignin } from "@components/signinCard";
-import { Loader } from "@components/loader";
+import { Loader } from "@components/ui";
 import { IMessage } from "@pages/background/types";
 
 interface IResourceSignin {
