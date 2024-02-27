@@ -1,12 +1,18 @@
 import { useIntl } from "react-intl";
-import { CustomSwitch } from "@components/customSwitch";
-import { Card, Button, Text } from "@components/ui";
+import { Card, Button, Text, Switch } from "@components/ui";
+import { ISignin } from "@config/types";
+
+interface ISigninCard {
+  signin: ISignin;
+  handleDelete: () => void;
+  handleAutoSignin: () => void;
+}
 
 export function SigninCard({
   signin,
   handleDelete,
   handleAutoSignin,
-}): JSX.Element {
+}: ISigninCard): JSX.Element {
   const { formatMessage } = useIntl();
   return (
     <Card>
@@ -61,7 +67,7 @@ export function SigninCard({
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "signin.autoSignin" })}
             </Text>
-            <CustomSwitch
+            <Switch
               isChecked={signin.autoSignin}
               handleToggle={handleAutoSignin}
             />

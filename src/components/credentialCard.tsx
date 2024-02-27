@@ -2,10 +2,22 @@ import { useIntl } from "react-intl";
 import { Text, Subtext, Card } from "@components/ui";
 
 interface ICredential {
-  credential: any;
+  issueeName: string;
+  schema: {
+    title: string;
+    credentialType: string;
+    description: string;
+  };
+  status: {
+    et: string;
+  };
 }
 
-export function CredentialCard({ credential }: ICredential): JSX.Element {
+interface ICredentialCard {
+  credential: ICredential;
+}
+
+export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
   const { formatMessage } = useIntl();
 
   return (

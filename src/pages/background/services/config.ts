@@ -70,7 +70,7 @@ const Config = () => {
       CONFIG_ENUMS.VENDOR_URL,
       CONFIG_ENUMS.VENDOR_DATA,
       CONFIG_ENUMS.HAS_ONBOARDED
-    ]);
+    ]) as any;
     return {
       vendorUrl: resp[CONFIG_ENUMS.VENDOR_URL],
       agentUrl: resp[CONFIG_ENUMS.AGENT_URL],

@@ -1,16 +1,16 @@
-interface ICustomRadio {
+interface IRadio {
   id?: string;
   component?: JSX.Element;
   checked: boolean;
   onClick: () => void;
 }
 
-export function CustomRadio({
+export function Radio({
   id,
   component,
   checked,
   onClick,
-}: ICustomRadio): JSX.Element {
+}: IRadio): JSX.Element {
   return (
     <div
       onClick={onClick}

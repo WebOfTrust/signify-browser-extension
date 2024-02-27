@@ -1,8 +1,8 @@
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
-import { IMessage } from "@pages/background/types";
+import { IMessage } from "@config/types";
 import "./style.css";
-import Dialog from "../dialog/Dialog";
+import { Dialog } from "../dialog/Dialog";
 import { TAB_STATE } from "../popup/constants";
 
 var tabState = TAB_STATE.NONE;
@@ -66,7 +66,10 @@ window.addEventListener(
               (event.data.type === TAB_STATE.SELECT_CREDENTIAL ||
                 event.data.type === TAB_STATE.SELECT_ID_CRED)
             ) {
-              if (!event.data.schema || signin.credential.schema.id === event.data.schema){
+              if (
+                !event.data.schema ||
+                signin.credential.schema.id === event.data.schema
+              ) {
                 filteredSignins.push(signin);
               }
             }
@@ -162,7 +165,7 @@ function insertDialog(
         vendorData={vendorData}
         tabUrl={tabUrl}
         signins={signins}
-        autoSigninObj={autoSigninObj}
+        autoSigninObjExists={!!autoSigninObj}
         eventType={eventType}
         removeDialog={removeDialog}
       />

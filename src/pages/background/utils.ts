@@ -41,7 +41,7 @@ export const obfuscateString = (inputString: string) => {
   return `${prefix}...${suffix}`;
 };
 
-export const removeSlash = (site: string) => {
+export const removeSlash = (site = "") => {
   return site.replace(/\/$/, "");
 };
 

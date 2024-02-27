@@ -4,9 +4,9 @@ import { configService } from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
-import { IMessage } from "@pages/background/types";
+import { IVendorData, IMessage } from "@config/types";
 import { Signin } from "@src/screens/signin";
-import { Loader } from "@components/loader";
+import { Loader } from "@components/ui";
 import { Main } from "@components/main";
 
 interface IConnect {
@@ -29,7 +29,7 @@ const StyledLoader = styled.div`
 `;
 
 export default function Popup(): JSX.Element {
-  const [vendorData, setVendorData] = useState(defaultVendor);
+  const [vendorData, setVendorData] = useState<IVendorData>(defaultVendor);
   const [showConfig, setShowConfig] = useState(false);
 
   const [isConnected, setIsConnected] = useState(false);

@@ -3,9 +3,19 @@ import { useIntl } from "react-intl";
 import { Button } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 
-export function CreateIdentifierCard(props): JSX.Element {
+interface ICreateIdentifierCard {
+  error?: string | JSX.Element;
+  handleCreateIdentifier: (name: string) => void;
+  isLoading?: boolean;
+}
+
+export function CreateIdentifierCard(
+  props: ICreateIdentifierCard
+): JSX.Element {
   const [name, setName] = useState("");
-  const [nameError, setNameError] = useState<string | JSX.Element>("");
+  const [nameError, setNameError] = useState<string | JSX.Element | undefined>(
+    ""
+  );
   const { formatMessage } = useIntl();
   const emptyNameError = formatMessage({ id: "identifier.error.emptyName" });
 

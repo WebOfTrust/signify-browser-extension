@@ -6,7 +6,7 @@ const USER_ENUMS = {
 
 const User = () => {
     const getPasscode = async () : Promise<string> => {
-        return await browserStorageService.getValue(USER_ENUMS.PASSCODE);
+        return await browserStorageService.getValue(USER_ENUMS.PASSCODE) as string;
     }
 
     const removePasscode = async () => {

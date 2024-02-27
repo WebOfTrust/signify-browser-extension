@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button, Drawer, Text } from "@components/ui";
-import { Loader } from "@components/loader";
-import { IMessage } from "@pages/background/types";
+import { Button, Drawer, Text, Loader } from "@components/ui";
+import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
+
+interface ISelectIdentifier {
+  name: string;
+}
 
 export function SelectIdentifier(): JSX.Element {
   const [aids, setAids] = useState([]);
@@ -47,9 +50,11 @@ export function SelectIdentifier(): JSX.Element {
     fetchIdentifiers();
   }, []);
 
-  const handleCreateIdentifier = async (name) => {
+  const handleCreateIdentifier = async (name: string) => {
     setIsCreating(true);
-    const { data, error } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data, error } = await chrome.runtime.sendMessage<
+      IMessage<ISelectIdentifier>
+    >({
       type: "create-resource",
       subtype: "identifier",
       data: { name },

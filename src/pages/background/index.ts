@@ -2,7 +2,7 @@ import { browserStorageService } from "@pages/background/services/browser-storag
 import { configService } from "@pages/background/services/config";
 import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
-import { IMessage } from "@pages/background/types";
+import { IMessage, IIdentifier, ICredential } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { removeSlash, getCurrentDomain } from "@pages/background/utils";
 import {
@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener(function (
         sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
       }
 
-    // Handle messages from Popup
+      // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
       console.log(
         "Message received from browser extension: " +
@@ -122,7 +122,7 @@ chrome.runtime.onMessage.addListener(function (
         const resp = await signifyService.connect(
           message.data.agentUrl,
           message.data.passcode
-        );
+        ) as any;
         if (resp?.error) {
           // TODO: improve error messages
           // Current messages are not descrptive enough e.g
@@ -175,7 +175,7 @@ chrome.runtime.onMessage.addListener(function (
       try {
         const resp = await signifyService.createAID(message.data.name);
         sendResponse({ data: { ...(resp ?? {}) } });
-      } catch (error) {
+      } catch (error: any) {
         const errorMsg = JSON.parse(error?.message ?? "");
         sendResponse({
           error: { code: 404, message: errorMsg?.title },
@@ -231,9 +231,9 @@ chrome.runtime.onMessage.addListener(function (
       const indentifiers = await signifyService.listIdentifiers();
       console.log(indentifiers.aids);
       // Add holder name to credential
-      credentials?.forEach((credential) => {
+      credentials?.forEach((credential: ICredential) => {
         const issueePrefix = credential.sad.a.i;
-        const aidIssuee = indentifiers.aids.find((aid) => {
+        const aidIssuee = indentifiers.aids.find((aid: IIdentifier) => {
           return aid.prefix === issueePrefix;
         });
         credential.issueeName = aidIssuee.name;
@@ -276,7 +276,7 @@ chrome.runtime.onMessageExternal.addListener(function (
       const signedHeaders = await signifyService.signHeaders(
         // sigin can either have identifier or credential
         autoSignin?.identifier
-          ? autoSignin?.identifier.name
+          ? autoSignin?.identifier?.name
           : autoSignin?.credential?.issueeName,
         origin
       );

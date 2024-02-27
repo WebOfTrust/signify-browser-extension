@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const DropdownWrapper = styled.div`
+interface IDropdownOption {
+  label: string;
+  value: string;
+}
+
+interface IDropdown {
+  options: IDropdownOption[];
+  selectedOption?: IDropdownOption;
+  onSelect: (option: IDropdownOption) => void;
+  zIndex?: number;
+}
+
+const DropdownWrapper = styled.div<Pick<IDropdown, "zIndex">>`
   position: relative;
   display: inline-block;
   width: 100%;
@@ -43,14 +55,19 @@ const DropdownItem = styled.li`
   }
 `;
 
-export const Dropdown = ({ selectedOption, options, onSelect, zIndex }) => {
+export const Dropdown = ({
+  selectedOption,
+  options,
+  onSelect,
+  zIndex,
+}: IDropdown) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDropdownClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = (option: IDropdownOption) => {
     setIsOpen(false);
     onSelect(option);
   };

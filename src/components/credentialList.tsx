@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
-import { Loader } from "@components/loader";
-import { IMessage } from "@pages/background/types";
+import { Loader } from "@components/ui";
+import { IMessage } from "@config/types";
 
 export function CredentialList(): JSX.Element {
   const [credentials, setCredentials] = useState([]);

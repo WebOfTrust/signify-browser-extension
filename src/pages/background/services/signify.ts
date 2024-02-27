@@ -90,7 +90,7 @@ const Signify = () => {
     await userService.removePasscode();
   };
 
-  const signHeaders = async (aidName: string, origin: string) => {
+  const signHeaders = async (aidName = "", origin: string) => {
     const hab = await _client?.identifiers().get(aidName);
     const keeper = _client?.manager!.get(hab);
 

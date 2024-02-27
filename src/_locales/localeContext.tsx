@@ -10,8 +10,12 @@ interface ILocaleContext {
 
 const LocaleContext = createContext<ILocaleContext | null>(null);
 
-export const LocaleProvider = ({ children }) => {
-  const [currentLocale, setCurrentLocale] = useState(defaultLocale);
+interface ILocaleProvider {
+  children?: React.ReactNode;
+}
+
+export const LocaleProvider = ({ children }: ILocaleProvider): JSX.Element => {
+  const [currentLocale, setCurrentLocale] = useState<string>(defaultLocale);
 
   const handleChangeLocale = async () => {
     const lang = await configService.getLanguage();
@@ -27,9 +31,10 @@ export const LocaleProvider = ({ children }) => {
     setCurrentLocale(newLocale);
   };
 
+  const selectedMessages = messages[currentLocale as keyof typeof messages];
   return (
     <LocaleContext.Provider value={{ currentLocale, changeLocale }}>
-      <IntlProvider locale={currentLocale} messages={messages[currentLocale]}>
+      <IntlProvider locale={currentLocale} messages={selectedMessages}>
         {children}
       </IntlProvider>
     </LocaleContext.Provider>
