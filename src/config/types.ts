@@ -36,10 +36,29 @@ export interface ISignin {
     name?: string;
   };
   credential?: {
+    issueeName?: string;
     schema?: {
-      title: string
-    }
+      title: string;
+    };
   };
   updatedAt: string;
   autoSignin: boolean;
+}
+
+export interface IIdentifier {
+  name?: string;
+  prefix: string;
+}
+
+export interface ICredential {
+  issueeName: string;
+  sad: { a: { i: string } };
+  schema: {
+    title: string;
+    credentialType: string;
+    description: string;
+  };
+  status: {
+    et: string;
+  };
 }

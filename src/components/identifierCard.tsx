@@ -2,11 +2,7 @@ import { obfuscateString } from "@pages/background/utils";
 import { useIntl } from "react-intl";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { Card, Text, Subtext } from "@components/ui";
-
-interface IIdentifier {
-  name: string;
-  prefix: string;
-}
+import { IIdentifier } from "@config/types";
 
 interface IIdentifierCard {
   aid: IIdentifier;
