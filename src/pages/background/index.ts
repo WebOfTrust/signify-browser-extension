@@ -4,7 +4,11 @@ import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
 import { IMessage, IIdentifier, ICredential } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
-import { removeSlash, getCurrentDomain } from "@pages/background/utils";
+import {
+  removeSlash,
+  getCurrentDomain,
+  setActionIcon,
+} from "@pages/background/utils";
 import {
   updateDomainAutoSigninByIndex,
   getSigninsByDomain,
@@ -119,10 +123,10 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "authentication" &&
         message.subtype === "connect-agent"
       ) {
-        const resp = await signifyService.connect(
+        const resp = (await signifyService.connect(
           message.data.agentUrl,
           message.data.passcode
-        ) as any;
+        )) as any;
         if (resp?.error) {
           // TODO: improve error messages
           // Current messages are not descrptive enough e.g
@@ -285,6 +289,34 @@ chrome.runtime.onMessageExternal.addListener(function (
         jsonHeaders[pair[0]] = pair[1];
       }
       sendResponse({ data: { headers: jsonHeaders } });
+    }
+
+
+    if (
+      message.type === "vendor-info" &&
+      message.subtype === "attempt-set-vendor-url"
+    ) {
+      const { vendorUrl } = message?.data ?? {};
+      if (!vendorUrl) {
+        return;
+      }
+
+      const _vendorUrl = await configService.getUrl();
+      if (!_vendorUrl) {
+        try {
+          const resp = await (await fetch(vendorUrl)).json();
+          if (resp?.agentUrl) {
+            await configService.setAgentUrl(resp?.agentUrl);
+          }
+          await configService.setData(resp);
+          if (resp?.icon) {
+            await setActionIcon(resp?.icon);
+          }
+          await configService.setUrl(vendorUrl);
+        } catch (error) {}
+      }
+
+      sendResponse({ data: { _vendorUrl } });
     }
   })();
 
