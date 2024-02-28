@@ -3,8 +3,13 @@
 ### Installation
 
 1. Install [polaris-web-extension](FUTURE_DEPLOYED_EXTENSION_LINK) from [Chrome Web Store](https://chromewebstore.google.com/category/extensions)
-2. Install [signify-polaris-web](https://www.npmjs.com/package/signify-polaris-web) from npm
-`npm install signify-polaris-web --save`
+2. Install [signify-polaris-web](https://github.com/roots-id/polaris-web) by listing it into `package.json` dependencies:
+   
+```  
+"dependencies": {
+  "signify-polaris-web": "https://github.com/roots-id/polaris-web.git",
+}
+```
 
 ### Usage
 import following methods from `polaris-web`
