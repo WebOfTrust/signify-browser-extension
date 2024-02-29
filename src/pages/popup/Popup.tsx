@@ -65,7 +65,6 @@ export default function Popup(): JSX.Element {
     if (data.isConnected) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (tabs.length === 1) {
-          console.log("realoading tab");
           chrome.tabs.sendMessage(tabs[0].id!, {
             type: "tab",
             subtype: "reload-state",
