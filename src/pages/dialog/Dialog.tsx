@@ -88,7 +88,6 @@ export function Dialog({
   return (
     <ThemeProvider theme={vendorData?.theme}>
       {" "}
-      // ?? defaultVendor.theme
       <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
         {showPopupPrompt ? (
           <PopupPrompt
