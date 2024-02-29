@@ -52,7 +52,6 @@ window.addEventListener(
           });
 
           let filteredSignins: any[] = [];
-          console.log(event.data.type);
           tabSigninResp?.data?.signins.forEach((signin: any) => {
             if (
               signin.identifier &&
@@ -98,7 +97,8 @@ chrome.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  if (sender.origin === "chrome-extension://" + chrome.runtime.id) {
+  if ((sender.url?.startsWith("moz-extension://") || sender.origin?.startsWith("chrome-extension://")) && 
+    sender.id === chrome.runtime.id) {
     console.log(
       "Message received from browser extension: " +
         message.type +
@@ -135,7 +135,12 @@ chrome.runtime.onMessage.addListener(async function (
     }
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
-      sendResponse({ data: { appState: getTabState() } });
+      if (sender.origin?.startsWith("chrome-extension://")){
+        sendResponse({ data: { appState: getTabState() } });
+      } else {
+        return Promise.resolve({ data: { appState: getTabState() } })
+      }
+      
     }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {

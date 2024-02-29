@@ -14,11 +14,9 @@ function init() {
     sender,
     sendResponse
   ) {
-    if (
-      sender.url ===
-        "chrome-extension://" +
-          chrome.runtime.id +
-          "/service-worker-loader.js" &&
+    if ((sender.url?.startsWith('moz-extension://') || sender.url?.startsWith('chrome-extension://')) && 
+      sender.url?.endsWith('/service-worker-loader.js') && 
+      sender.id === chrome.runtime.id &&
       request.type === "popup" &&
       request.subtype === "isOpened"
     ) {

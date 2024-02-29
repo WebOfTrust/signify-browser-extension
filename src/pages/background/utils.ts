@@ -1,7 +1,7 @@
 export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
-  const origin = "chrome-extension://" + chrome.runtime.id;
-  const popupPath = origin + "/src/pages/popup/index.html";
-  return sender.origin === origin && sender.url === popupPath;
+  return ((sender.url?.startsWith('moz-extension://') || sender.url?.startsWith('chrome-extension://'))&& 
+    sender.url?.endsWith('/src/pages/popup/index.html') && 
+    sender.id === chrome.runtime.id);
 };
 
 export const isValidUrl = (str: string) => {
