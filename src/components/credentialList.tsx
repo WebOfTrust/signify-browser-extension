@@ -35,7 +35,7 @@ export function CredentialList(): JSX.Element {
         </div>
       ))}
       {!isLoading && !credentials?.length ? (
-        <p className="">{formatMessage({ id: "message.noItems" })}</p>
+        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
       ) : (
         <></>
       )}

@@ -8,7 +8,8 @@ import {
   requestCredential,
   requestAidORCred,
   trySettingVendorUrl,
-} from "./signify-polaris-web";
+  canCallAsync,
+} from "signify-polaris-web";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -66,6 +67,18 @@ function App() {
     setParsedSignifyData(null);
   };
 
+  const handleRequestAutoSignin = async () => {
+    console.log("canCallAsync()", canCallAsync());
+    if (canCallAsync()) {
+      const resp = await requestAutoSignin();
+      if (resp) {
+        handleSignifyData(resp);
+      }
+    } else {
+      requestAutoSignin();
+    }
+  };
+
   const renderData = () => {
     if (extensionInstalled === null) return <CircularIndeterminate />;
 
@@ -93,7 +106,7 @@ function App() {
           <Button
             variant="contained"
             color="success"
-            onClick={requestAutoSignin}
+            onClick={handleRequestAutoSignin}
           >
             Auto Sign in
           </Button>
