@@ -50,6 +50,63 @@ chrome.runtime.onMessage.addListener(function (
       }
 
       if (
+        message.type === "vendor-info" &&
+        message.subtype === "attempt-set-vendor-url"
+      ) {
+        const { vendorUrl } = message?.data ?? {};
+        if (!vendorUrl) {
+          return;
+        }
+  
+        const _vendorUrl = await configService.getUrl();
+        if (!_vendorUrl) {
+          try {
+            const resp = await (await fetch(vendorUrl)).json();
+            if (resp?.agentUrl) {
+              await configService.setAgentUrl(resp?.agentUrl);
+            }
+            await configService.setData(resp);
+            if (resp?.icon) {
+              await setActionIcon(resp?.icon);
+            }
+            await configService.setUrl(vendorUrl);
+          } catch (error) {}
+        }
+  
+        sendResponse({ data: { _vendorUrl } });
+      }
+
+      if (
+        message.type === "fetch-resource" &&
+        message.subtype === "auto-signin-signature"
+      ) {
+        // Validate that message comes from a page that has a signin
+        const origin = removeSlash(sender.url);
+        const signins = await getSigninsByDomain(origin);
+        console.log("signins", signins);
+        const autoSignin = signins?.find((signin) => signin.autoSignin);
+        if (!signins?.length || !autoSignin) {
+          sendResponse({
+            error: { code: 404, message: "auto signin not found" },
+          });
+          return;
+        }
+  
+        const signedHeaders = await signifyService.signHeaders(
+          // sigin can either have identifier or credential
+          autoSignin?.identifier
+            ? autoSignin?.identifier?.name
+            : autoSignin?.credential?.issueeName,
+          origin
+        );
+        let jsonHeaders: { [key: string]: string } = {};
+        for (const pair of signedHeaders.entries()) {
+          jsonHeaders[pair[0]] = pair[1];
+        }
+        sendResponse({ data: { headers: jsonHeaders } });
+      }
+
+      if (
         message.type === "authentication" &&
         message.subtype === "check-agent-connection"
       ) {
@@ -261,63 +318,63 @@ chrome.runtime.onMessageExternal.addListener(function (
     console.log("Message received from external source: ", sender);
     console.log("Message received from external request: ", message);
 
-    if (
-      message.type === "fetch-resource" &&
-      message.subtype === "auto-signin-signature"
-    ) {
-      // Validate that message comes from a page that has a signin
-      const origin = removeSlash(sender.url);
-      const signins = await getSigninsByDomain(origin);
-      console.log("signins", signins);
-      const autoSignin = signins?.find((signin) => signin.autoSignin);
-      if (!signins?.length || !autoSignin) {
-        sendResponse({
-          error: { code: 404, message: "auto signin not found" },
-        });
-        return;
-      }
+    // if (
+    //   message.type === "fetch-resource" &&
+    //   message.subtype === "auto-signin-signature"
+    // ) {
+    //   // Validate that message comes from a page that has a signin
+    //   const origin = removeSlash(sender.url);
+    //   const signins = await getSigninsByDomain(origin);
+    //   console.log("signins", signins);
+    //   const autoSignin = signins?.find((signin) => signin.autoSignin);
+    //   if (!signins?.length || !autoSignin) {
+    //     sendResponse({
+    //       error: { code: 404, message: "auto signin not found" },
+    //     });
+    //     return;
+    //   }
 
-      const signedHeaders = await signifyService.signHeaders(
-        // sigin can either have identifier or credential
-        autoSignin?.identifier
-          ? autoSignin?.identifier?.name
-          : autoSignin?.credential?.issueeName,
-        origin
-      );
-      let jsonHeaders: { [key: string]: string } = {};
-      for (const pair of signedHeaders.entries()) {
-        jsonHeaders[pair[0]] = pair[1];
-      }
-      sendResponse({ data: { headers: jsonHeaders } });
-    }
+    //   const signedHeaders = await signifyService.signHeaders(
+    //     // sigin can either have identifier or credential
+    //     autoSignin?.identifier
+    //       ? autoSignin?.identifier?.name
+    //       : autoSignin?.credential?.issueeName,
+    //     origin
+    //   );
+    //   let jsonHeaders: { [key: string]: string } = {};
+    //   for (const pair of signedHeaders.entries()) {
+    //     jsonHeaders[pair[0]] = pair[1];
+    //   }
+    //   sendResponse({ data: { headers: jsonHeaders } });
+    // }
 
 
-    if (
-      message.type === "vendor-info" &&
-      message.subtype === "attempt-set-vendor-url"
-    ) {
-      const { vendorUrl } = message?.data ?? {};
-      if (!vendorUrl) {
-        return;
-      }
+    // if (
+    //   message.type === "vendor-info" &&
+    //   message.subtype === "attempt-set-vendor-url"
+    // ) {
+    //   const { vendorUrl } = message?.data ?? {};
+    //   if (!vendorUrl) {
+    //     return;
+    //   }
 
-      const _vendorUrl = await configService.getUrl();
-      if (!_vendorUrl) {
-        try {
-          const resp = await (await fetch(vendorUrl)).json();
-          if (resp?.agentUrl) {
-            await configService.setAgentUrl(resp?.agentUrl);
-          }
-          await configService.setData(resp);
-          if (resp?.icon) {
-            await setActionIcon(resp?.icon);
-          }
-          await configService.setUrl(vendorUrl);
-        } catch (error) {}
-      }
+    //   const _vendorUrl = await configService.getUrl();
+    //   if (!_vendorUrl) {
+    //     try {
+    //       const resp = await (await fetch(vendorUrl)).json();
+    //       if (resp?.agentUrl) {
+    //         await configService.setAgentUrl(resp?.agentUrl);
+    //       }
+    //       await configService.setData(resp);
+    //       if (resp?.icon) {
+    //         await setActionIcon(resp?.icon);
+    //       }
+    //       await configService.setUrl(vendorUrl);
+    //     } catch (error) {}
+    //   }
 
-      sendResponse({ data: { _vendorUrl } });
-    }
+    //   sendResponse({ data: { _vendorUrl } });
+    // }
   })();
 
   // return true to indicate chrome api to send a response asynchronously

@@ -103,7 +103,7 @@ export function Config(props: any): JSX.Element {
   return (
     <>
       {hasOnboarded ? (
-        <div className="flex flex-row justify-between px-2">
+        <div className="text-xs flex flex-row justify-between px-2">
           <button
             onClick={handleBack}
             className="cursor-pointer underline font-medium"

@@ -83,6 +83,38 @@ window.addEventListener(
             respVendorData?.data?.vendorData
           );
           break;
+        case "vendor-info":
+          if (event.data.subtype === "attempt-set-vendor-url") {
+            await chrome.runtime.sendMessage(chrome.runtime.id, {
+              type: "vendor-info",
+              subtype: "attempt-set-vendor-url",
+              data: {
+                vendorUrl: event.data.data.vendorUrl,
+              },
+            });
+          }
+          break;
+        case "fetch-resource":
+          if (event.data.subtype === "auto-signin-signature") {
+            const { data, error } = await chrome.runtime.sendMessage(
+              chrome.runtime.id,
+              {
+                type: "fetch-resource",
+                subtype: "auto-signin-signature",
+              }
+            );
+            if (error) {
+              window.postMessage({ type: "select-auto-signin" }, "*");
+            } else {
+              window.postMessage(
+                { type: "signify-signature", data: data },
+                "*"
+              );
+              // pubsub.publish("signify-signature", data);
+            }
+          }
+
+          break;
         default:
           break;
       }
@@ -97,8 +129,11 @@ chrome.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  if ((sender.url?.startsWith("moz-extension://") || sender.origin?.startsWith("chrome-extension://")) && 
-    sender.id === chrome.runtime.id) {
+  if (
+    (sender.url?.startsWith("moz-extension://") ||
+      sender.origin?.startsWith("chrome-extension://")) &&
+    sender.id === chrome.runtime.id
+  ) {
     console.log(
       "Message received from browser extension: " +
         message.type +
@@ -135,12 +170,11 @@ chrome.runtime.onMessage.addListener(async function (
     }
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
-      if (sender.origin?.startsWith("chrome-extension://")){
+      if (sender.origin?.startsWith("chrome-extension://")) {
         sendResponse({ data: { appState: getTabState() } });
       } else {
-        return Promise.resolve({ data: { appState: getTabState() } })
+        return Promise.resolve({ data: { appState: getTabState() } });
       }
-      
     }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {

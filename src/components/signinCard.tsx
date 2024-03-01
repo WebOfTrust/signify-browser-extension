@@ -17,7 +17,7 @@ export function SigninCard({
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div>
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "signin.website" })}
@@ -42,7 +42,7 @@ export function SigninCard({
           </svg>
         </div>
 
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div>
             <Text className="font-bold" $color="heading">
               {signin?.identifier
@@ -62,7 +62,7 @@ export function SigninCard({
             </Text>
           </div>
         </div>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div>
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "signin.autoSignin" })}

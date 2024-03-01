@@ -8,7 +8,7 @@ import {
   requestCredential,
   requestAidORCred,
   trySettingVendorUrl,
-} from "signify-polaris-web";
+} from "./signify-polaris-web";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
