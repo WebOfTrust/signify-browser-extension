@@ -110,7 +110,6 @@ window.addEventListener(
                 { type: "signify-signature", data: data },
                 "*"
               );
-              // pubsub.publish("signify-signature", data);
             }
           }
 

@@ -94,7 +94,7 @@ export function IdentifierList(): JSX.Element {
         </div>
       ))}
       {!isLoading && !aids?.length ? (
-        <p className="">{formatMessage({ id: "message.noItems" })}</p>
+        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
       ) : (
         <></>
       )}

@@ -91,7 +91,7 @@ export function SigninList(): JSX.Element {
         </div>
       ))}
       {!isLoading && !signins?.length ? (
-        <p className="">{formatMessage({ id: "message.noItems" })}</p>
+        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
       ) : (
         <></>
       )}
