@@ -64,7 +64,7 @@ export function Signin(props: ISignin): JSX.Element {
           logo={props.logo}
         />
       )}
-      <div className=" absolute bottom-2 w-full">
+      <div className="text-xs absolute bottom-2 w-full">
         <div className=" text-center">
           <a
             href={props?.vendorData?.onboardingUrl}

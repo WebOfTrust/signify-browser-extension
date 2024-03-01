@@ -14,7 +14,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div>
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "identifier.alias.label" })}{" "}
@@ -39,7 +39,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
           </svg>
         </div>
         <div>
-          <Text className="font-bold" $color="heading">
+          <Text className="font-bold text-xs" $color="heading">
             {formatMessage({ id: "identifier.aid.label" })}{" "}
             <span data-tooltip-id={aid.prefix}>
               <Subtext
@@ -52,7 +52,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
           </Text>
         </div>
         <ReactTooltip id={aid.prefix} clickable>
-          <div className="flex flex-row gap-x-1">
+          <div className="flex flex-row gap-x-1 text-xs">
             <p>{aid.prefix}</p>
             <button
               onClick={() => {

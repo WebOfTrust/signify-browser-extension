@@ -23,7 +23,7 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div>
             <Text className="font-bold" $color="heading">
               {credential.schema.title}
@@ -47,7 +47,7 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
             />
           </svg>
         </div>
-        <div className="">
+        <div className="text-xs">
           <Text className="font-normal text-md" $color="text">
             {credential.schema.description}
           </Text>
@@ -60,7 +60,7 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
             </>
           </Text>
         </div>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between text-xs">
           <div className="">
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "credential.lastUsed.label" })}{" "}

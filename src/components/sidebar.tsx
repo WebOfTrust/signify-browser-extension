@@ -128,7 +128,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
           {SIDEBAR.map((element, index) => (
             <li
               key={index}
-              className={`${
+              className={`text-xs ${
                 props.disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               aria-disabled={props.disabled}
@@ -146,7 +146,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
         </ul>
       </div>
       <ul className="px-3 font-medium">
-        <li className="cursor-pointer">
+        <li className="text-xs cursor-pointer">
           <StyledBottomMenu
             onClick={props.onSignout}
             className={`flex items-center p-2 rounded-lg group`}
