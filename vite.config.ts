@@ -1,28 +1,35 @@
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
-import { crx, ManifestV3Export } from '@crxjs/vite-plugin';
-import merge from 'lodash/merge';
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import react from "@vitejs/plugin-react";
+import { resolve } from "path";
+import { defineConfig } from "vite";
+import { crx, ManifestV3Export } from "@crxjs/vite-plugin";
+import merge from "lodash/merge";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
-import manifest from './manifest.json';
-import devManifest from './manifest.dev.json';
-import pkg from './package.json';
+import manifest from "./manifest.json";
+import devManifest from "./manifest.dev.json";
+import pkg from "./package.json";
 
-const root = resolve(__dirname, 'src');
-const pagesDir = resolve(root, 'pages');
-const assetsDir = resolve(root, 'assets');
-const componentsDir = resolve(root, 'components');
-const configDir = resolve(root, 'config');
-const outDir = resolve(__dirname, 'dist');
-const publicDir = resolve(__dirname, 'public');
+const root = resolve(__dirname, "src");
+const pagesDir = resolve(root, "pages");
+const assetsDir = resolve(root, "assets");
+const componentsDir = resolve(root, "components");
+const configDir = resolve(root, "config");
+const publicDir = resolve(__dirname, "public");
 
-const isDev = process.env.__DEV__ === 'false';
+const isDev = process.env.__DEV__ === "false";
+const targetBrowser = process.env.BROWSER || "chrome";
+const outDir = resolve(__dirname, `dist/${targetBrowser}`);
+
+const backgroundConfig =
+  targetBrowser === "firefox"
+    ? { scripts: [manifest.background.service_worker], type: "module" }
+    : { service_worker: manifest.background.service_worker };
 
 const extensionManifest = {
   ...merge(manifest, isDev ? devManifest : {}),
   manifest_version: 3,
-  name: isDev ? `DEV: ${ pkg.displayName }` : pkg.displayName,
+  background: backgroundConfig,
+  name: isDev ? `DEV: ${pkg.displayName}` : pkg.displayName,
   description: pkg.description,
   version: pkg.version,
 };
@@ -30,23 +37,21 @@ const extensionManifest = {
 export default defineConfig({
   resolve: {
     alias: {
-      '@src': root,
-      '@assets': assetsDir,
-      '@pages': pagesDir,
-      '@components': componentsDir,
-      '@config': configDir,
+      "@src": root,
+      "@assets": assetsDir,
+      "@pages": pagesDir,
+      "@components": componentsDir,
+      "@config": configDir,
     },
   },
   plugins: [
     react(),
-    crx(
-      {
+    crx({
       manifest: extensionManifest as ManifestV3Export,
       contentScripts: {
         injectCss: true,
-      }
-    }
-    ),
+      },
+    }),
     nodePolyfills(),
   ],
   publicDir,
