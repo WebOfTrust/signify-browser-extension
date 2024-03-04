@@ -27,8 +27,8 @@ export function CreateIdentifierCard(
     setName(removeWhiteSpace(name));
     setNameError("");
   };
-  const onCreateIdentifier = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const onCreateIdentifier = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
     let hasError = false;
     if (!name) {
       setNameError(emptyNameError);
@@ -84,7 +84,7 @@ export function CreateIdentifierCard(
         <div className=" flex flex-row justify-center mt-2">
           <Button
             type="submit"
-            // handleClick={onCreateIdentifier}
+            handleClick={onCreateIdentifier}
             isLoading={props.isLoading}
             className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
           >
