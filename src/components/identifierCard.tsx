@@ -51,7 +51,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
             </span>
           </Text>
         </div>
-        <ReactTooltip id={aid.prefix} clickable>
+        <ReactTooltip id={aid.prefix} clickable delayShow={500}>
           <div className="flex flex-row gap-x-1 text-xs">
             <p>{aid.prefix}</p>
             <button
