@@ -76,13 +76,8 @@ export default function Popup(): JSX.Element {
 
   useEffect(() => {
     checkIfVendorDataExists();
+    checkInitialConnection();
   }, []);
-
-  useEffect(() => {
-    if (vendorData) {
-      checkInitialConnection();
-    }
-  }, [vendorData]);
 
   const handleConnect = async (passcode: string) => {
     setIsLoading(true);

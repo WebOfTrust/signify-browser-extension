@@ -102,18 +102,6 @@ export function Config(props: any): JSX.Element {
 
   return (
     <>
-      {hasOnboarded ? (
-        <div className="text-xs flex flex-row justify-between px-2">
-          <button
-            onClick={handleBack}
-            className="cursor-pointer underline font-medium"
-          >
-            {formatMessage({ id: "action.back" })}
-          </button>
-        </div>
-      ) : (
-        <></>
-      )}
       <div className="px-4 relative mb-2">
         <p className="text-sm font-bold">
           {formatMessage({ id: "config.vendorUrl.label" })}
@@ -170,6 +158,20 @@ export function Config(props: any): JSX.Element {
           onSelect={(option) => changeLocale(option.value)}
         />
       </div>
+      {hasOnboarded ? (
+        <div className="text-xs flex flex-row justify-center px-4 mt-3">
+          <Button
+            handleClick={handleBack}
+            className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
+          >
+            <p className="font-medium text-md">
+              {formatMessage({ id: "action.save" })}
+            </p>
+          </Button>
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 }
