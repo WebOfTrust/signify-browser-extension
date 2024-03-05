@@ -22,19 +22,13 @@ export function CreateIdentifierCard(
   useEffect(() => {
     setNameError(props.error);
   }, [props.error]);
-  const onBlurName = () => {
-    if (!name) {
-      setNameError(emptyNameError);
-    } else {
-      setNameError("");
-    }
-  };
 
   const handleRemoveWhiteSpace = () => {
     setName(removeWhiteSpace(name));
     setNameError("");
   };
-  const onCreateIdentifier = async () => {
+  const onCreateIdentifier = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
     let hasError = false;
     if (!name) {
       setNameError(emptyNameError);
@@ -45,6 +39,7 @@ export function CreateIdentifierCard(
           {formatMessage({ id: "identifier.error.noWhiteSpace" })}{" "}
           <button
             className=" underline cursor-pointer"
+            type="button"
             onClick={handleRemoveWhiteSpace}
           >
             {formatMessage({ id: "action.clickToRemove" })}
@@ -54,12 +49,18 @@ export function CreateIdentifierCard(
       hasError = true;
     }
 
-    if (!hasError) props.handleCreateIdentifier(name);
+    if (!hasError) {
+      setNameError("");
+      props.handleCreateIdentifier(name);
+    }
   };
 
   return (
     <>
-      <div className=" max-w-xs m-4 flex flex-col gap-y-4">
+      <form
+        onSubmit={onCreateIdentifier}
+        className=" max-w-xs m-4 flex flex-col gap-y-4"
+      >
         <div>
           <input
             type="text"
@@ -71,7 +72,6 @@ export function CreateIdentifierCard(
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onBlur={onBlurName}
           />
           {nameError ? (
             isValidElement(nameError) ? (
@@ -83,6 +83,7 @@ export function CreateIdentifierCard(
         </div>
         <div className=" flex flex-row justify-center mt-2">
           <Button
+            type="submit"
             handleClick={onCreateIdentifier}
             isLoading={props.isLoading}
             className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
@@ -92,7 +93,7 @@ export function CreateIdentifierCard(
             </p>
           </Button>
         </div>
-      </div>
+      </form>
     </>
   );
 }

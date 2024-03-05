@@ -64,6 +64,7 @@ chrome.runtime.onMessage.addListener(function (
             const resp = await (await fetch(vendorUrl)).json();
             if (resp?.agentUrl) {
               await configService.setAgentUrl(resp?.agentUrl);
+              await configService.setHasOnboarded(true)
             }
             await configService.setData(resp);
             if (resp?.icon) {
