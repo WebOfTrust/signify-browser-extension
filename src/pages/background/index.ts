@@ -17,6 +17,17 @@ import {
 
 console.log("Background script loaded");
 
+chrome.runtime.onStartup.addListener(function () {
+  (async () => {
+    const vendorData = await configService.getData();
+    if(vendorData?.icon) {
+      setActionIcon(vendorData?.icon)
+    }
+  })()
+
+  return true;
+});
+
 chrome.runtime.onInstalled.addListener(function (object) {
   if (object.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     console.log("Signify Browser Extension installed");
@@ -297,7 +308,7 @@ chrome.runtime.onMessage.addListener(function (
         const aidIssuee = indentifiers.aids.find((aid: IIdentifier) => {
           return aid.prefix === issueePrefix;
         });
-        credential.issueeName = aidIssuee.name;
+        credential.issueeName = aidIssuee?.name;
       });
 
       sendResponse({ data: { credentials: credentials ?? [] } });
