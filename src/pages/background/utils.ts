@@ -1,7 +1,10 @@
 export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
-  return ((sender.url?.startsWith('moz-extension://') || sender.url?.startsWith('chrome-extension://'))&& 
-    sender.url?.endsWith('/src/pages/popup/index.html') && 
-    sender.id === chrome.runtime.id);
+  return (
+    (sender.url?.startsWith("moz-extension://") ||
+      sender.url?.startsWith("chrome-extension://")) &&
+    sender.url?.endsWith("/src/pages/popup/index.html") &&
+    sender.id === chrome.runtime.id
+  );
 };
 
 export const isValidUrl = (str: string) => {
@@ -54,11 +57,13 @@ export const removeWhiteSpace = (s: string, replace = "") => {
 };
 
 export const setActionIcon = async (iconUrl: string) => {
-  const imageBlob = await fetch(iconUrl).then((r) => r.blob());
-  const bitmap = await createImageBitmap(imageBlob);
-  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const context = canvas.getContext("2d");
-  context?.drawImage(bitmap, 0, 0);
-  const imageData = context?.getImageData(0, 0, bitmap.width, bitmap.height);
-  chrome.action.setIcon({ imageData: imageData });
+  try {
+    const imageBlob = await fetch(iconUrl).then((r) => r.blob());
+    const bitmap = await createImageBitmap(imageBlob);
+    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+    const context = canvas.getContext("2d");
+    context?.drawImage(bitmap, 0, 0);
+    const imageData = context?.getImageData(0, 0, bitmap.width, bitmap.height);
+    chrome.action.setIcon({ imageData: imageData });
+  } catch (error) {}
 };
