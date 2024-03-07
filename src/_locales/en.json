@@ -20,6 +20,7 @@
   "config.agentUrl.label": "Agent Url:",
   "config.agentUrl.placeholder": "Enter agent url",
   "config.error.enterUrl": "Enter a valid url",
+  "config.error.invalidAgentUrl": "Invalid agent url",
   "config.error.invalidVendorUrl": "Invalid url, Vendor configuration not found",
   "config.error.setUrl": "Vendor url is not set",
   "config.error.vendorData.agentUrls": "response missing agent urls, contact support",

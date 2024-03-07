@@ -21,6 +21,9 @@ export function Config(props: any): JSX.Element {
   const { formatMessage } = useIntl();
   const { changeLocale, currentLocale } = useLocale();
   const validUrlMsg = formatMessage({ id: "config.error.enterUrl" });
+  const invalidAgentUrlMsg = formatMessage({
+    id: "config.error.invalidAgentUrl",
+  });
   const invalidVendorUrlError = formatMessage({
     id: "config.error.invalidVendorUrl",
   });
@@ -46,15 +49,24 @@ export function Config(props: any): JSX.Element {
     }
   };
 
-  const checkErrorAgentUrl = (_url: string) => {
-    if (!_url || !isValidUrl(_url)) {
+  const checkErrorAgentUrl = async (_url: string) => {
+    const urlObject = isValidUrl(_url);
+    if (!_url || !urlObject) {
       setAgentUrlError(validUrlMsg);
       return true;
+    }
+    if (urlObject && urlObject?.origin) {
+      try {
+        await (await fetch(`${urlObject?.origin}/health`)).json();
+      } catch (error) {
+        setAgentUrlError(invalidAgentUrlMsg);
+        return true;
+      }
     }
   };
 
   const handleSetAgentUrl = async (_url: string) => {
-    const hasError = checkErrorAgentUrl(_url);
+    const hasError = await checkErrorAgentUrl(_url);
     if (hasError) return;
 
     await configService.setAgentUrl(_url);
@@ -95,7 +107,7 @@ export function Config(props: any): JSX.Element {
   };
 
   const handleBack = async () => {
-    const hasError = checkErrorAgentUrl(agentUrl);
+    const hasError = await checkErrorAgentUrl(agentUrl);
     if (hasError) return;
     props.handleBack();
   };

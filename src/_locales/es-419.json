@@ -20,6 +20,7 @@
   "config.agentUrl.label": "URL del agente:",
   "config.agentUrl.placeholder": "Ingrese la URL del agente",
   "config.error.enterUrl": "Introduce una URL válida",
+  "config.error.invalidAgentUrl": "URL de agente inválido",
   "config.error.invalidVendorUrl": "URL no válida, configuración del proveedor no encontrada",
   "config.error.setUrl": "La URL del proveedor no está configurada",
   "config.error.vendorData.agentUrls": "URL de agentes faltantes de respuesta, comuníquese con el soporte",
