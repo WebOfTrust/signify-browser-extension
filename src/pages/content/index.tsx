@@ -33,6 +33,10 @@ window.addEventListener(
         case TAB_STATE.SELECT_CREDENTIAL:
         case TAB_STATE.SELECT_ID_CRED:
         case TAB_STATE.SELECT_AUTO_SIGNIN:
+          await chrome.runtime.sendMessage<IMessage<void>>({
+            type: "action-icon",
+            subtype: "set-action-icon",
+          });
           const respVendorData = await chrome.runtime.sendMessage<
             IMessage<void>
           >({
@@ -192,10 +196,7 @@ function insertDialog(
         signins={signins}
         autoSigninObjExists={!!autoSigninObj}
         eventType={eventType}
-        handleRemove={() => {
-          removeDialog();
-          setTabState(TAB_STATE.NONE);
-        }}
+        handleRemove={resetTabState}
       />
     </LocaleProvider>
   );
@@ -204,6 +205,16 @@ function insertDialog(
 function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
+
+  chrome.runtime.sendMessage<IMessage<void>>({
+    type: "action-icon",
+    subtype: "unset-action-icon",
+  });
+}
+
+export function resetTabState() {
+  removeDialog();
+  setTabState(TAB_STATE.NONE);
 }
 
 // TODO: proper types for these params
