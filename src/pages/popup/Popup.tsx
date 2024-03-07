@@ -63,14 +63,22 @@ export default function Popup(): JSX.Element {
 
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        if (tabs.length === 1) {
-          chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "reload-state",
-          });
+      chrome.tabs.query(
+        { active: true, currentWindow: true },
+        async function (tabs) {
+          if (tabs.length === 1) {
+            const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
+              type: "tab",
+              subtype: "get-tab-state",
+            });
+            chrome.tabs.sendMessage(tabs[0].id!, {
+              type: "tab",
+              subtype: "reload-state",
+              eventType: data?.tabState,
+            });
+          }
         }
-      });
+      );
     }
   };
 

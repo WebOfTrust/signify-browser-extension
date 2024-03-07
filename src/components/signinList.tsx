@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { TAB_STATE } from "@pages/popup/constants";
 import { SigninCard } from "@components/signinCard";
 import { Loader } from "@components/ui";
 import { IMessage, ISignin } from "@config/types";
@@ -36,13 +35,20 @@ export function SigninList(): JSX.Element {
     });
     if (data?.isDeleted) {
       setSignins(data?.signins);
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "reload-state",
-          eventType: TAB_STATE.SELECT_IDENTIFIER,
-        });
-      });
+      chrome.tabs.query(
+        { active: true, currentWindow: true },
+        async function (tabs) {
+          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
+            type: "tab",
+            subtype: "get-tab-state",
+          });
+          chrome.tabs.sendMessage(tabs[0].id!, {
+            type: "tab",
+            subtype: "reload-state",
+            eventType: data?.tabState,
+          });
+        }
+      );
     }
   };
 
@@ -60,13 +66,20 @@ export function SigninList(): JSX.Element {
     });
     if (data?.signins) {
       setSignins(data?.signins);
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "reload-state",
-          eventType: TAB_STATE.SELECT_IDENTIFIER,
-        });
-      });
+      chrome.tabs.query(
+        { active: true, currentWindow: true },
+        async function (tabs) {
+          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
+            type: "tab",
+            subtype: "get-tab-state",
+          });
+          chrome.tabs.sendMessage(tabs[0].id!, {
+            type: "tab",
+            subtype: "reload-state",
+            eventType: data?.tabState,
+          });
+        }
+      );
     }
   };
 

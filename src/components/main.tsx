@@ -22,7 +22,7 @@ const StyledMainContainer = styled.div`
 
 export function Main(props: IMain): JSX.Element {
   const [activeSidebar, setActiveSidebar] = useState(SIDEBAR[0]);
-  const [tabState, setTabState] = useState(TAB_STATE.DEFAULT);
+  const [currentTabState, setCurrentTabState] = useState(TAB_STATE.NONE);
 
   const fetchTabState = async () => {
     chrome.tabs.query(
@@ -34,21 +34,21 @@ export function Main(props: IMain): JSX.Element {
         });
         if (!data) return;
 
-        if (data?.appState) {
-          setTabState(data?.appState);
+        if (data?.tabState) {
+          setCurrentTabState(data?.tabState);
           if (
-            data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
-            data?.appState === TAB_STATE.SELECT_CREDENTIAL ||
-            data?.appState === TAB_STATE.SELECT_ID_CRED
+            data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
+            data?.tabState === TAB_STATE.SELECT_CREDENTIAL ||
+            data?.tabState === TAB_STATE.SELECT_ID_CRED
           ) {
             setActiveSidebar(
-              data?.appState === TAB_STATE.SELECT_IDENTIFIER ||
-                data?.appState === TAB_STATE.SELECT_ID_CRED
+              data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
+                data?.tabState === TAB_STATE.SELECT_ID_CRED
                 ? SIDEBAR[0]
                 : SIDEBAR[1]
             );
           }
-          if (data?.appState === TAB_STATE.SELECT_AUTO_SIGNIN) {
+          if (data?.tabState === TAB_STATE.SELECT_AUTO_SIGNIN) {
             setActiveSidebar(SIDEBAR[2]);
           }
         }
@@ -64,8 +64,8 @@ export function Main(props: IMain): JSX.Element {
     switch (activeSidebar?.id) {
       case SIDEBAR_KEYS.credentials:
         if (
-          tabState === TAB_STATE.SELECT_CREDENTIAL ||
-          tabState === TAB_STATE.SELECT_ID_CRED
+          currentTabState === TAB_STATE.SELECT_CREDENTIAL ||
+          currentTabState === TAB_STATE.SELECT_ID_CRED
         )
           return <SelectCredential />;
 
@@ -75,20 +75,13 @@ export function Main(props: IMain): JSX.Element {
 
       default:
         if (
-          tabState === TAB_STATE.SELECT_IDENTIFIER ||
-          tabState === TAB_STATE.SELECT_ID_CRED
+          currentTabState === TAB_STATE.SELECT_IDENTIFIER ||
+          currentTabState === TAB_STATE.SELECT_ID_CRED
         )
           return <SelectIdentifier />;
 
         return <IdentifierList />;
     }
-  };
-
-  const isSidebarDisabled = () => {
-    return (
-      tabState === TAB_STATE.SELECT_IDENTIFIER ||
-      tabState === TAB_STATE.SELECT_CREDENTIAL
-    );
   };
 
   return (
@@ -99,7 +92,6 @@ export function Main(props: IMain): JSX.Element {
         onSignout={props.handleDisconnect}
         logo={props?.logo}
         title={props?.title}
-        // disabled={isSidebarDisabled()}
       />
       <StyledMainContainer className="rounded p-2 sm:ml-48 sm:mt-4 mr-4">
         <div className="">
