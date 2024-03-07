@@ -1,9 +1,9 @@
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { IMessage } from "@config/types";
-import "./style.css";
+import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "../dialog/Dialog";
-import { TAB_STATE } from "../popup/constants";
+import "./style.css";
 
 var tabState = TAB_STATE.NONE;
 
@@ -33,7 +33,6 @@ window.addEventListener(
         case TAB_STATE.SELECT_CREDENTIAL:
         case TAB_STATE.SELECT_ID_CRED:
         case TAB_STATE.SELECT_AUTO_SIGNIN:
-          setTabState(TAB_STATE.DEFAULT);
           const respVendorData = await chrome.runtime.sendMessage<
             IMessage<void>
           >({
@@ -51,28 +50,11 @@ window.addEventListener(
             subtype: "tab-signin",
           });
 
-          let filteredSignins: any[] = [];
-          tabSigninResp?.data?.signins.forEach((signin: any) => {
-            if (
-              signin.identifier &&
-              (event.data.type === TAB_STATE.SELECT_IDENTIFIER ||
-                event.data.type === TAB_STATE.SELECT_ID_CRED)
-            ) {
-              filteredSignins.push(signin);
-            }
-            if (
-              signin.credential &&
-              (event.data.type === TAB_STATE.SELECT_CREDENTIAL ||
-                event.data.type === TAB_STATE.SELECT_ID_CRED)
-            ) {
-              if (
-                !event.data.schema ||
-                signin.credential.schema.id === event.data.schema
-              ) {
-                filteredSignins.push(signin);
-              }
-            }
-          });
+          const filteredSignins = getFilteredSignins(
+            tabSigninResp?.data?.signins,
+            event.data.type,
+            event.data.schema
+          );
 
           insertDialog(
             data.isConnected,
@@ -157,10 +139,15 @@ chrome.runtime.onMessage.addListener(async function (
           type: "fetch-resource",
           subtype: "tab-signin",
         });
+        const filteredSignins = getFilteredSignins(
+          tabSigninResp?.data?.signins,
+          message.eventType,
+          message.schema
+        );
         insertDialog(
           data.isConnected,
           data.tabUrl,
-          tabSigninResp?.data?.signins,
+          filteredSignins,
           message.eventType ?? "",
           tabSigninResp?.data?.autoSigninObj,
           respVendorData?.data?.vendorData
@@ -170,14 +157,14 @@ chrome.runtime.onMessage.addListener(async function (
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
       if (sender.origin?.startsWith("chrome-extension://")) {
-        sendResponse({ data: { appState: getTabState() } });
+        sendResponse({ data: { tabState: getTabState() } });
       } else {
-        return Promise.resolve({ data: { appState: getTabState() } });
+        return Promise.resolve({ data: { tabState: getTabState() } });
       }
     }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {
-      setTabState(message.data.appState);
+      setTabState(message.data.tabState);
     }
   }
 });
@@ -205,7 +192,10 @@ function insertDialog(
         signins={signins}
         autoSigninObjExists={!!autoSigninObj}
         eventType={eventType}
-        removeDialog={removeDialog}
+        handleRemove={() => {
+          removeDialog();
+          setTabState(TAB_STATE.NONE);
+        }}
       />
     </LocaleProvider>
   );
@@ -214,6 +204,37 @@ function insertDialog(
 function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
+}
+
+// TODO: proper types for these params
+function getFilteredSignins(
+  signins: any,
+  currentTabState: any,
+  credentialSchema: any
+) {
+  let filteredSignins: any[] = [];
+  signins.forEach((signin: any) => {
+    if (
+      signin.identifier &&
+      (currentTabState === TAB_STATE.SELECT_IDENTIFIER ||
+        currentTabState === TAB_STATE.SELECT_ID_CRED)
+    ) {
+      filteredSignins.push(signin);
+    }
+    if (
+      signin.credential &&
+      (currentTabState === TAB_STATE.SELECT_CREDENTIAL ||
+        currentTabState === TAB_STATE.SELECT_ID_CRED)
+    ) {
+      if (
+        !credentialSchema ||
+        signin.credential.schema.id === credentialSchema
+      ) {
+        filteredSignins.push(signin);
+      }
+    }
+  });
+  return filteredSignins;
 }
 
 export function setTabState(state: string) {

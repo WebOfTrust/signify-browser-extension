@@ -26,13 +26,22 @@ export function SelectCredential(): JSX.Element {
         credential,
       },
     });
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id!, {
-        type: "tab",
-        subtype: "reload-state",
-      });
-    });
-    window.close();
+    chrome.tabs.query(
+      { active: true, currentWindow: true },
+      async function (tabs) {
+        const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
+          type: "tab",
+          subtype: "get-tab-state",
+        });
+        await chrome.tabs.sendMessage(tabs[0].id!, {
+          type: "tab",
+          subtype: "reload-state",
+          eventType: data?.tabState,
+        });
+
+        window.close();
+      }
+    );
   };
 
   useEffect(() => {

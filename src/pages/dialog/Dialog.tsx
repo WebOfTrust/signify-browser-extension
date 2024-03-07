@@ -4,9 +4,9 @@ import { useIntl } from "react-intl";
 import { Text, Subtext } from "@components/ui";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
+import { setTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
-import { setTabState } from "@pages/content/index";
 
 const StyledMain = styled.div`
   border: ${(props) =>
@@ -21,7 +21,7 @@ interface IDialog {
   isConnected: boolean;
   tabUrl: string;
   eventType: string;
-  removeDialog: () => void;
+  handleRemove: () => void;
   signins: ISignin[];
   vendorData: IVendorData;
   autoSigninObjExists?: boolean;
@@ -33,8 +33,8 @@ export function Dialog({
   tabUrl = "",
   signins = [],
   autoSigninObjExists,
-  eventType = "",
-  removeDialog,
+  eventType = TAB_STATE.NONE,
+  handleRemove,
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const logo =
@@ -42,34 +42,23 @@ export function Dialog({
     chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
   const showRequestAuthPrompt =
-    !signins.length ||
+    !signins?.length ||
     (!autoSigninObjExists && eventType === TAB_STATE.SELECT_AUTO_SIGNIN) ||
     !isConnected;
 
-  const getEventTypeAppState = () => {
-    return eventType ?? TAB_STATE.DEFAULT;
-  };
-
   const handleClick = () => {
-    setTabState(getEventTypeAppState());
     setShowPopupPrompt(true);
   };
 
   useEffect(() => {
-    if (
-      !signins?.length ||
-      (!autoSigninObjExists && eventType === TAB_STATE.SELECT_AUTO_SIGNIN)
-    ) {
-      setTabState(getEventTypeAppState());
-      setShowPopupPrompt(true);
-    } else if (!isConnected || !vendorData) {
-      setTabState(TAB_STATE.DEFAULT);
+    setTabState(eventType);
+    if (showRequestAuthPrompt) {
       setShowPopupPrompt(true);
     }
   }, []);
 
-  const handleRemove = () => {
-    removeDialog();
+  const onClickRemove = () => {
+    handleRemove();
   };
 
   const getTextKeyByEventType = () => {
@@ -104,7 +93,7 @@ export function Dialog({
         ) : null}
         <button
           type="button"
-          onClick={handleRemove}
+          onClick={onClickRemove}
           className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
         >
           {"x"}
@@ -132,17 +121,21 @@ export function Dialog({
               {signins?.map((signin) => (
                 <SigninItem signin={signin} />
               ))}
-              <div
-                onClick={handleClick}
-                className="font-bold text-sm cursor-pointer"
-              >
-                {formatMessage({ id: "action.open" })}{" "}
-                <span className="inline-block">
-                  <img src={logo} className="h-4" alt="logo" />
-                </span>{" "}
-                {formatMessage({ id: "action.toSelectOther" })}{" "}
-                {formatMessage({ id: getTextKeyByEventType() })}
-              </div>
+              {eventType !== TAB_STATE.NONE ? (
+                <div
+                  onClick={handleClick}
+                  className="font-bold text-sm cursor-pointer"
+                >
+                  {formatMessage({ id: "action.open" })}{" "}
+                  <span className="inline-block">
+                    <img src={logo} className="h-4" alt="logo" />
+                  </span>{" "}
+                  {formatMessage({ id: "action.toSelectOther" })}{" "}
+                  {formatMessage({ id: getTextKeyByEventType() })}
+                </div>
+              ) : (
+                <></>
+              )}
             </>
           )}
         </StyledMain>

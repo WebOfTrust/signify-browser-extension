@@ -1,7 +1,7 @@
-import { TAB_STATE } from "@pages/popup/constants";
 import { styled } from "styled-components";
 import { Button, Text, Subtext } from "@components/ui";
-import { setTabState } from "@pages/content/index";
+import { TAB_STATE } from "@pages/popup/constants";
+import { setTabState } from "@pages/content";
 import { ISignin } from "@config/types";
 
 const StyledSigninItem = styled.div`
