@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import { Button, Text, Subtext } from "@components/ui";
-import { TAB_STATE } from "@pages/popup/constants";
-import { setTabState } from "@pages/content";
+import { resetTabState } from "@pages/content";
 import { ISignin } from "@config/types";
 
 const StyledSigninItem = styled.div`
@@ -19,9 +18,7 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
         signin: signin,
       },
     });
-    const element = document.getElementById("__root");
-    if (element) element.remove();
-    setTabState(TAB_STATE.NONE);
+    resetTabState();
     // Communicate headers to web page
     window.postMessage({ type: "signify-signature", data: headers.data }, "*");
   };

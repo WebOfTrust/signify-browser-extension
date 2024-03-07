@@ -20,10 +20,10 @@ console.log("Background script loaded");
 chrome.runtime.onStartup.addListener(function () {
   (async () => {
     const vendorData = await configService.getData();
-    if(vendorData?.icon) {
-      setActionIcon(vendorData?.icon)
+    if (vendorData?.icon) {
+      setActionIcon(vendorData?.icon);
     }
-  })()
+  })();
 
   return true;
 });
@@ -53,6 +53,24 @@ chrome.runtime.onMessage.addListener(function (
       );
 
       if (
+        message.type === "action-icon" &&
+        message.subtype === "set-action-icon"
+      ) {
+        chrome.action.setBadgeBackgroundColor({ color: "#008000" }, () => {
+          chrome.action.setBadgeText({ text: "^" });
+          sendResponse({ data: { success: true } });
+        });
+      }
+
+      if (
+        message.type === "action-icon" &&
+        message.subtype === "unset-action-icon"
+      ) {
+        chrome.action.setBadgeText({ text: "" });
+        sendResponse({ data: { success: true } });
+      }
+
+      if (
         message.type === "vendor-info" &&
         message.subtype === "get-vendor-data"
       ) {
@@ -75,7 +93,7 @@ chrome.runtime.onMessage.addListener(function (
             const resp = await (await fetch(vendorUrl)).json();
             if (resp?.agentUrl) {
               await configService.setAgentUrl(resp?.agentUrl);
-              await configService.setHasOnboarded(true)
+              await configService.setHasOnboarded(true);
             }
             await configService.setData(resp);
             if (resp?.icon) {
@@ -102,7 +120,7 @@ chrome.runtime.onMessage.addListener(function (
           });
           return;
         }
-  
+
         const signedHeaders = await signifyService.signHeaders(
           // sigin can either have identifier or credential
           autoSignin?.identifier
