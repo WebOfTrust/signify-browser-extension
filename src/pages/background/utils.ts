@@ -9,8 +9,7 @@ export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
 
 export const isValidUrl = (str: string) => {
   try {
-    new URL(str);
-    return true;
+    return new URL(str);
   } catch (err) {
     return false;
   }
@@ -24,7 +23,7 @@ export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
   });
 };
 
-export const getCurrentDomain = async () => {
+export const getCurrentUrl = async () => {
   const currentTab = await getCurrentTab();
   console.log("Current tab: ", currentTab);
   return currentTab ? new URL(currentTab.url!) : null;
