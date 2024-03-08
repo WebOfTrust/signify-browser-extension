@@ -6,7 +6,7 @@ import { IMessage, IIdentifier, ICredential } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import {
   removeSlash,
-  getCurrentDomain,
+  getCurrentUrl,
   setActionIcon,
 } from "@pages/background/utils";
 import {
@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "set-action-icon"
       ) {
         chrome.action.setBadgeBackgroundColor({ color: "#008000" }, () => {
-          chrome.action.setBadgeText({ text: "^" });
+          chrome.action.setBadgeText({ text: "1" });
           sendResponse({ data: { success: true } });
         });
       }
@@ -86,7 +86,7 @@ chrome.runtime.onMessage.addListener(function (
         if (!vendorUrl) {
           return;
         }
-  
+
         const _vendorUrl = await configService.getUrl();
         if (!_vendorUrl) {
           try {
@@ -102,7 +102,7 @@ chrome.runtime.onMessage.addListener(function (
             await configService.setUrl(vendorUrl);
           } catch (error) {}
         }
-  
+
         sendResponse({ data: { _vendorUrl } });
       }
 
@@ -237,26 +237,46 @@ chrome.runtime.onMessage.addListener(function (
       const signins = (await browserStorageService.getValue(
         "signins"
       )) as any[];
-      const currentDomain = await getCurrentDomain();
-
+      const currentUrl = await getCurrentUrl();
       const { identifier, credential } = message.data;
-      const signinObj = {
-        identifier,
-        credential,
-        createdAt: new Date().getTime(),
-        updatedAt: new Date().getTime(),
-        domain: currentDomain!.origin,
-      };
-      if (signins && signins?.length) {
-        await browserStorageService.setValue("signins", [
-          ...signins,
-          signinObj,
-        ]);
-      } else {
-        await browserStorageService.setValue("signins", [signinObj]);
+      let signinExists = false;
+      if (identifier && identifier.prefix) {
+        signinExists = signins?.find(
+          (signin) =>
+            signin.domain === currentUrl?.origin &&
+            signin?.identifier?.prefix === identifier.prefix
+        );
       }
-      const storageSignins = await browserStorageService.getValue("signins");
-      sendResponse({ data: { signins: storageSignins } });
+
+      if (credential && credential.sad.d) {
+        signinExists = signins?.find(
+          (signin) =>
+            signin.domain === currentUrl?.origin &&
+            signin?.credential?.sad?.d === credential.sad.d
+        );
+      }
+
+      if (signinExists) {
+        sendResponse({ data: { signins: signins } });
+      } else {
+        const signinObj = {
+          identifier,
+          credential,
+          createdAt: new Date().getTime(),
+          updatedAt: new Date().getTime(),
+          domain: currentUrl!.origin,
+        };
+        if (signins && signins?.length) {
+          await browserStorageService.setValue("signins", [
+            ...signins,
+            signinObj,
+          ]);
+        } else {
+          await browserStorageService.setValue("signins", [signinObj]);
+        }
+        const storageSignins = await browserStorageService.getValue("signins");
+        sendResponse({ data: { signins: storageSignins } });
+      }
     }
     if (
       message.type === "create-resource" &&

@@ -23,7 +23,7 @@ export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
   });
 };
 
-export const getCurrentDomain = async () => {
+export const getCurrentUrl = async () => {
   const currentTab = await getCurrentTab();
   console.log("Current tab: ", currentTab);
   return currentTab ? new URL(currentTab.url!) : null;
