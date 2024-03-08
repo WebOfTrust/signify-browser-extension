@@ -126,7 +126,7 @@ export function Dialog({
                   onClick={handleClick}
                   className="font-bold text-sm cursor-pointer"
                 >
-                  {formatMessage({ id: "action.open" })}{" "}
+                  {formatMessage({ id: "action.click" })}{" "}
                   <span className="inline-block">
                     <img src={logo} className="h-4" alt="logo" />
                   </span>{" "}
