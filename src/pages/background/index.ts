@@ -1,5 +1,8 @@
 import { browserStorageService } from "@pages/background/services/browser-storage";
-import { configService } from "@pages/background/services/config";
+import {
+  WEB_APP_PERMS,
+  configService,
+} from "@pages/background/services/config";
 import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
 import { IMessage, IIdentifier, ICredential } from "@config/types";
@@ -82,28 +85,14 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "vendor-info" &&
         message.subtype === "attempt-set-vendor-url"
       ) {
+        const currentUrl = await getCurrentUrl();
         const { vendorUrl } = message?.data ?? {};
-        if (!vendorUrl) {
-          return;
-        }
-
-        const _vendorUrl = await configService.getUrl();
-        if (!_vendorUrl) {
-          try {
-            const resp = await (await fetch(vendorUrl)).json();
-            if (resp?.agentUrl) {
-              await configService.setAgentUrl(resp?.agentUrl);
-              await configService.setHasOnboarded(true);
-            }
-            await configService.setData(resp);
-            if (resp?.icon) {
-              await setActionIcon(resp?.icon);
-            }
-            await configService.setUrl(vendorUrl);
-          } catch (error) {}
-        }
-
-        sendResponse({ data: { _vendorUrl } });
+        
+        await configService.setWebRequestedPermission(
+          WEB_APP_PERMS.SET_VENDOR_URL,
+          { origin: currentUrl?.origin, vendorUrl }
+        );
+        sendResponse({ data: { success: true } });
       }
 
       if (
