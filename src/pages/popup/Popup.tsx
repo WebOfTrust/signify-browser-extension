@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
-import { configService } from "@pages/background/services/config";
+import {
+  WEB_APP_PERMS,
+  configService,
+} from "@pages/background/services/config";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
 import { IVendorData, IMessage } from "@config/types";
+import { Permission } from "@src/screens/permission";
 import { Signin } from "@src/screens/signin";
 import { Loader } from "@components/ui";
 import { Main } from "@components/main";
@@ -32,11 +36,20 @@ export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState<IVendorData>(defaultVendor);
   const [showConfig, setShowConfig] = useState(false);
 
+  const [permissionData, setPermissionData] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [connectError, setConnectError] = useState("");
   const [isCheckingInitialConnection, setIsCheckingInitialConnection] =
     useState(false);
+
+  const checkWebRequestedPermissions = async () => {
+    const webRequestedPermissions =
+      await configService.getWebRequestedPermissions();
+    const requestedVendorUrlChange =
+      webRequestedPermissions[WEB_APP_PERMS.SET_VENDOR_URL];
+    setPermissionData(requestedVendorUrlChange);
+  };
 
   const checkIfVendorDataExists = async () => {
     const resp = await configService.getAgentAndVendorInfo();
@@ -51,6 +64,7 @@ export default function Popup(): JSX.Element {
 
   const checkInitialConnection = async () => {
     setIsCheckingInitialConnection(true);
+    await checkWebRequestedPermissions();
     await checkConnection();
     setIsCheckingInitialConnection(false);
   };
@@ -120,6 +134,16 @@ export default function Popup(): JSX.Element {
     checkConnection();
   };
 
+  const handleDisconnectPermission = async () => {
+    await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "authentication",
+      subtype: "disconnect-agent",
+    });
+    await checkConnection();
+    checkIfVendorDataExists();
+    checkWebRequestedPermissions();
+  };
+
   const logo = vendorData?.logo ?? "/128_keri_logo.png";
   return (
     <LocaleProvider>
@@ -134,26 +158,42 @@ export default function Popup(): JSX.Element {
             </div>
           ) : (
             <>
-              {isConnected ? (
-                <Main
-                  handleDisconnect={handleDisconnect}
-                  logo={logo}
-                  title={vendorData?.title}
-                />
-              ) : (
+              {permissionData ? (
                 <div className="w-[300px]">
-                  <Signin
-                    signinError={connectError}
-                    handleConnect={handleConnect}
-                    isLoading={isLoading}
-                    logo={logo}
-                    title={vendorData?.title}
-                    afterSetUrl={checkIfVendorDataExists}
-                    vendorData={vendorData}
-                    showConfig={showConfig}
-                    setShowConfig={setShowConfig}
+                  <Permission
+                    isConnected={isConnected}
+                    permissionData={permissionData}
+                    afterCallback={() => {
+                      checkIfVendorDataExists();
+                      checkWebRequestedPermissions();
+                    }}
+                    handleDisconnect={handleDisconnectPermission}
                   />
                 </div>
+              ) : (
+                <>
+                  {isConnected ? (
+                    <Main
+                      handleDisconnect={handleDisconnect}
+                      logo={logo}
+                      title={vendorData?.title}
+                    />
+                  ) : (
+                    <div className="w-[300px]">
+                      <Signin
+                        signinError={connectError}
+                        handleConnect={handleConnect}
+                        isLoading={isLoading}
+                        logo={logo}
+                        title={vendorData?.title}
+                        afterSetUrl={checkIfVendorDataExists}
+                        vendorData={vendorData}
+                        showConfig={showConfig}
+                        setShowConfig={setShowConfig}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

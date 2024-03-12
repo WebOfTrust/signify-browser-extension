@@ -7,6 +7,11 @@ const CONFIG_ENUMS = {
   VENDOR_LANG: "vendor-lang",
   AGENT_URL: "agent-url",
   HAS_ONBOARDED: "has-onboarded",
+  WEB_APP_PERMISSION: "WEB_APP_PERMISSION",
+};
+
+export const WEB_APP_PERMS = {
+  SET_VENDOR_URL: `${CONFIG_ENUMS.WEB_APP_PERMISSION}_set_vendor-url`,
 };
 
 const Config = () => {
@@ -65,18 +70,38 @@ const Config = () => {
   };
 
   const getAgentAndVendorInfo = async (): Promise<any> => {
-    const resp = await browserStorageService.getValues([
+    const resp = (await browserStorageService.getValues([
       CONFIG_ENUMS.AGENT_URL,
       CONFIG_ENUMS.VENDOR_URL,
       CONFIG_ENUMS.VENDOR_DATA,
-      CONFIG_ENUMS.HAS_ONBOARDED
-    ]) as any;
+      CONFIG_ENUMS.HAS_ONBOARDED,
+    ])) as any;
     return {
       vendorUrl: resp[CONFIG_ENUMS.VENDOR_URL],
       agentUrl: resp[CONFIG_ENUMS.AGENT_URL],
       vendorData: resp[CONFIG_ENUMS.VENDOR_DATA],
-      hasOnboarded: resp[CONFIG_ENUMS.HAS_ONBOARDED]
+      hasOnboarded: resp[CONFIG_ENUMS.HAS_ONBOARDED],
     };
+  };
+
+  const getWebRequestedPermissions = async (): Promise<any> => {
+    const resp = (await browserStorageService.getValue(
+      CONFIG_ENUMS.WEB_APP_PERMISSION
+    )) as any;
+    return resp ?? {};
+  };
+
+  const setWebRequestedPermission = async (
+    permissionKey: string,
+    value: any
+  ): Promise<void> => {
+    const resp = await getWebRequestedPermissions();
+    if (resp[permissionKey] && value === "delete") {
+      delete resp[permissionKey];
+    } else {
+      resp[permissionKey] = value;
+    }
+    await browserStorageService.setValue(CONFIG_ENUMS.WEB_APP_PERMISSION, resp);
   };
 
   return {
@@ -91,7 +116,9 @@ const Config = () => {
     getAgentUrl,
     setAgentUrl,
     setHasOnboarded,
-    getAgentAndVendorInfo
+    getAgentAndVendorInfo,
+    setWebRequestedPermission,
+    getWebRequestedPermissions,
   };
 };
 

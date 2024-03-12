@@ -24,7 +24,9 @@ function CircularIndeterminate() {
   );
 }
 
-const VENDOR_URL = "https://api.npoint.io/d59bd3ab0b31de863a20";
+const PROVENANT_URL = "https://api.npoint.io/d59bd3ab0b31de863a20";
+const FACEBOOK_URL = "https://api.npoint.io/1d388b8942c4ec3ed763";
+const GITHUB_URL = "https://api.npoint.io/a75a0383d2820a2153c1";
 
 function App() {
   const [signifyData, setSignifyData] = useState();
@@ -51,9 +53,6 @@ function App() {
   useEffect(() => {
     subscribeToSignature(handleSignifyData);
     isExtensionInstalled((extensionId) => {
-      if (extensionId) {
-        trySettingVendorUrl(VENDOR_URL);
-      }
       setExtensionInstalled(extensionId);
     });
     return () => {
@@ -65,6 +64,10 @@ function App() {
     localStorage.removeItem("signify-data");
     setSignifyData(null);
     setParsedSignifyData(null);
+  };
+
+  const handleSettingVendorUrl = async (url) => {
+    trySettingVendorUrl(url);
   };
 
   const handleRequestAutoSignin = async () => {
@@ -84,33 +87,61 @@ function App() {
 
     if (extensionInstalled)
       return (
-        <div className="auth-btn-container">
-          <p className="auth-heading">Authenticate with</p>
-          <Button variant="contained" color="success" onClick={requestAid}>
-            AID
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={requestCredential}
+        <>
+          <div
+            style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}
           >
-            Credential
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={requestAidORCred}
-          >
-            AID or CRED
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={handleRequestAutoSignin}
-          >
-            Auto Sign in
-          </Button>
-        </div>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleSettingVendorUrl(PROVENANT_URL)}
+            >
+              Provenant Theme (has Agent)
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleSettingVendorUrl(FACEBOOK_URL)}
+            >
+              Facebook Theme
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleSettingVendorUrl(GITHUB_URL)}
+            >
+              Github Theme (has Agent)
+            </Button>
+          </div>
+
+          <div className="auth-btn-container">
+            <p className="auth-heading">Authenticate with</p>
+            <Button variant="contained" color="success" onClick={requestAid}>
+              AID
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={requestCredential}
+            >
+              Credential
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={requestAidORCred}
+            >
+              AID or CRED
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleRequestAutoSignin}
+            >
+              Auto Sign in
+            </Button>
+          </div>
+        </>
       );
 
     return (
