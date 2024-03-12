@@ -22,6 +22,7 @@ export function Permission({
 }: IPermissions): JSX.Element {
   const [receivedVendorData, setReceivedVendorData] = useState<any>();
   const [containsAgentUrl, setContainsAgentUrl] = useState(false);
+  const [isLoadingVendorUrl, setIsLoadingVendorUrl] = useState(false);
   const [vendorUrlError, setVendorUrlError] = useState("");
 
   const { formatMessage } = useIntl();
@@ -65,8 +66,9 @@ export function Permission({
   const handleSetVendorUrl = async () => {
     let hasError = checkErrorVendorUrl();
     try {
+      setIsLoadingVendorUrl(true);
       const resp = await (await fetch(permissionData?.vendorUrl)).json();
-
+      setIsLoadingVendorUrl(false);
       setReceivedVendorData(resp);
 
       if (resp?.agentUrl && isConnected) {
@@ -84,6 +86,7 @@ export function Permission({
       }
     } catch (error) {
       setVendorUrlError(invalidVendorUrlError);
+      setIsLoadingVendorUrl(false);
       hasError = true;
     }
     if (!hasError) {
@@ -147,7 +150,7 @@ export function Permission({
         {containsAgentUrl ? (
           <>
             <div className="mb-2">
-              <Text className="font-bold" $color="heading">
+              <Text className="font-bold text-xs" $color="heading">
                 {formatMessage(
                   { id: "permissions.warning.containsAgentUrl" },
                   { url: receivedVendorData?.agentUrl }
@@ -185,7 +188,7 @@ export function Permission({
           </>
         ) : (
           <>
-            <Text className="font-bold break-words" $color="heading">
+            <Text className="font-bold text-xs break-words" $color="heading">
               {formatMessage(
                 { id: "permissions.desc.loadVendorUrl" },
                 {
@@ -202,6 +205,7 @@ export function Permission({
             <div className="flex flex-row justify-between mt-2">
               <Button
                 handleClick={handleSetVendorUrl}
+                isLoading={isLoadingVendorUrl}
                 className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
               >
                 <p className="font-medium text-md">
