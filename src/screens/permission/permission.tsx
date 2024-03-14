@@ -6,6 +6,7 @@ import {
 } from "@pages/background/services/config";
 import { isValidUrl, setActionIcon } from "@pages/background/utils";
 import { Card, Button, Text } from "@components/ui";
+import { IMessage } from "@config/types";
 
 interface IPermissions {
   permissionData: any;
@@ -55,6 +56,16 @@ export function Permission({
     }
   };
 
+  const removePostPermissionFlags = async () => {
+    await configService.setWebRequestedPermission(
+      WEB_APP_PERMS.SET_VENDOR_URL,
+      "delete"
+    );
+    await chrome.runtime.sendMessage<IMessage<void>>({
+      type: "action-icon",
+      subtype: "unset-action-icon",
+    });
+  };
   const handleSetAgentUrl = async (_url: string) => {
     const hasError = await checkErrorAgentUrl(_url);
     if (hasError) return;
@@ -91,19 +102,13 @@ export function Permission({
     }
     if (!hasError) {
       await configService.setUrl(permissionData?.vendorUrl);
-      await configService.setWebRequestedPermission(
-        WEB_APP_PERMS.SET_VENDOR_URL,
-        "delete"
-      );
+      await removePostPermissionFlags();
       afterCallback();
     }
   };
 
   const handleCancel = async () => {
-    await configService.setWebRequestedPermission(
-      WEB_APP_PERMS.SET_VENDOR_URL,
-      "delete"
-    );
+    await removePostPermissionFlags();
     afterCallback();
   };
 
@@ -113,10 +118,7 @@ export function Permission({
       await setActionIcon(receivedVendorData?.icon);
     }
 
-    await configService.setWebRequestedPermission(
-      WEB_APP_PERMS.SET_VENDOR_URL,
-      "delete"
-    );
+    await removePostPermissionFlags();
     afterCallback();
   };
 
@@ -130,10 +132,7 @@ export function Permission({
       await setActionIcon(receivedVendorData?.icon);
     }
 
-    await configService.setWebRequestedPermission(
-      WEB_APP_PERMS.SET_VENDOR_URL,
-      "delete"
-    );
+    await removePostPermissionFlags();
     handleDisconnect();
   };
 

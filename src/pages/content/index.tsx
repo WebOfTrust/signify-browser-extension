@@ -35,7 +35,7 @@ window.addEventListener(
         case TAB_STATE.SELECT_AUTO_SIGNIN:
           await chrome.runtime.sendMessage<IMessage<void>>({
             type: "action-icon",
-            subtype: "set-action-icon",
+            subtype: "set-tab-action-icon",
           });
           const respVendorData = await chrome.runtime.sendMessage<
             IMessage<void>
@@ -71,6 +71,10 @@ window.addEventListener(
           break;
         case "vendor-info":
           if (event.data.subtype === "attempt-set-vendor-url") {
+            await chrome.runtime.sendMessage<IMessage<void>>({
+              type: "action-icon",
+              subtype: "set-action-icon",
+            });
             await chrome.runtime.sendMessage(chrome.runtime.id, {
               type: "vendor-info",
               subtype: "attempt-set-vendor-url",
@@ -208,7 +212,7 @@ function removeDialog() {
 
   chrome.runtime.sendMessage<IMessage<void>>({
     type: "action-icon",
-    subtype: "unset-action-icon",
+    subtype: "unset-tab-action-icon",
   });
 }
 
