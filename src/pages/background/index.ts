@@ -67,6 +67,24 @@ chrome.runtime.onMessage.addListener(function (
 
       if (
         message.type === "action-icon" &&
+        message.subtype === "set-tab-action-icon"
+      ) {
+        chrome.action.setBadgeBackgroundColor({ color: "#008000" }, () => {
+          chrome.action.setBadgeText({ tabId: sender.tab?.id, text: "1" });
+          sendResponse({ data: { success: true } });
+        });
+      }
+
+      if (
+        message.type === "action-icon" &&
+        message.subtype === "unset-tab-action-icon"
+      ) {
+        chrome.action.setBadgeText({ tabId: sender.tab?.id, text: "" });
+        sendResponse({ data: { success: true } });
+      }
+
+      if (
+        message.type === "action-icon" &&
         message.subtype === "unset-action-icon"
       ) {
         chrome.action.setBadgeText({ text: "" });
@@ -85,12 +103,10 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "vendor-info" &&
         message.subtype === "attempt-set-vendor-url"
       ) {
-        const currentUrl = await getCurrentUrl();
         const { vendorUrl } = message?.data ?? {};
-        
         await configService.setWebRequestedPermission(
           WEB_APP_PERMS.SET_VENDOR_URL,
-          { origin: currentUrl?.origin, vendorUrl }
+          { origin: sender.tab.url, vendorUrl }
         );
         sendResponse({ data: { success: true } });
       }
@@ -176,6 +192,14 @@ chrome.runtime.onMessage.addListener(function (
           "-" +
           message.subtype
       );
+
+      if (
+        message.type === "action-icon" &&
+        message.subtype === "unset-action-icon"
+      ) {
+        chrome.action.setBadgeText({ text: "" });
+        sendResponse({ data: { success: true } });
+      }
 
       if (
         message.type === "authentication" &&
