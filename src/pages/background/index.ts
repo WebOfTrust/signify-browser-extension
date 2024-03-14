@@ -310,7 +310,7 @@ chrome.runtime.onMessage.addListener(function (
       message.subtype === "identifiers"
     ) {
       const identifiers = await signifyService.listIdentifiers();
-      sendResponse({ data: { aids: identifiers?.aids ?? [] } });
+      sendResponse({ data: { aids: identifiers ?? [] } });
     }
 
     if (message.type === "fetch-resource" && message.subtype === "signins") {
@@ -352,14 +352,14 @@ chrome.runtime.onMessage.addListener(function (
     ) {
       var credentials = await signifyService.listCredentials();
       const indentifiers = await signifyService.listIdentifiers();
-      console.log(indentifiers.aids);
+      console.log(indentifiers);
       // Add holder name to credential
       credentials?.forEach((credential: ICredential) => {
         const issueePrefix = credential.sad.a.i;
-        const aidIssuee = indentifiers.aids.find((aid: IIdentifier) => {
+        const aidIssuee = indentifiers.find((aid: IIdentifier) => {
           return aid.prefix === issueePrefix;
         });
-        credential.issueeName = aidIssuee?.name;
+        credential.issueeName = aidIssuee?.name!;
       });
 
       sendResponse({ data: { credentials: credentials ?? [] } });

@@ -1,6 +1,7 @@
 import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
+import { IIdentifier } from "@config/types";
 
 const PASSCODE_TIMEOUT = 5;
 
@@ -77,7 +78,18 @@ const Signify = () => {
 
   const listIdentifiers = async () => {
     validateClient();
-    return await _client?.identifiers().list();
+    let aids: IIdentifier[] = []
+    let start = 0;
+    let total = 0;
+    do {
+      const res = await _client?.identifiers().list(start);
+      if(res.aids?.length){
+        aids.push(...res.aids);
+      }
+      total = res.total;
+      start = aids.length; 
+    } while (aids.length < total);
+    return aids;
   };
 
   const listCredentials = async () => {
