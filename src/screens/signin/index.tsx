@@ -24,7 +24,7 @@ export function Signin(props: ISignin): JSX.Element {
   return (
     <div className="grid grid-cols-1 gap-2">
       <div className="flex flex-row justify-between p-2">
-        <Text className="text-xl capitalize font-bold" $color="primary">
+        <Text className="text-xl capitalize font-bold" $color="bodyColor">
           {props.showConfig
             ? formatMessage({ id: "account.settings" })
             : props.title}
