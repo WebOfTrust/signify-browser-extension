@@ -1,4 +1,4 @@
-import { SignifyClient, Tier, ready, Authenticater } from "signify-ts";
+import { SignifyClient, Tier, ready, Authenticater, randomPasscode, b } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 
@@ -34,6 +34,24 @@ const Signify = () => {
   const resetTimeoutAlarm = async () => {
     await chrome.alarms.clear("passcode-timeout");
     setTimeoutAlarm();
+  };
+
+  const generatePasscode =  () => {
+    return randomPasscode();
+  };
+
+  const bootAndConnect = async (agentUrl: string, bootUrl: string, passcode: string) => {
+    try {
+      await ready();
+      _client = new SignifyClient(agentUrl, passcode, Tier.low, bootUrl);
+      await _client.boot();
+      await _client.connect();
+      setTimeoutAlarm();
+    } catch (error) {
+      console.error(error);
+      _client = null;
+      return { error };
+    }
   };
 
   const connect = async (agentUrl: string, passcode: string) => {
@@ -116,7 +134,7 @@ const Signify = () => {
     ];
 
     const signed_headers = authenticator.sign(headers, "", "", fields);
-
+    resetTimeoutAlarm();
     return signed_headers;
   };
 
