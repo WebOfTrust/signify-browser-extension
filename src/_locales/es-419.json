@@ -58,5 +58,11 @@
   "signin.requestAuth": "solicita autenticación con",
   "signin.website": "Sitio web",
   "signin.with": "Ingresar con",
-  "signins.title": "Ingresar"
+  "signins.title": "Ingresar",
+  "signup.action.copyToClipboard": "¡Copiar al portapapeles!",
+  "signup.desc.safegaurd": "El código de acceso protege su identidad.",
+  "signup.desc.storeYourPasscode": "Guárdelo en una ubicación segura en línea o fuera de línea.",
+  "signup.title.generatePasscode": "Generar contraseña",
+  "signup.title.saveYourPasscode": "Guarde su contraseña",
+  "signup.warning.cannotRetrieve": "NO PODEMOS recuperar su contraseña si la pierde."
 }
