@@ -4,14 +4,22 @@ import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
+import { isValidUrl } from "@pages/background/utils";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
 import { IVendorData, IMessage } from "@config/types";
 import { Permission } from "@src/screens/permission";
 import { Signin } from "@src/screens/signin";
+import { Signup } from "@src/screens/signup";
 import { Loader } from "@components/ui";
 import { Main } from "@components/main";
+
+interface IBootAndConnect {
+  passcode?: string;
+  agentUrl?: string;
+  bootUrl: string;
+}
 
 interface IConnect {
   passcode?: string;
@@ -35,6 +43,7 @@ const StyledLoader = styled.div`
 export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState<IVendorData>(defaultVendor);
   const [showConfig, setShowConfig] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   const [permissionData, setPermissionData] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -100,6 +109,37 @@ export default function Popup(): JSX.Element {
     checkIfVendorDataExists();
     checkInitialConnection();
   }, []);
+
+  const handleBootAndConnect = async (passcode: string) => {
+    const agentUrl = await configService.getAgentUrl();
+    const urlObject = isValidUrl(agentUrl);
+
+    if (!urlObject || !urlObject?.origin) return;
+    setIsLoading(true);
+
+    const { data, error } = await chrome.runtime.sendMessage<
+      IMessage<IBootAndConnect>
+    >({
+      type: "authentication",
+      subtype: "boot-and-connect-agent",
+      data: {
+        passcode,
+        agentUrl,
+        bootUrl: urlObject.origin,
+      },
+    });
+
+    setIsLoading(false);
+    setShowSignup(false);
+    if (error) {
+      setConnectError(error?.message);
+      setTimeout(() => {
+        setConnectError("");
+      }, 3000);
+    } else {
+      await checkConnection();
+    }
+  };
 
   const handleConnect = async (passcode: string) => {
     setIsLoading(true);
@@ -170,6 +210,13 @@ export default function Popup(): JSX.Element {
                     handleDisconnect={handleDisconnectPermission}
                   />
                 </div>
+              ) : showSignup ? (
+                <div className="w-[300px]">
+                  <Signup
+                    isLoading={isLoading}
+                    handleBootAndConnect={handleBootAndConnect}
+                  />
+                </div>
               ) : (
                 <>
                   {isConnected ? (
@@ -190,6 +237,7 @@ export default function Popup(): JSX.Element {
                         vendorData={vendorData}
                         showConfig={showConfig}
                         setShowConfig={setShowConfig}
+                        handleSignup={() => setShowSignup(true)}
                       />
                     </div>
                   )}

@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { Text } from "@components/ui";
+import { configService } from "@pages/background/services/config";
 import { Config } from "@src/screens/config";
 import { IVendorData } from "@config/types";
 import { Signin as SigninComponent } from "./signin";
@@ -16,10 +18,21 @@ interface ISignin {
   afterSetUrl?: () => void;
   showConfig: boolean;
   setShowConfig: (state: boolean) => void;
+  handleSignup: () => void;
 }
 
 export function Signin(props: ISignin): JSX.Element {
   const { formatMessage } = useIntl();
+  const [hasOnboarded, setHasOnboarded] = useState(false);
+
+  const checkIfOnboarded = async () => {
+    const _hasOnboarded = await configService.getHasOnboarded();
+    setHasOnboarded(_hasOnboarded);
+  };
+
+  useEffect(() => {
+    checkIfOnboarded();
+  }, []);
 
   return (
     <div className="grid grid-cols-1 gap-2">
@@ -53,7 +66,10 @@ export function Signin(props: ISignin): JSX.Element {
       </div>
       {props.showConfig ? (
         <Config
-          handleBack={() => props.setShowConfig(false)}
+          handleBack={() => {
+            props.setShowConfig(false);
+            checkIfOnboarded();
+          }}
           afterSetUrl={props?.afterSetUrl}
         />
       ) : (
@@ -65,15 +81,16 @@ export function Signin(props: ISignin): JSX.Element {
         />
       )}
       <div className="text-xs absolute bottom-2 w-full">
-        <div className=" text-center">
-          <a
-            href={props?.vendorData?.onboardingUrl}
-            className="font-medium hover:underline"
-            target="_blank"
-          >
-            {formatMessage({ id: "account.onboard.cta" })}
-          </a>
-        </div>
+        {hasOnboarded ? (
+          <div className=" text-center">
+            <button
+              onClick={props.handleSignup}
+              className="font-medium hover:underline"
+            >
+              {formatMessage({ id: "account.onboard.cta" })}
+            </button>
+          </div>
+        ) : null}
         <div className=" text-center">
           <a
             href={props?.vendorData?.docsUrl}

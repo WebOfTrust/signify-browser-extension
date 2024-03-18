@@ -65,6 +65,12 @@ const Config = () => {
     await browserStorageService.setValue(CONFIG_ENUMS.AGENT_URL, token);
   };
 
+  const getHasOnboarded = async () => {
+    return (await browserStorageService.getValue(
+      CONFIG_ENUMS.HAS_ONBOARDED
+    )) as boolean;
+  };
+
   const setHasOnboarded = async (value: boolean) => {
     await browserStorageService.setValue(CONFIG_ENUMS.HAS_ONBOARDED, value);
   };
@@ -115,6 +121,7 @@ const Config = () => {
     setLanguage,
     getAgentUrl,
     setAgentUrl,
+    getHasOnboarded,
     setHasOnboarded,
     getAgentAndVendorInfo,
     setWebRequestedPermission,
