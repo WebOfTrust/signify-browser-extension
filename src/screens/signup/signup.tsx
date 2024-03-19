@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
-import { Card, Button, Text } from "@components/ui";
+import { Card, Button, Text, Input } from "@components/ui";
 import EyeIcon from "@components/shared/icons/eye";
 import EyeOffIcon from "@components/shared/icons/eye-off";
 import { IMessage } from "@config/types";
@@ -13,11 +13,11 @@ interface ISignup {
 }
 
 const StyledGeneratedPassword = styled.p<{ blur: boolean }>`
-  ${({ blur }) =>
+  ${({ blur, theme }) =>
     blur &&
     css`
       color: transparent;
-      text-shadow: 0 0 8px #000;
+      text-shadow: 0 0 8px ${theme?.colors?.cardColor};
     `}
 `;
 
@@ -131,21 +131,15 @@ export function Signup({
               copiedToClipboard ? (
                 <div>
                   <div className="mb-1">
-                    <input
+                    <Input
                       type="password"
                       id="passcode"
-                      className={`border text-black text-sm rounded-lg block w-full p-1 ${
-                        passcodeError ? " text-red border-red" : ""
-                      }`}
+                      error={passcodeError}
                       placeholder={passcodeMessage}
-                      required
                       value={passcode}
                       onChange={(e) => setPasscode(e.target.value)}
                       onBlur={onBlurPasscode}
                     />
-                    {passcodeError ? (
-                      <p className="text-red">{passcodeError}</p>
-                    ) : null}
                   </div>
                   <Button
                     isLoading={isLoading}
