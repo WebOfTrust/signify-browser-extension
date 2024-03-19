@@ -58,5 +58,11 @@
   "signin.requestAuth": "requests authentication with",
   "signin.website": "Website",
   "signin.with": "Sign in with",
-  "signins.title": "Sign Ins"
+  "signins.title": "Sign Ins",
+  "signup.action.copyToClipboard": "Copy to clipboard!",
+  "signup.desc.safegaurd": "The passcode safeguards your identity.",
+  "signup.desc.storeYourPasscode": "Please store it in a secure online or offline location.",
+  "signup.title.generatePasscode": "Generate Passcode",
+  "signup.title.saveYourPasscode": "Save your Passcode",
+  "signup.warning.cannotRetrieve": "We CANNOT retrieve your passcode if you lose it."
 }

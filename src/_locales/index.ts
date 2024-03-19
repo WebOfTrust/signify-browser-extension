@@ -5,8 +5,8 @@ import es_419 from "@src/_locales/es-419.json";
 const existingLanguageCodes = ["en", "es", "es-419"];
 export const languageCodeMap = {
   en: "English",
-  es: "Spanish",
-  "es-419": "Spanish (LA)",
+  es: "Español",
+  "es-419": "Español (LA)",
 };
 
 export * from "./localeContext";

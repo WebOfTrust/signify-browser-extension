@@ -244,6 +244,36 @@ chrome.runtime.onMessage.addListener(function (
           sendResponse({ data: { success: true } });
         }
       }
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "boot-and-connect-agent"
+      ) {
+        const resp = (await signifyService.bootAndConnect(
+          message.data.agentUrl,
+          message.data.bootUrl,
+          message.data.passcode
+        )) as any;
+        if (resp?.error) {
+          sendResponse({
+            error: {
+              code: 404,
+              message: resp?.error?.message,
+            },
+          });
+        } else {
+          await userService.setPasscode(message.data.passcode);
+          sendResponse({ data: { success: true } });
+        }
+      }
+
+      if (
+        message.type === "authentication" &&
+        message.subtype === "generate-passcode"
+      ) {
+        const passcode = signifyService.generatePasscode();
+        sendResponse({ data: { passcode } });
+      }
     }
 
     if (message.type === "create-resource" && message.subtype === "signin") {

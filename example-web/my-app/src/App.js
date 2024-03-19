@@ -24,6 +24,7 @@ function CircularIndeterminate() {
   );
 }
 
+const ROOTSID_URL = "https://api.npoint.io/52639f849bb31823a8c0";
 const PROVENANT_URL = "https://api.npoint.io/d59bd3ab0b31de863a20";
 const FACEBOOK_URL = "https://api.npoint.io/1d388b8942c4ec3ed763";
 const GITHUB_URL = "https://api.npoint.io/a75a0383d2820a2153c1";
@@ -91,12 +92,20 @@ function App() {
           <div
             style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}
           >
+            <p className="auth-heading">Request Permissions</p>
             <Button
               variant="contained"
               color="success"
               onClick={() => handleSettingVendorUrl(PROVENANT_URL)}
             >
               Provenant Theme (has Agent)
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleSettingVendorUrl(ROOTSID_URL)}
+            >
+              RootsID Theme
             </Button>
             <Button
               variant="contained"

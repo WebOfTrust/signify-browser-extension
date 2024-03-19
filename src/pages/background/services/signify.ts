@@ -164,6 +164,8 @@ const Signify = () => {
     listCredentials,
     signHeaders,
     createAID,
+    generatePasscode,
+    bootAndConnect,
   };
 };
 
