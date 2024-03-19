@@ -1,6 +1,7 @@
 import { useIntl } from "react-intl";
 import { Card, Button, Text, Switch } from "@components/ui";
 import SigninIcon from "@components/shared/icons/signin";
+import AutoSigninIcon from "@components/shared/icons/auto-signin";
 import { ISignin } from "@config/types";
 
 interface ISigninCard {
@@ -58,6 +59,7 @@ export function SigninCard({
             <Switch
               isChecked={signin.autoSignin}
               handleToggle={handleAutoSignin}
+              icon={<AutoSigninIcon />}
             />
           </div>
           <div className="flex items-end">

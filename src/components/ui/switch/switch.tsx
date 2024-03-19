@@ -1,9 +1,9 @@
 import { styled } from "styled-components";
-import SwitchIcon from "@src/components/shared/icons/switch";
 
 interface ISwitch {
   isChecked: boolean;
   handleToggle: () => void;
+  icon?: JSX.Element;
 }
 
 const StyledSwitch = styled.button<Pick<ISwitch, "isChecked">>`
@@ -22,7 +22,11 @@ const StyledSwitchDiv = styled.div<Pick<ISwitch, "isChecked">>`
     isChecked ? theme?.colors?.bodyBg : theme?.colors?.bodyColor};
 `;
 
-export function Switch({ handleToggle, isChecked }: ISwitch): JSX.Element {
+export function Switch({
+  handleToggle,
+  isChecked,
+  icon,
+}: ISwitch): JSX.Element {
   return (
     <StyledSwitch
       isChecked={isChecked}
@@ -36,7 +40,7 @@ export function Switch({ handleToggle, isChecked }: ISwitch): JSX.Element {
           isChecked ? "translate-x-full" : " -translate-x-1"
         }`}
       >
-        <SwitchIcon />
+        {icon}
       </StyledSwitchDiv>
     </StyledSwitch>
   );
