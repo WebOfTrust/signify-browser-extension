@@ -1,20 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
 import { Card, Button, Text } from "@components/ui";
+import EyeIcon from "@components/shared/icons/eye";
+import EyeOffIcon from "@components/shared/icons/eye-off";
 import { IMessage } from "@config/types";
 
 interface ISignup {
   handleBootAndConnect: (passcode: string) => void;
   isLoading: boolean;
+  signupError?: string;
 }
+
+const StyledGeneratedPassword = styled.p<{ blur: boolean }>`
+  ${({ blur }) =>
+    blur &&
+    css`
+      color: transparent;
+      text-shadow: 0 0 8px #000;
+    `}
+`;
 
 export function Signup({
   handleBootAndConnect,
   isLoading,
+  signupError,
 }: ISignup): JSX.Element {
   const [generatedPasscode, setGeneratedPasscode] = useState("");
   const [copiedToClipboard, setCopiedToClipboard] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { formatMessage } = useIntl();
+  const [passcode, setPasscode] = useState("");
+  const [passcodeError, setPasscodeError] = useState("");
+  const passcodeMessage = formatMessage({ id: "account.enterPasscode" });
+  const connectMessage = formatMessage({ id: "action.connect" });
+
+  useEffect(() => {
+    if (signupError) {
+      setPasscodeError(signupError);
+    }
+  }, [signupError]);
+
+  const onBlurPasscode = () => {
+    if (!passcode) {
+      setPasscodeError(passcodeMessage);
+    } else {
+      setPasscodeError("");
+    }
+  };
 
   const handleGeneratePasscode = async () => {
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
@@ -23,6 +56,18 @@ export function Signup({
     });
     if (data?.passcode) {
       setGeneratedPasscode(data.passcode);
+    }
+  };
+
+  const handlingBootAndConnect = async () => {
+    let hasError = false;
+    if (!passcode) {
+      setPasscodeError(passcodeMessage);
+      hasError = true;
+    }
+
+    if (!hasError) {
+      await handleBootAndConnect(passcode);
     }
   };
 
@@ -62,45 +107,60 @@ export function Signup({
           {generatedPasscode ? (
             <Card>
               <div className="flex flex-row gap-x-1 justify-between text-xs">
-                <p>{generatedPasscode}</p>
+                <StyledGeneratedPassword blur={!showPassword}>
+                  {generatedPasscode}
+                </StyledGeneratedPassword>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(generatedPasscode);
+                    setShowPassword(!showPassword);
                   }}
                 >
-                  <svg
-                    className="w-3 h-3"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                  >
-                    <path
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      d="M4 2a2 2 0 00-2 2v9a2 2 0 002 2h2v2a2 2 0 002 2h9a2 2 0 002-2V8a2 2 0 00-2-2h-2V4a2 2 0 00-2-2H4zm9 4V4H4v9h2V8a2 2 0 012-2h5zM8 8h9v9H8V8z"
-                    />
-                  </svg>
+                  {showPassword ? (
+                    <EyeIcon className="w-3 h-3" />
+                  ) : (
+                    <EyeOffIcon className="w-3 h-3" />
+                  )}
                 </button>
               </div>
             </Card>
           ) : (
             <></>
           )}
-          <div className="flex flex-row justify-between mt-2">
+          <div className="mt-2">
             {generatedPasscode ? (
               copiedToClipboard ? (
-                <Button
-                  isLoading={isLoading}
-                  handleClick={() => handleBootAndConnect(generatedPasscode)}
-                  className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
-                >
-                  <p className="font-medium text-md">
-                    {formatMessage({ id: "action.connect" })}
-                  </p>
-                </Button>
+                <div>
+                  <div className="mb-1">
+                    <input
+                      type="password"
+                      id="passcode"
+                      className={`border text-black text-sm rounded-lg block w-full p-1 ${
+                        passcodeError ? " text-red border-red" : ""
+                      }`}
+                      placeholder={passcodeMessage}
+                      required
+                      value={passcode}
+                      onChange={(e) => setPasscode(e.target.value)}
+                      onBlur={onBlurPasscode}
+                    />
+                    {passcodeError ? (
+                      <p className="text-red">{passcodeError}</p>
+                    ) : null}
+                  </div>
+                  <Button
+                    isLoading={isLoading}
+                    handleClick={handlingBootAndConnect}
+                    className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
+                  >
+                    <p className="font-medium text-md">{connectMessage}</p>
+                  </Button>
+                </div>
               ) : (
                 <Button
-                  handleClick={() => setCopiedToClipboard(true)}
+                  handleClick={() => {
+                    navigator.clipboard.writeText(generatedPasscode);
+                    setCopiedToClipboard(true);
+                  }}
                   className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
                 >
                   <p className="font-medium text-md">

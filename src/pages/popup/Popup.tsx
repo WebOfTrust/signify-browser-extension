@@ -130,13 +130,13 @@ export default function Popup(): JSX.Element {
     });
 
     setIsLoading(false);
-    setShowSignup(false);
     if (error) {
       setConnectError(error?.message);
       setTimeout(() => {
         setConnectError("");
       }, 3000);
     } else {
+      setShowSignup(false);
       await checkConnection();
     }
   };
@@ -215,6 +215,7 @@ export default function Popup(): JSX.Element {
                   <Signup
                     isLoading={isLoading}
                     handleBootAndConnect={handleBootAndConnect}
+                    signupError={connectError}
                   />
                 </div>
               ) : (
