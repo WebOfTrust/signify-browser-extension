@@ -1,6 +1,6 @@
-import { isValidElement, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Button } from "@components/ui";
+import { Button, Input } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 
 interface ICreateIdentifierCard {
@@ -35,7 +35,7 @@ export function CreateIdentifierCard(
       hasError = true;
     } else if (hasWhiteSpace(name)) {
       setNameError(
-        <div className="text-red mt-1">
+        <div className="text-red text-xs mt-1">
           {formatMessage({ id: "identifier.error.noWhiteSpace" })}{" "}
           <button
             className=" underline cursor-pointer"
@@ -62,24 +62,14 @@ export function CreateIdentifierCard(
         className=" max-w-xs m-4 flex flex-col gap-y-4"
       >
         <div>
-          <input
+          <Input
             type="text"
             id="vendor_url"
-            className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
-              nameError ? " text-red border-red" : ""
-            } `}
+            error={nameError}
             placeholder={formatMessage({ id: "identifier.uniqueName" })}
-            required
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          {nameError ? (
-            isValidElement(nameError) ? (
-              nameError
-            ) : (
-              <p className="text-red mt-1">{nameError}</p>
-            )
-          ) : null}
         </div>
         <div className=" flex flex-row justify-center mt-2">
           <Button

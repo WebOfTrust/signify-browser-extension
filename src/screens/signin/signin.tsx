@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@components/ui";
+import { Button, Input } from "@components/ui";
 import { useIntl } from "react-intl";
 
 interface ISignin {
@@ -49,19 +49,15 @@ export function Signin(props: ISignin): JSX.Element {
         <img src={props.logo} className="w-32 h-32" alt="logo" />
       </div>
       <div className=" px-4 py-2">
-        <input
+        <Input
           type="password"
           id="passcode"
-          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
-            passcodeError ? " text-red border-red" : ""
-          }`}
+          error={passcodeError}
           placeholder={passcodeMessage}
-          required
           value={passcode}
           onChange={(e) => setPasscode(e.target.value)}
           onBlur={onBlurPasscode}
         />
-        {passcodeError ? <p className="text-red">{passcodeError}</p> : null}
       </div>
       <div className="flex flex-row justify-center">
         <Button

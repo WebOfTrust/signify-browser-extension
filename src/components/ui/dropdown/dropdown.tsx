@@ -21,7 +21,7 @@ const DropdownWrapper = styled.div<Pick<IDropdown, "zIndex">>`
 `;
 
 const DropdownButton = styled.button`
-  padding: 10px;
+  padding: 8px;
   border: none;
   cursor: pointer;
   width: 100%;

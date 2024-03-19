@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
 import { isValidUrl, setActionIcon } from "@pages/background/utils";
-import { Button, Dropdown } from "@components/ui";
+import { Button, Dropdown, Input } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({
   label: s[1],
@@ -115,22 +115,15 @@ export function Config(props: any): JSX.Element {
   return (
     <>
       <div className="px-4 relative mb-2">
-        <p className="text-sm font-bold">
-          {formatMessage({ id: "config.vendorUrl.label" })}
-        </p>
-        <input
-          type="text"
+        <Input
           id="vendor_url"
-          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
-            vendorUrlError ? " text-red border-red" : ""
-          } `}
+          label={formatMessage({ id: "config.vendorUrl.label" })}
+          error={vendorUrlError}
           placeholder={formatMessage({ id: "config.vendorUrl.placeholder" })}
-          required
           value={vendorUrl}
           onChange={(e) => setVendorUrl(e.target.value)}
           onBlur={checkErrorVendorUrl}
         />
-        {vendorUrlError ? <p className="text-red">{vendorUrlError}</p> : null}
         <div className="absolute right-[16px] bottom-[-28px]">
           <Button
             handleClick={handleSave}
@@ -143,22 +136,15 @@ export function Config(props: any): JSX.Element {
         </div>
       </div>
       <div className="px-4">
-        <p className="text-sm font-bold">
-          {formatMessage({ id: "config.agentUrl.label" })} *
-        </p>
-        <input
-          type="text"
+        <Input
           id="agent_url"
-          className={`border text-black text-sm rounded-lg block w-full p-2.5 ${
-            agentUrlError ? " text-red border-red" : ""
-          } `}
+          label={`${formatMessage({ id: "config.agentUrl.label" })} *`}
+          error={agentUrlError}
           placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
-          required
           value={agentUrl}
           onChange={(e) => setAgentUrl(e.target.value)}
           onBlur={() => handleSetAgentUrl(agentUrl)}
         />
-        {agentUrlError ? <p className="text-red">{agentUrlError}</p> : null}
       </div>
       <div className="px-4">
         <p className="text-sm font-bold">
