@@ -27,6 +27,7 @@ const StyledInput = styled.input<Pick<IInput, "error">>`
 
 const StyledInputError = styled.p`
   color: ${({ theme }) => theme?.colors?.error};
+  font-size: 12px;
 `;
 
 export const Input = ({

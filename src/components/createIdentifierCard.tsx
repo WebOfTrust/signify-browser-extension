@@ -35,7 +35,7 @@ export function CreateIdentifierCard(
       hasError = true;
     } else if (hasWhiteSpace(name)) {
       setNameError(
-        <div className="text-red mt-1">
+        <div className="text-red text-xs mt-1">
           {formatMessage({ id: "identifier.error.noWhiteSpace" })}{" "}
           <button
             className=" underline cursor-pointer"
