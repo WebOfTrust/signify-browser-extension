@@ -6,10 +6,5 @@ interface ILoader {
 }
 
 export const Loader = ({ color = "currentColor", size = 3 }: ILoader) => {
-  return (
-    <LoaderIcon
-      className={`animate-spin h-${size} w-${size}`}
-      fillColor={color}
-    />
-  );
+  return <LoaderIcon className="animate-spin" size={size} fillColor={color} />;
 };

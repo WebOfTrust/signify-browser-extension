@@ -14,17 +14,17 @@ export const SIDEBAR_KEYS = {
 export const SIDEBAR = [
   {
     id: SIDEBAR_KEYS.identifiers,
-    icon: <IdentifierIcon className="w-6 h-6" />,
+    icon: <IdentifierIcon size={6} />,
     title: <FormattedMessage id="identifiers.title" />,
   },
   {
     id: SIDEBAR_KEYS.credentials,
-    icon: <CredentialIcon className="w-6 h-6" />,
+    icon: <CredentialIcon size={6} />,
     title: <FormattedMessage id="credentials.title" />,
   },
   {
     id: SIDEBAR_KEYS.signin,
-    icon: <SigninIcon className="w-6 h-6" />,
+    icon: <SigninIcon size={6} />,
     title: <FormattedMessage id="signins.title" />,
   },
 ];
@@ -110,7 +110,7 @@ export function Sidebar(props: ISidebar): JSX.Element {
             onClick={props.onSignout}
             className={`flex items-center p-2 rounded-lg group`}
           >
-            <LockIcon className="w-6 h-6" />
+            <LockIcon size={6} />
             <span className="ms-3">
               {formatMessage({ id: "action.disconnect" })}
             </span>

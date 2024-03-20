@@ -1,7 +1,17 @@
-export default function PopupArrow({ className }: { className?: string }) {
+export default function PopupArrow({
+  size,
+  scale = 4,
+  className,
+}: {
+  size: number;
+  scale?: number;
+  className?: string;
+}) {
   return (
     <svg
       className={className}
+      width={size * scale}
+      height={size * scale}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 197.091 197.091"
     >

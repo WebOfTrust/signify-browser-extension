@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "build:firefox":"BROWSER=firefox vite build",
+    "build:firefox": "BROWSER=firefox vite build",
     "dev": "nodemon"
   },
   "type": "module",
@@ -21,6 +21,7 @@
     "react-intl": "^6.6.2",
     "react-tooltip": "^5.26.2",
     "styled-components": "^6.1.8",
+    "styled-system": "^5.1.5",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "@types/styled-system": "^5.1.22",
     "@types/webextension-polyfill": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",

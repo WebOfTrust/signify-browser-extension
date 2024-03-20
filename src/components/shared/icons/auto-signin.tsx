@@ -1,6 +1,18 @@
-export default function AutoSignin({ className }: { className?: string }) {
+export default function AutoSignin({
+  size,
+  scale = 4,
+}: {
+  size: number;
+  scale?: number;
+}) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      width={size * scale}
+      height={size * scale}
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M20 12C20 7.58172 16.4183 4 12 4M12 20C14.5264 20 16.7792 18.8289 18.2454 17"
         stroke="currentColor"

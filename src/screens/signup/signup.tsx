@@ -116,9 +116,9 @@ export function Signup({
                   }}
                 >
                   {showPassword ? (
-                    <EyeIcon className="w-3 h-3" />
+                    <EyeIcon size={3} />
                   ) : (
-                    <EyeOffIcon className="w-3 h-3" />
+                    <EyeOffIcon size={3} />
                   )}
                 </button>
               </div>

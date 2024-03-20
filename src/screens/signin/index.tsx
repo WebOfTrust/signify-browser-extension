@@ -44,7 +44,7 @@ export function Signin(props: ISignin): JSX.Element {
             : props.title}
         </Text>
         <button onClick={() => props.setShowConfig(true)}>
-          <SettingIcon className="w-6 h-6" />
+          <SettingIcon size={6} />
         </button>
       </div>
       {props.showConfig ? (
