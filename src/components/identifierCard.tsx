@@ -25,7 +25,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
               </Subtext>
             </Text>
           </div>
-          <IdentifierIcon className="w-6 h-6" />
+          <IdentifierIcon size={6} />
         </div>
         <div>
           <Text className="font-bold text-xs" $color="heading">
@@ -48,7 +48,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
                 navigator.clipboard.writeText(aid.prefix);
               }}
             >
-              <CopyIcon className="w-3 h-3" />
+              <CopyIcon size={3} />
             </button>
           </div>
         </ReactTooltip>

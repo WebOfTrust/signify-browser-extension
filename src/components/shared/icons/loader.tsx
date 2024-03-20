@@ -1,15 +1,21 @@
 export default function Loader({
   className,
   fillColor,
+  size,
+  scale = 4,
 }: {
   className?: string;
   fillColor: string;
+  size: number;
+  scale?: number;
 }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 32 32"
       id="Loading"
+      width={size * scale}
+      height={size * scale}
       className={className}
     >
       <g data-name="Loader">

@@ -1,7 +1,14 @@
-export default function EyeOff({ className }: { className?: string }) {
+export default function EyeOff({
+  size,
+  scale = 4,
+}: {
+  size: number;
+  scale?: number;
+}) {
   return (
     <svg
-      className={className}
+      width={size * scale}
+      height={size * scale}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

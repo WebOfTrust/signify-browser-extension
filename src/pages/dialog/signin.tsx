@@ -64,7 +64,7 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
         <div className={`${signin?.autoSignin ? "visible" : "invisible"}`}>
           <p className=" text-end text-[8px] font-bold">Auto Sign in</p>
           <div className="float-right">
-            <SigninIcon className="w-6 h-6" />
+            <SigninIcon size={6} />
           </div>
         </div>
         <Button

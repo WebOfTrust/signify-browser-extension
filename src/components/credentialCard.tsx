@@ -1,5 +1,5 @@
 import { useIntl } from "react-intl";
-import { Text, Subtext, Card } from "@components/ui";
+import { Text, Subtext, Card, Flex, Box } from "@components/ui";
 import CredentialIcon from "@components/shared/icons/credential";
 import ValidIcon from "@components/shared/icons/valid";
 import RevokedIcon from "@components/shared/icons/revoked";
@@ -26,7 +26,7 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between text-xs">
+        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
           <div>
             <Text className="font-bold" $color="heading">
               {credential.schema.title}
@@ -35,9 +35,9 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
               {credential.schema.credentialType}
             </Text>
           </div>
-          <CredentialIcon className="w-6 h-6" />
-        </div>
-        <div className="text-xs">
+          <CredentialIcon size={6} />
+        </Flex>
+        <Box fontSize={0}>
           <Text className="font-normal text-md" $color="text">
             {credential.schema.description}
           </Text>
@@ -49,9 +49,9 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
               </Subtext>
             </>
           </Text>
-        </div>
-        <div className="flex flex-row justify-between text-xs">
-          <div className="">
+        </Box>
+        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
+          <div>
             <Text className="font-bold" $color="heading">
               {formatMessage({ id: "credential.lastUsed.label" })}{" "}
             </Text>
@@ -61,16 +61,16 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
           </div>
           {credential.status?.et === "iss" ? (
             <div className="flex flex-col items-center text-green">
-              <ValidIcon className="w-6 h-6" />
+              <ValidIcon size={6} />
               <p>{formatMessage({ id: "credential.valid" })}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center text-red">
-              <RevokedIcon className="w-6 h-6" />
+              <RevokedIcon size={6} />
               <p>{formatMessage({ id: "credential.revoked" })}</p>
             </div>
           )}
-        </div>
+        </Flex>
       </>
     </Card>
   );

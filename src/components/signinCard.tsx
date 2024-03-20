@@ -28,7 +28,7 @@ export function SigninCard({
               {signin?.domain}
             </Text>
           </div>
-          <SigninIcon className="w-6 h-6" />
+          <SigninIcon size={6} />
         </div>
 
         <div className="flex flex-row justify-between text-xs">
@@ -59,7 +59,7 @@ export function SigninCard({
             <Switch
               isChecked={signin.autoSignin}
               handleToggle={handleAutoSignin}
-              icon={<AutoSigninIcon />}
+              icon={<AutoSigninIcon size={4} />}
             />
           </div>
           <div className="flex items-end">

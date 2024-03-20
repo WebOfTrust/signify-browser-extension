@@ -1,7 +1,14 @@
-export default function Copy({ className }: { className?: string }) {
+export default function Copy({
+  size,
+  scale = 4,
+}: {
+  size: number;
+  scale?: number;
+}) {
   return (
     <svg
-      className={className}
+      width={size * scale}
+      height={size * scale}
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

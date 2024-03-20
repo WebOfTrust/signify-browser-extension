@@ -1,4 +1,10 @@
-export default function Lock({ className }: { className?: string }) {
+export default function Lock({
+  size,
+  scale = 4,
+}: {
+  size: number;
+  scale?: number;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +12,8 @@ export default function Lock({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      className={className}
+      width={size * scale}
+      height={size * scale}
     >
       <path
         stroke-linecap="round"
