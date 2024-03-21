@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Subtext } from "@components/ui";
+import { Text, Subtext, Box } from "@components/ui";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
@@ -77,11 +77,17 @@ export function Dialog({
   return (
     <ThemeProvider theme={vendorData?.theme}>
       {" "}
-      <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
+      <Box
+        position="absolute"
+        width="320px"
+        maxHeight="540px"
+        paddingTop={4}
+        className="top-10 right-10 overflow-auto"
+      >
         {showPopupPrompt ? (
           <PopupPrompt
             message={
-              <Text className="text-sm" $color="subtext">
+              <Text fontSize={1} $color="subtext">
                 {formatMessage({ id: "action.open" })}{" "}
                 <span className="inline-block">
                   <img src={logo} className="h-4" alt="logo" />
@@ -110,9 +116,7 @@ export function Dialog({
               className="mt-2 text-sm max-w-[280px] font-bold"
               $color="bodyColor"
             >
-              <Subtext className="" $color="">
-                {tabUrl}
-              </Subtext>{" "}
+              <Subtext $color="">{tabUrl}</Subtext>{" "}
               {formatMessage({ id: "signin.requestAuth" })}{" "}
               {formatMessage({ id: getTextKeyByEventType() })}
             </Text>
@@ -139,7 +143,7 @@ export function Dialog({
             </>
           )}
         </StyledMain>
-      </div>
+      </Box>
     </ThemeProvider>
   );
 }

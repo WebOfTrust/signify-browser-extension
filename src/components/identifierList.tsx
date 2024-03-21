@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button, Drawer, Text, Loader } from "@components/ui";
+import { Button, Box, Drawer, Flex, Text, Loader } from "@components/ui";
 import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
@@ -60,24 +60,29 @@ export function IdentifierList(): JSX.Element {
 
   return (
     <>
-      <div className=" flex flex-row-reverse">
+      <Flex flexDirection="row-reverse">
         <Button
           handleClick={() => setShowDrawer(true)}
           className="text-white font-medium rounded-full text-xs px-2 py-1"
         >
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
-      </div>
+      </Flex>
       {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
           <Loader size={6} />
-        </div>
+        </Flex>
       ) : null}
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
         header={
-          <Text $color="subtext" className="text-xl capitalize font-bold">
+          <Text
+            fontWeight="bold"
+            $color="subtext"
+            fontSize={3}
+            className="capitalize"
+          >
             {formatMessage({ id: "identifier.create.title" })}
           </Text>
         }
@@ -89,12 +94,14 @@ export function IdentifierList(): JSX.Element {
         />
       </Drawer>
       {aids.map((aid, index) => (
-        <div key={index} className="my-2 mx-4">
+        <Box marginX={3} marginY={2} key={index}>
           <IdentifierCard aid={aid} />
-        </div>
+        </Box>
       ))}
       {!isLoading && !aids?.length ? (
-        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
+        <Text fontSize={0} $color="subtext">
+          {formatMessage({ id: "message.noItems" })}
+        </Text>
       ) : (
         <></>
       )}

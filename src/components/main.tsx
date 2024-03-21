@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { Text } from "@components/ui";
+import { Text, MainBox, Box } from "@components/ui";
 import { Sidebar, SIDEBAR, SIDEBAR_KEYS } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
 import { SelectCredential } from "@components/selectCredential";
@@ -15,7 +15,7 @@ interface IMain {
   title?: string;
 }
 
-const StyledMainContainer = styled.div`
+const StyledMainContainer = styled(Box)`
   background-color: ${(props) => props.theme?.colors?.secondary};
   color: ${(props) => props.theme?.colors?.text};
 `;
@@ -85,7 +85,7 @@ export function Main(props: IMain): JSX.Element {
   };
 
   return (
-    <main className="w-[640px]">
+    <MainBox width="640px">
       <Sidebar
         active={activeSidebar}
         onClickLink={setActiveSidebar}
@@ -93,14 +93,27 @@ export function Main(props: IMain): JSX.Element {
         logo={props?.logo}
         title={props?.title}
       />
-      <StyledMainContainer className="rounded p-2 sm:ml-48 sm:mt-4 mr-4">
-        <div className="">
-          <Text $color="subtext" className="text-xl capitalize font-bold">
+      <StyledMainContainer
+        padding={2}
+        borderRadius={1}
+        marginRight={3}
+        marginTop={3}
+        marginLeft="192px"
+      >
+        <div>
+          <Text
+            fontSize={3}
+            fontWeight="bold"
+            $color="subtext"
+            className="capitalize"
+          >
             {activeSidebar?.title}
           </Text>
-          <div className="m-5 max-h-[576px] overflow-auto">{renderItems()}</div>
+          <Box margin={3} maxHeight="576px" overflow="auto">
+            {renderItems()}
+          </Box>
         </div>
       </StyledMainContainer>
-    </main>
+    </MainBox>
   );
 }

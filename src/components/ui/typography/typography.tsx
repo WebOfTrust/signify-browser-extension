@@ -1,5 +1,10 @@
-import React from "react";
 import { styled } from "styled-components";
+import {
+  typography,
+  TypographyProps,
+  maxWidth,
+  MaxWidthProps,
+} from "styled-system";
 
 interface ITypography {
   children: JSX.Element | any;
@@ -7,30 +12,15 @@ interface ITypography {
   $color: string;
 }
 
-interface IStyledTypography {
-  $color: string;
-}
+type TText = TypographyProps & ITypography & MaxWidthProps;
 
-const StyledTypography = styled.p<IStyledTypography>`
+export const Text = styled.p<TText>`
+  ${typography}
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
 `;
 
-const StyledSubtext = styled.span<IStyledTypography>`
+export const Subtext = styled.span<TText>`
+  ${typography}
+  ${maxWidth}
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
 `;
-
-export function Text(props: ITypography): JSX.Element {
-  return (
-    <StyledTypography className={props.className} $color={props.$color}>
-      {props.children}
-    </StyledTypography>
-  );
-}
-
-export function Subtext(props: ITypography): JSX.Element {
-  return (
-    <StyledSubtext className={props.className} $color={props.$color}>
-      {props.children}
-    </StyledSubtext>
-  );
-}

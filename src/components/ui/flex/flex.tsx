@@ -7,10 +7,11 @@ import {
   flex,
   FlexDirectionProps,
   JustifyContentProps,
+  AlignItemsProps,
 } from "styled-system";
 import { Box } from "../box";
 
-type TFlex = FlexDirectionProps & JustifyContentProps;
+type TFlex = FlexDirectionProps & JustifyContentProps & AlignItemsProps;
 
 export const Flex = styled(Box)<TFlex>`
   display: flex;

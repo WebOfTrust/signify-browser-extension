@@ -1,7 +1,7 @@
 import { obfuscateString } from "@pages/background/utils";
 import { useIntl } from "react-intl";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { Card, Text, Subtext } from "@components/ui";
+import { Card, Text, Subtext, Flex } from "@components/ui";
 import IdentifierIcon from "@components/shared/icons/identifier";
 import CopyIcon from "@components/shared/icons/copy";
 import { IIdentifier } from "@config/types";
@@ -16,23 +16,25 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between text-xs">
+        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "identifier.alias.label" })}{" "}
-              <Subtext className="font-normal max-w" $color="text">
+              <Subtext fontWeight="normal" $color="text">
                 {aid.name}
               </Subtext>
             </Text>
           </div>
           <IdentifierIcon size={6} />
-        </div>
+        </Flex>
         <div>
-          <Text className="font-bold text-xs" $color="heading">
+          <Text fontWeight="bold" fontSize={0} $color="heading">
             {formatMessage({ id: "identifier.aid.label" })}{" "}
             <span data-tooltip-id={aid.prefix}>
               <Subtext
-                className="cursor-pointer font-normal max-w-[200px] break-words"
+                fontWeight="normal"
+                maxWidth="200px"
+                className="cursor-pointer break-words"
                 $color="text"
               >
                 {obfuscateString(aid.prefix)}
@@ -41,7 +43,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
           </Text>
         </div>
         <ReactTooltip id={aid.prefix} clickable delayShow={500}>
-          <div className="flex flex-row gap-x-1 text-xs">
+          <Flex flexDirection="row" fontSize={0} className="gap-x-1">
             <p>{aid.prefix}</p>
             <button
               onClick={() => {
@@ -50,19 +52,24 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
             >
               <CopyIcon size={3} />
             </button>
-          </div>
+          </Flex>
         </ReactTooltip>
-        {/* COMMENTED OUT FOR THE DEMO
-      <div className="flex flex-row justify-between">
-        <div className="">
-          <Text className="font-bold" $color="heading">Credentials Received: </Text>
-          <Text className="font-normal" $color="text">13</Text>
-        </div>
-        <div className="">
-          <Text className="font-bold" $color="heading">Last Used: </Text>
-          <Text className="font-normal" $color="text">November 08, 2023</Text>
-        </div>
-      </div> */}
+
+        {/*  COMMENTED OUT FOR THE DEMO 
+        <Flex flexDirection="row" justifyContent="space-between">
+          <div>
+            <Text fontWeight="bold" $color="heading">
+              Credentials Received:{" "}
+            </Text>
+            <Text $color="text">13</Text>
+          </div>
+          <div>
+            <Text fontWeight="bold" $color="heading">
+              Last Used:{" "}
+            </Text>
+            <Text $color="text">November 08, 2023</Text>
+          </div>
+        </Flex> */}
       </>
     </Card>
   );

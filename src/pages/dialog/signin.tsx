@@ -27,16 +27,16 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
   return (
     <StyledSigninItem className="flex m-2 flex-row justify-between p-2 items-start border border-black rounded">
       <div className="max-w-[200px] break-words">
-        <Text className="text-start text-sm font-bold" $color="heading">
+        <Text fontWeight="bold" fontSize={1} textAlign="start" $color="heading">
           URL:{" "}
-          <Subtext className="font-normal" $color="text">
+          <Subtext fontWeight="normal" $color="text">
             {signin.domain}
           </Subtext>
         </Text>
         {signin?.identifier ? (
-          <Text className=" text-start text-sm" $color="heading">
+          <Text textAlign="start" fontSize={1} $color="heading">
             <strong>AID: </strong>{" "}
-            <Subtext className="font-normal" $color="text">
+            <Subtext fontWeight="normal" $color="text">
               {signin?.identifier?.name}
             </Subtext>
           </Text>
@@ -44,25 +44,32 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
           <></>
         )}
         {signin?.credential ? (
-          <Text className=" text-sm text-start font-normal" $color="heading">
+          <Text
+            fontWeight="normal"
+            textAlign="start"
+            fontSize={1}
+            $color="heading"
+          >
             <strong>Cred: </strong>{" "}
-            <Subtext className="font-normal" $color="text">
+            <Subtext fontWeight="normal" $color="text">
               {signin?.credential?.schema?.title}
             </Subtext>
           </Text>
         ) : (
           <></>
         )}
-        <Text className=" text-start text-xs font-bold" $color="heading">
+        <Text fontWeight="bold" textAlign="start" fontSize={0} $color="heading">
           Last used:{" "}
-          <Subtext className="font-normal" $color="text">
+          <Subtext fontWeight="normal" $color="text">
             {new Date(signin.updatedAt).toDateString()}
           </Subtext>
         </Text>
       </div>
       <div className="flex flex-col gap-y-2">
         <div className={`${signin?.autoSignin ? "visible" : "invisible"}`}>
-          <p className=" text-end text-[8px] font-bold">Auto Sign in</p>
+          <Text $color="" textAlign="end" fontSize="8px" fontWeight="bold">
+            Auto Sign in
+          </Text>
           <div className="float-right">
             <SigninIcon size={6} />
           </div>
