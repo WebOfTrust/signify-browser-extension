@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
 import { Text, Subtext, Box, Flex } from "@components/ui";
+import CloseIcon from "@components/shared/icons/close";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
@@ -15,6 +16,26 @@ const StyledMain = styled(Box)`
     }`};
   background: ${(props) => props.theme?.colors?.bodyBg};
   color: ${(props) => props.theme?.colors?.bodyColor};
+`;
+
+const StyledClose = styled.button`
+  position: absolute;
+  top: 16px;
+  left: 0px;
+  background-color: white;
+  border-radius: 50%;
+  &:hover {
+    background-color: #f55877;
+    color: white;
+  }
+`;
+
+const StyledImgSpan = styled.span`
+  display: inline-block;
+`;
+
+const StyledImg = styled.img`
+  height: ${({ height }) => height};
 `;
 
 interface IDialog {
@@ -91,24 +112,20 @@ export function Dialog({
             message={
               <Text fontSize={1} $color="subtext">
                 {formatMessage({ id: "action.open" })}{" "}
-                <span className="inline-block">
-                  <img src={logo} className="h-4" alt="logo" />
-                </span>{" "}
+                <StyledImgSpan>
+                  <StyledImg src={logo} height="16px" alt="logo" />
+                </StyledImgSpan>{" "}
                 {formatMessage({ id: "action.toProceed" })}
               </Text>
             }
           />
         ) : null}
-        <button
-          type="button"
-          onClick={onClickRemove}
-          className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
-        >
-          {"x"}
-        </button>
+        <StyledClose type="button" onClick={onClickRemove}>
+          <CloseIcon size={6} />
+        </StyledClose>
         <StyledMain borderRadius="4px" textAlign="center" padding={3}>
           <Flex flexDirection="row" $flexGap={2} marginBottom={2}>
-            <img src={logo} className="h-8" alt="logo" />
+            <StyledImg src={logo} height="32px" alt="logo" />
             <Text fontWeight="bold" fontSize={4} $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
@@ -127,17 +144,19 @@ export function Dialog({
                 <SigninItem signin={signin} />
               ))}
               {eventType !== TAB_STATE.NONE ? (
-                <div
+                <Box
                   onClick={handleClick}
-                  className="font-bold text-sm cursor-pointer"
+                  fontWeight="bold"
+                  fontSize={1}
+                  $cursorPointer
                 >
                   {formatMessage({ id: "action.click" })}{" "}
-                  <span className="inline-block">
-                    <img src={logo} className="h-4" alt="logo" />
-                  </span>{" "}
+                  <StyledImgSpan>
+                    <StyledImg height="16px" src={logo} alt="logo" />
+                  </StyledImgSpan>{" "}
                   {formatMessage({ id: "action.toSelectOther" })}{" "}
                   {formatMessage({ id: getTextKeyByEventType() })}
-                </div>
+                </Box>
               ) : (
                 <></>
               )}
