@@ -83,10 +83,7 @@ export function SelectIdentifier(): JSX.Element {
   return (
     <>
       <Flex flexDirection="row-reverse">
-        <Button
-          handleClick={() => setShowDrawer(true)}
-          className=" text-white font-medium rounded-full text-xs px-2 py-1"
-        >
+        <Button handleClick={() => setShowDrawer(true)}>
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
       </Flex>
@@ -99,12 +96,7 @@ export function SelectIdentifier(): JSX.Element {
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
         header={
-          <Text
-            fontSize={3}
-            fontWeight="bold"
-            $color="subtext"
-            className="capitalize"
-          >
+          <Text fontSize={3} fontWeight="bold" $color="subtext" $capitalize>
             {formatMessage({ id: "identifier.create.title" })}
           </Text>
         }
@@ -117,14 +109,13 @@ export function SelectIdentifier(): JSX.Element {
       </Drawer>
       {aids.map((aid, index) => (
         <Box marginY={2} marginX={3} key={index}>
-          <Box position="relative" className="opacity-80 hover:opacity-100">
+          <Box position="relative" $hoverableOpacity>
             <IdentifierCard aid={aid} />
-            <Button
-              handleClick={() => createSigninWithIdentifiers(aid)}
-              className=" absolute right-[2px] bottom-[2px] text-white font-medium rounded-full text-xs px-2 py-1"
-            >
-              <>{`${formatMessage({ id: "action.select" })} >`}</>
-            </Button>
+            <Box position="absolute" right="2px" bottom="2px">
+              <Button handleClick={() => createSigninWithIdentifiers(aid)}>
+                <>{`${formatMessage({ id: "action.select" })} >`}</>
+              </Button>
+            </Box>
           </Box>
         </Box>
       ))}

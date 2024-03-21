@@ -61,10 +61,7 @@ export function IdentifierList(): JSX.Element {
   return (
     <>
       <Flex flexDirection="row-reverse">
-        <Button
-          handleClick={() => setShowDrawer(true)}
-          className="text-white font-medium rounded-full text-xs px-2 py-1"
-        >
+        <Button handleClick={() => setShowDrawer(true)}>
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
       </Flex>
@@ -77,12 +74,7 @@ export function IdentifierList(): JSX.Element {
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
         header={
-          <Text
-            fontWeight="bold"
-            $color="subtext"
-            fontSize={3}
-            className="capitalize"
-          >
+          <Text fontWeight="bold" $color="subtext" fontSize={3} $capitalize>
             {formatMessage({ id: "identifier.create.title" })}
           </Text>
         }

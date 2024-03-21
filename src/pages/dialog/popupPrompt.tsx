@@ -1,23 +1,33 @@
 import { styled } from "styled-components";
+import { Flex, Box } from "@components/ui";
 import PopupArrowIcon from "@src/components/shared/icons/popup-arrow";
 
 interface IPopupPrompt {
   message: JSX.Element;
 }
 
-const StyledContainer = styled.div`
+const StyledContainer = styled(Flex)`
   background-color: ${({ theme }) => theme?.colors?.secondary};
   color: ${({ theme }) => theme?.colors?.subtext};
 `;
 
 export const PopupPrompt = ({ message }: IPopupPrompt): JSX.Element => {
   return (
-    <StyledContainer className="absolute top-0 right-0 flex justify-center max-w-[280px] flex-row border  p-2 rounded">
+    <StyledContainer
+      position="absolute"
+      top={0}
+      right={0}
+      justifyContent="center"
+      flexDirection="row"
+      border="1px"
+      padding={2}
+      borderRadius="4px"
+      maxWidth="280px"
+    >
       {message}
-      <PopupArrowIcon
-        size={4}
-        className="ml-2 rounded border-green animate-bounce"
-      />
+      <Box marginLeft={2}>
+        <PopupArrowIcon size={4} />
+      </Box>
     </StyledContainer>
   );
 };

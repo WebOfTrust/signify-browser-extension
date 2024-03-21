@@ -59,10 +59,7 @@ export function SigninCard({
             />
           </div>
           <Flex alignItems="end">
-            <Button
-              handleClick={handleDelete}
-              className="text-white hover:bg-red font-medium rounded-full text-xs px-2 py-1"
-            >
+            <Button handleClick={handleDelete}>
               <>{formatMessage({ id: "action.delete" })}</>
             </Button>
           </Flex>

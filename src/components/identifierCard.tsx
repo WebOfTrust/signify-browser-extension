@@ -34,7 +34,8 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
               <Subtext
                 fontWeight="normal"
                 maxWidth="200px"
-                className="cursor-pointer break-words"
+                $breakWord
+                $cursorPointer
                 $color="text"
               >
                 {obfuscateString(aid.prefix)}
@@ -43,7 +44,7 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
           </Text>
         </div>
         <ReactTooltip id={aid.prefix} clickable delayShow={500}>
-          <Flex flexDirection="row" fontSize={0} className="gap-x-1">
+          <Flex flexDirection="row" fontSize={0} $flexGap={1}>
             <p>{aid.prefix}</p>
             <button
               onClick={() => {

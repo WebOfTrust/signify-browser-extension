@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Subtext, Box } from "@components/ui";
+import { Text, Subtext, Box, Flex } from "@components/ui";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 
-const StyledMain = styled.div`
+const StyledMain = styled(Box)`
   border: ${(props) =>
     `1px solid ${
       props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
@@ -82,7 +82,9 @@ export function Dialog({
         width="320px"
         maxHeight="540px"
         paddingTop={4}
-        className="top-10 right-10 overflow-auto"
+        top="40px"
+        right="40px"
+        overflow="auto"
       >
         {showPopupPrompt ? (
           <PopupPrompt
@@ -104,13 +106,13 @@ export function Dialog({
         >
           {"x"}
         </button>
-        <StyledMain className="items-center justify-center rounded text-center p-3">
-          <div className="flex flex-row gap-x-2 mb-2">
+        <StyledMain borderRadius="4px" textAlign="center" padding={3}>
+          <Flex flexDirection="row" $flexGap={2} marginBottom={2}>
             <img src={logo} className="h-8" alt="logo" />
             <Text className="text-2xl font-bold" $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
-          </div>
+          </Flex>
           {showRequestAuthPrompt ? (
             <Text
               className="mt-2 text-sm max-w-[280px] font-bold"

@@ -12,7 +12,7 @@ import { IVendorData, IMessage } from "@config/types";
 import { Permission } from "@src/screens/permission";
 import { Signin } from "@src/screens/signin";
 import { Signup } from "@src/screens/signup";
-import { Loader } from "@components/ui";
+import { Loader, Box } from "@components/ui";
 import { Main } from "@components/main";
 
 interface IBootAndConnect {
@@ -36,7 +36,7 @@ export const GlobalStyles = createGlobalStyle`
   }
 `;
 
-const StyledLoader = styled.div`
+const StyledLoaderBox = styled(Box)`
   color: ${(props) => props.theme?.colors?.primary};
 `;
 
@@ -191,15 +191,15 @@ export default function Popup(): JSX.Element {
         <GlobalStyles />
         <div>
           {isCheckingInitialConnection ? (
-            <div className="w-[300px]">
-              <StyledLoader className=" w-16 h-16 m-auto">
+            <Box width="300px">
+              <StyledLoaderBox margin="auto" width={64} height={64}>
                 <Loader size={12} />
-              </StyledLoader>
-            </div>
+              </StyledLoaderBox>
+            </Box>
           ) : (
             <>
               {permissionData ? (
-                <div className="w-[300px]">
+                <Box width="300px">
                   <Permission
                     isConnected={isConnected}
                     permissionData={permissionData}
@@ -209,15 +209,15 @@ export default function Popup(): JSX.Element {
                     }}
                     handleDisconnect={handleDisconnectPermission}
                   />
-                </div>
+                </Box>
               ) : showSignup ? (
-                <div className="w-[300px]">
+                <Box width="300px">
                   <Signup
                     isLoading={isLoading}
                     handleBootAndConnect={handleBootAndConnect}
                     signupError={connectError}
                   />
-                </div>
+                </Box>
               ) : (
                 <>
                   {isConnected ? (
@@ -227,7 +227,7 @@ export default function Popup(): JSX.Element {
                       title={vendorData?.title}
                     />
                   ) : (
-                    <div className="w-[300px]">
+                    <Box width="300px">
                       <Signin
                         signinError={connectError}
                         handleConnect={handleConnect}
@@ -240,7 +240,7 @@ export default function Popup(): JSX.Element {
                         setShowConfig={setShowConfig}
                         handleSignup={() => setShowSignup(true)}
                       />
-                    </div>
+                    </Box>
                   )}
                 </>
               )}

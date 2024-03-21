@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import {
   space,
   layout,
@@ -15,7 +15,14 @@ import {
   LayoutProps,
 } from "styled-system";
 
-type TBox = SpaceProps &
+interface IBoxCustomProps {
+  $breakWord?: boolean;
+  $hoverableOpacity?: boolean;
+  $float?: string;
+}
+
+type TBox = IBoxCustomProps &
+  SpaceProps &
   TypographyProps &
   LayoutProps &
   BorderProps &
@@ -40,6 +47,24 @@ export const Box = styled.div<TBox>`
   ${border}
   ${position}
   ${opacity}
+  ${({ $breakWord }) =>
+    $breakWord &&
+    css`
+      overflow-wrap: break-word;
+    `}
+  ${({ $hoverableOpacity }) =>
+    $hoverableOpacity &&
+    css`
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+      }
+    `}
+  ${({ $float }) =>
+    $float &&
+    css`
+      float: ${$float === "right" ? "right" : "left"};
+    `}
 `;
 
 Box.displayName = "Box";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
-import { Button, Loader } from "@components/ui";
+import { Button, Loader, Flex, Box } from "@components/ui";
 import { IMessage } from "@config/types";
 
 export function SelectCredential(): JSX.Element {
@@ -51,22 +51,23 @@ export function SelectCredential(): JSX.Element {
   return (
     <>
       {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
           <Loader size={6} />
-        </div>
+        </Flex>
       ) : null}
       {credentials.map((credential, index) => (
-        <div key={index} className="my-2 mx-4">
-          <div className=" relative opacity-80 hover:opacity-100">
+        <Box marginY={2} marginX={3} key={index}>
+          <Box position="relative" $hoverableOpacity>
             <CredentialCard credential={credential} />
-            <Button
-              handleClick={() => createSigninWithCredential(credential)}
-              className="absolute right-[2px] bottom-[2px] text-white font-medium rounded-full text-xs px-2 py-1 "
-            >
-              <>{`${formatMessage({ id: "action.select" })} >`}</>
-            </Button>
-          </div>
-        </div>
+            <Box position="absolute" right="2px" bottom="2px">
+              <Button
+                handleClick={() => createSigninWithCredential(credential)}
+              >
+                <>{`${formatMessage({ id: "action.select" })} >`}</>
+              </Button>
+            </Box>
+          </Box>
+        </Box>
       ))}
     </>
   );

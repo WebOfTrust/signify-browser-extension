@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Text } from "@components/ui";
+import { Box, Text, Flex, NewButton } from "@components/ui";
 import SettingIcon from "@src/components/shared/icons/setting";
 import { configService } from "@pages/background/services/config";
 import { Config } from "@src/screens/config";
@@ -37,8 +37,8 @@ export function Signin(props: ISignin): JSX.Element {
 
   return (
     <div className="grid grid-cols-1 gap-2">
-      <div className="flex flex-row justify-between p-2">
-        <Text className="text-xl capitalize font-bold" $color="bodyColor">
+      <Flex flexDirection="row" justifyContent="space-between" padding={2}>
+        <Text fontWeight="bold" fontSize={3} $capitalize $color="bodyColor">
           {props.showConfig
             ? formatMessage({ id: "account.settings" })
             : props.title}
@@ -46,7 +46,7 @@ export function Signin(props: ISignin): JSX.Element {
         <button onClick={() => props.setShowConfig(true)}>
           <SettingIcon size={6} />
         </button>
-      </div>
+      </Flex>
       {props.showConfig ? (
         <Config
           handleBack={() => {
@@ -63,35 +63,34 @@ export function Signin(props: ISignin): JSX.Element {
           logo={props.logo}
         />
       )}
-      <div className="text-xs absolute bottom-2 w-full">
+      <Box fontSize={0} position="absolute" width="100%" bottom={2}>
         {hasOnboarded ? (
-          <div className=" text-center">
-            <button
-              onClick={props.handleSignup}
-              className="font-medium hover:underline"
-            >
+          <Box textAlign="center">
+            <NewButton onClick={props.handleSignup} $hoverUnderline>
               {formatMessage({ id: "account.onboard.cta" })}
-            </button>
-          </div>
+            </NewButton>
+          </Box>
         ) : null}
-        <div className=" text-center">
-          <a
+        <Box textAlign="center">
+          <NewButton
+            as="a"
             href={props?.vendorData?.docsUrl}
             target="_blank"
-            className="font-medium hover:underline"
+            $hoverUnderline
           >
             {formatMessage({ id: "account.docs" })}
-          </a>
+          </NewButton>
           <strong> | </strong>
-          <a
+          <NewButton
+            as="a"
             href={props?.vendorData?.supportUrl}
-            className="font-medium hover:underline"
+            $hoverUnderline
             target="_blank"
           >
             {formatMessage({ id: "account.support" })}
-          </a>
-        </div>
-      </div>
+          </NewButton>
+        </Box>
+      </Box>
     </div>
   );
 }

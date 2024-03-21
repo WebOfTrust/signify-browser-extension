@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
 import { isValidUrl, setActionIcon } from "@pages/background/utils";
-import { Button, Dropdown, Input } from "@components/ui";
+import { Box, Button, Dropdown, Input, Text, Flex } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({
   label: s[1],
@@ -114,7 +114,7 @@ export function Config(props: any): JSX.Element {
 
   return (
     <>
-      <div className="px-4 relative mb-2">
+      <Box paddingX={3} position="relative" marginBottom={2}>
         <Input
           id="vendor_url"
           label={formatMessage({ id: "config.vendorUrl.label" })}
@@ -124,18 +124,13 @@ export function Config(props: any): JSX.Element {
           onChange={(e) => setVendorUrl(e.target.value)}
           onBlur={checkErrorVendorUrl}
         />
-        <div className="absolute right-[16px] bottom-[-28px]">
-          <Button
-            handleClick={handleSave}
-            className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
-          >
-            <p className="font-medium text-md">
-              {formatMessage({ id: "action.load" })}
-            </p>
+        <Box position="absolute" right="16px" bottom="-28px">
+          <Button handleClick={handleSave}>
+            <Text $color="">{formatMessage({ id: "action.load" })}</Text>
           </Button>
-        </div>
-      </div>
-      <div className="px-4">
+        </Box>
+      </Box>
+      <Box paddingX={3}>
         <Input
           id="agent_url"
           label={`${formatMessage({ id: "config.agentUrl.label" })} *`}
@@ -145,28 +140,29 @@ export function Config(props: any): JSX.Element {
           onChange={(e) => setAgentUrl(e.target.value)}
           onBlur={() => handleSetAgentUrl(agentUrl)}
         />
-      </div>
-      <div className="px-4">
-        <p className="text-sm font-bold">
+      </Box>
+      <Box paddingX={3}>
+        <Text $color="" fontSize={1} fontWeight="bold">
           {formatMessage({ id: "config.language.label" })}
-        </p>
+        </Text>
         <Dropdown
           selectedOption={langMap.find((s) => s.value === currentLocale)}
           options={langMap}
           onSelect={(option) => changeLocale(option.value)}
         />
-      </div>
+      </Box>
       {hasOnboarded ? (
-        <div className="text-xs flex flex-row justify-center px-4 mt-3">
-          <Button
-            handleClick={handleBack}
-            className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
-          >
-            <p className="font-medium text-md">
-              {formatMessage({ id: "action.save" })}
-            </p>
+        <Flex
+          fontSize={0}
+          flexDirection="row"
+          justifyContent="center"
+          paddingX={3}
+          marginTop={3}
+        >
+          <Button handleClick={handleBack}>
+            <Text $color="">{formatMessage({ id: "action.save" })}</Text>
           </Button>
-        </div>
+        </Flex>
       ) : (
         <></>
       )}

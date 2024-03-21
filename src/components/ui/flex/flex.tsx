@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import {
   alignSelf,
   alignItems,
@@ -11,11 +11,28 @@ import {
 } from "styled-system";
 import { Box } from "../box";
 
-type TFlex = FlexDirectionProps & JustifyContentProps & AlignItemsProps;
+type TFlexCustomProps = {
+  $flexGap?: number;
+};
+
+type TFlex = TFlexCustomProps &
+  FlexDirectionProps &
+  JustifyContentProps &
+  AlignItemsProps;
 
 export const Flex = styled(Box)<TFlex>`
   display: flex;
   ${alignSelf} ${alignItems} ${justifyContent} ${flexDirection} ${flex};
+  ${({ $flexGap, flexDirection }) =>
+    $flexGap
+      ? flexDirection === "row"
+        ? css`
+            column-gap: ${$flexGap * 4}px;
+          `
+        : css`
+            row-gap: ${$flexGap * 4}px;
+          `
+      : null}
 `;
 
 Flex.displayName = "Flex";

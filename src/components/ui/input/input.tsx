@@ -13,9 +13,17 @@ interface IInput {
   type?: string;
 }
 
+const StyledInputLabel = styled.label`
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+`;
+
 const StyledInput = styled.input<Pick<IInput, "error">>`
   border-radius: 4px;
   display: block;
+  font-size: 14px;
+  line-height: 20px;
   width: 100%;
   padding: 8px;
   border: ${({ theme, error }) =>
@@ -44,16 +52,13 @@ export const Input = ({
   return (
     <div>
       {label ? (
-        <label htmlFor={id} className="text-sm font-bold">
-          {label}
-        </label>
+        <StyledInputLabel htmlFor={id}>{label}</StyledInputLabel>
       ) : (
         <></>
       )}
       <StyledInput
         type={type}
         id={id}
-        className={`text-black text-sm `}
         error={error}
         placeholder={placeholder}
         required={required}

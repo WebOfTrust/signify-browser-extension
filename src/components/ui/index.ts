@@ -9,3 +9,4 @@ export * from "./loader";
 export * from "./input";
 export * from "./box";
 export * from "./flex";
+export * from "./animations";

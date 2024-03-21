@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
-import { Card, Button, Text, Input } from "@components/ui";
+import { Box, Card, Button, Flex, Text, Input } from "@components/ui";
 import EyeIcon from "@components/shared/icons/eye";
 import EyeOffIcon from "@components/shared/icons/eye-off";
 import { IMessage } from "@config/types";
@@ -72,9 +72,9 @@ export function Signup({
   };
 
   return (
-    <div className="p-4 relative">
-      <div className="mb-2">
-        <p className="text-sm font-bold">
+    <Box padding={3} position="relative">
+      <Box marginBottom={2}>
+        <Text fontSize={1} $color="" fontWeight="bold">
           {generatedPasscode
             ? formatMessage({
                 id: "signup.title.saveYourPasscode",
@@ -82,31 +82,36 @@ export function Signup({
             : formatMessage({
                 id: "signup.title.generatePasscode",
               })}
-        </p>
-      </div>
-      <div className="mb-2">
-        <p className="text-xs font-bold">
+        </Text>
+      </Box>
+      <Box marginBottom={2}>
+        <Text $color="" fontSize={0} fontWeight="bold">
           {formatMessage({
             id: "signup.desc.safegaurd",
           })}
-        </p>
-        <p className="text-xs font-bold">
+        </Text>
+        <Text $color="" fontSize={0} fontWeight="bold">
           {formatMessage({
             id: "signup.desc.storeYourPasscode",
           })}
-        </p>
-      </div>
+        </Text>
+      </Box>
       <Card>
         <>
-          <div className=" mb-2">
-            <Text className="font-bold text-xs break-words" $color="heading">
+          <Box marginBottom={2}>
+            <Text fontSize={0} fontWeight="bold" $breakWord $color="heading">
               {formatMessage({ id: "signup.warning.cannotRetrieve" })}
             </Text>
-          </div>
+          </Box>
 
           {generatedPasscode ? (
             <Card>
-              <div className="flex flex-row gap-x-1 justify-between text-xs">
+              <Flex
+                flexDirection="row"
+                justifyContent="space-between"
+                fontSize={0}
+                $flexGap={1}
+              >
                 <StyledGeneratedPassword blur={!showPassword}>
                   {generatedPasscode}
                 </StyledGeneratedPassword>
@@ -121,16 +126,16 @@ export function Signup({
                     <EyeOffIcon size={3} />
                   )}
                 </button>
-              </div>
+              </Flex>
             </Card>
           ) : (
             <></>
           )}
-          <div className="mt-2">
+          <Box marginTop={2}>
             {generatedPasscode ? (
               copiedToClipboard ? (
                 <div>
-                  <div className="mb-1">
+                  <Box marginBottom={1}>
                     <Input
                       type="password"
                       id="passcode"
@@ -140,13 +145,14 @@ export function Signup({
                       onChange={(e) => setPasscode(e.target.value)}
                       onBlur={onBlurPasscode}
                     />
-                  </div>
+                  </Box>
                   <Button
                     isLoading={isLoading}
                     handleClick={handlingBootAndConnect}
-                    className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
                   >
-                    <p className="font-medium text-md">{connectMessage}</p>
+                    <Text fontWeight="normal" $color="">
+                      {connectMessage}
+                    </Text>
                   </Button>
                 </div>
               ) : (
@@ -155,28 +161,24 @@ export function Signup({
                     navigator.clipboard.writeText(generatedPasscode);
                     setCopiedToClipboard(true);
                   }}
-                  className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
                 >
-                  <p className="font-medium text-md">
+                  <Text fontWeight="normal" $color="">
                     {formatMessage({
                       id: "signup.action.copyToClipboard",
                     })}
-                  </p>
+                  </Text>
                 </Button>
               )
             ) : (
-              <Button
-                handleClick={handleGeneratePasscode}
-                className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-3 py-[2px]"
-              >
-                <p className="font-medium text-md">
+              <Button handleClick={handleGeneratePasscode}>
+                <Text fontWeight="normal" $color="">
                   {formatMessage({ id: "signup.title.generatePasscode" })}
-                </p>
+                </Text>
               </Button>
             )}
-          </div>
+          </Box>
         </>
       </Card>
-    </div>
+    </Box>
   );
 }

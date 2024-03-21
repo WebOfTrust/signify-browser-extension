@@ -101,12 +101,7 @@ export function Main(props: IMain): JSX.Element {
         marginLeft="192px"
       >
         <div>
-          <Text
-            fontSize={3}
-            fontWeight="bold"
-            $color="subtext"
-            className="capitalize"
-          >
+          <Text fontSize={3} fontWeight="bold" $color="subtext" $capitalize>
             {activeSidebar?.title}
           </Text>
           <Box margin={3} maxHeight="576px" overflow="auto">

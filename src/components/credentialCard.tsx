@@ -54,20 +54,12 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
             <Text $color="text">November 08, 2023</Text>
           </div>
           {credential.status?.et === "iss" ? (
-            <Flex
-              flexDirection="column"
-              alignItems="center"
-              className="text-green"
-            >
+            <Flex flexDirection="column" alignItems="center" color="green">
               <ValidIcon size={6} />
               <p>{formatMessage({ id: "credential.valid" })}</p>
             </Flex>
           ) : (
-            <Flex
-              flexDirection="column"
-              alignItems="center"
-              className="text-red"
-            >
+            <Flex flexDirection="column" alignItems="center" color="red">
               <RevokedIcon size={6} />
               <p>{formatMessage({ id: "credential.revoked" })}</p>
             </Flex>
