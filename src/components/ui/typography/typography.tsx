@@ -8,7 +8,6 @@ import {
 
 interface ITypography {
   children: JSX.Element | any;
-  className?: string;
   $color: string;
   $capitalize?: boolean;
   $breakWord?: boolean;

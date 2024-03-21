@@ -1,9 +1,25 @@
+import { styled } from "styled-components";
+import { Flex } from "../flex";
+
 interface IRadio {
   id?: string;
   component?: JSX.Element;
   checked: boolean;
   onClick: () => void;
 }
+
+const StyledRadio = styled.input`
+  width: 16px;
+  height: 16px;
+  accent-color: #61783e;
+`;
+
+const StyledRadioLabel = styled.label`
+  cursor: pointer;
+  width: 100%;
+  margin-inline-start: 4px;
+  font-weight: 500;
+`;
 
 export function Radio({
   id,
@@ -12,23 +28,22 @@ export function Radio({
   onClick,
 }: IRadio): JSX.Element {
   return (
-    <div
+    <Flex
       onClick={onClick}
-      className={`flex cursor-pointer items-center border rounded ${
-        checked ? "border-green bg-green" : ""
-      }`}
+      alignItems="center"
+      $cursorPointer
+      borderWidth="1px"
+      borderRadius="4px"
+      borderColor={checked ? "green" : ""}
     >
-      <input
+      <StyledRadio
         checked={checked}
         id={id}
         type="radio"
         value=""
         name="bordered-radio"
-        className="w-4 h-4 accent-green"
       />
-      <label htmlFor={id} className="cursor-pointer w-full ms-1 font-medium">
-        {component}
-      </label>
-    </div>
+      <StyledRadioLabel htmlFor={id}>{component}</StyledRadioLabel>
+    </Flex>
   );
 }

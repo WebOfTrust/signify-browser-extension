@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Box, Text, Flex, NewButton } from "@components/ui";
+import { Box, Text, Flex, NewButton, Grid } from "@components/ui";
 import SettingIcon from "@src/components/shared/icons/setting";
 import { configService } from "@pages/background/services/config";
 import { Config } from "@src/screens/config";
@@ -36,7 +36,7 @@ export function Signin(props: ISignin): JSX.Element {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 gap-2">
+    <Grid>
       <Flex flexDirection="row" justifyContent="space-between" padding={2}>
         <Text fontWeight="bold" fontSize={3} $capitalize $color="bodyColor">
           {props.showConfig
@@ -91,6 +91,6 @@ export function Signin(props: ISignin): JSX.Element {
           </NewButton>
         </Box>
       </Box>
-    </div>
+    </Grid>
   );
 }

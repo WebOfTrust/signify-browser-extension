@@ -109,19 +109,18 @@ export function Dialog({
         <StyledMain borderRadius="4px" textAlign="center" padding={3}>
           <Flex flexDirection="row" $flexGap={2} marginBottom={2}>
             <img src={logo} className="h-8" alt="logo" />
-            <Text className="text-2xl font-bold" $color="bodyColor">
+            <Text fontWeight="bold" fontSize={4} $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
           </Flex>
           {showRequestAuthPrompt ? (
-            <Text
-              className="mt-2 text-sm max-w-[280px] font-bold"
-              $color="bodyColor"
-            >
-              <Subtext $color="">{tabUrl}</Subtext>{" "}
-              {formatMessage({ id: "signin.requestAuth" })}{" "}
-              {formatMessage({ id: getTextKeyByEventType() })}
-            </Text>
+            <Box marginTop={2} maxWidth="280px">
+              <Text fontWeight="bold" $color="bodyColor">
+                <Subtext $color="">{tabUrl}</Subtext>{" "}
+                {formatMessage({ id: "signin.requestAuth" })}{" "}
+                {formatMessage({ id: getTextKeyByEventType() })}
+              </Text>
+            </Box>
           ) : (
             <>
               {signins?.map((signin) => (

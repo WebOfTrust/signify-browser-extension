@@ -19,6 +19,7 @@ interface IBoxCustomProps {
   $breakWord?: boolean;
   $hoverableOpacity?: boolean;
   $float?: string;
+  $cursorPointer?: boolean;
 }
 
 type TBox = IBoxCustomProps &
@@ -64,6 +65,11 @@ export const Box = styled.div<TBox>`
     $float &&
     css`
       float: ${$float === "right" ? "right" : "left"};
+    `}
+  ${({ $cursorPointer }) =>
+    $cursorPointer &&
+    css`
+      cursor: pointer;
     `}
 `;
 
