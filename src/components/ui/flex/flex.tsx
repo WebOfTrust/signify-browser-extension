@@ -25,12 +25,12 @@ export const Flex = styled(Box)<TFlex>`
   ${alignSelf} ${alignItems} ${justifyContent} ${flexDirection} ${flex};
   ${({ $flexGap, flexDirection }) =>
     $flexGap
-      ? flexDirection === "row"
+      ? flexDirection === "column"
         ? css`
-            column-gap: ${$flexGap * 4}px;
+            row-gap: ${$flexGap * 4}px;
           `
         : css`
-            row-gap: ${$flexGap * 4}px;
+            column-gap: ${$flexGap * 4}px;
           `
       : null}
 `;
