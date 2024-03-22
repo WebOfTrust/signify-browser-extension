@@ -140,7 +140,7 @@ export function Dialog({
           </Flex>
           {showRequestAuthPrompt ? (
             <Box marginTop={2} maxWidth="280px">
-              <Text fontWeight="bold" $color="bodyColor">
+              <Text fontSize={1} fontWeight="bold" $color="bodyColor">
                 <Subtext $color="">{tabUrl}</Subtext>{" "}
                 {formatMessage({ id: "signin.requestAuth" })}{" "}
                 {formatMessage({ id: getTextKeyByEventType() })}

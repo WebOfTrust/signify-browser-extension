@@ -39,7 +39,7 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
       borderRadius="4px"
       borderColor="black"
     >
-      <Box maxWidth="200px" $breakWord>
+      <Box maxWidth="180px" $breakWord>
         <Text fontWeight="bold" fontSize={1} textAlign="start" $color="heading">
           URL:{" "}
           <Subtext fontWeight="normal" $color="text">
