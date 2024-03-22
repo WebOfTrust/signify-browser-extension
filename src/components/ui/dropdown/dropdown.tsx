@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Text } from "../typography";
 
 interface IDropdownOption {
   label: string;
@@ -7,6 +8,7 @@ interface IDropdownOption {
 }
 
 interface IDropdown {
+  label?: string;
   options: IDropdownOption[];
   selectedOption?: IDropdownOption;
   onSelect: (option: IDropdownOption) => void;
@@ -55,7 +57,12 @@ const DropdownItem = styled.li`
   }
 `;
 
+const DropdownLabel = styled(Text)`
+  padding-bottom: 4px;
+`;
+
 export const Dropdown = ({
+  label,
   selectedOption,
   options,
   onSelect,
@@ -73,22 +80,31 @@ export const Dropdown = ({
   };
 
   return (
-    <DropdownWrapper zIndex={zIndex}>
-      <DropdownButton onClick={handleDropdownClick}>
-        {selectedOption?.label}
-      </DropdownButton>
-      {isOpen && (
-        <DropdownList>
-          {options.map((option) => (
-            <DropdownItem
-              key={option?.value}
-              onClick={() => handleOptionClick(option)}
-            >
-              {option?.label}
-            </DropdownItem>
-          ))}
-        </DropdownList>
+    <>
+      {label ? (
+        <DropdownLabel $color="" fontSize={1} fontWeight="bold">
+          {label}
+        </DropdownLabel>
+      ) : (
+        <></>
       )}
-    </DropdownWrapper>
+      <DropdownWrapper zIndex={zIndex}>
+        <DropdownButton onClick={handleDropdownClick}>
+          {selectedOption?.label}
+        </DropdownButton>
+        {isOpen && (
+          <DropdownList>
+            {options.map((option) => (
+              <DropdownItem
+                key={option?.value}
+                onClick={() => handleOptionClick(option)}
+              >
+                {option?.label}
+              </DropdownItem>
+            ))}
+          </DropdownList>
+        )}
+      </DropdownWrapper>
+    </>
   );
 };

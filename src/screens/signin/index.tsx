@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Box, Text, Flex, NewButton, Grid } from "@components/ui";
+import { Box, Text, Flex, NewButton, IconButton, Grid } from "@components/ui";
 import SettingIcon from "@src/components/shared/icons/setting";
 import { configService } from "@pages/background/services/config";
 import { Config } from "@src/screens/config";
@@ -43,9 +43,9 @@ export function Signin(props: ISignin): JSX.Element {
             ? formatMessage({ id: "account.settings" })
             : props.title}
         </Text>
-        <button onClick={() => props.setShowConfig(true)}>
+        <IconButton onClick={() => props.setShowConfig(true)}>
           <SettingIcon size={6} />
-        </button>
+        </IconButton>
       </Flex>
       {props.showConfig ? (
         <Config

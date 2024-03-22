@@ -1,6 +1,6 @@
 import { styled, css } from "styled-components";
 import { buttonStyle, ButtonStyleProps } from "styled-system";
-import { Loader } from "@components/ui";
+import { Loader } from "../loader";
 
 interface IButton {
   type?: "button" | "reset" | "submit" | undefined;
@@ -16,6 +16,8 @@ type TNewButtonCustomProps = {
 };
 
 const StyledButton = styled.button`
+  border: none;
+  cursor: pointer;
   background-color: ${(props) => props.theme?.colors?.primary};
   text-align: center;
   font-weight: 500;
@@ -34,6 +36,14 @@ const StyledButton = styled.button`
 
 const CustomButton = styled.button<ButtonStyleProps & TNewButtonCustomProps>`
   ${buttonStyle}
+  height: fit-content;
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
   ${({ $underline }) =>
     $underline &&
     css`
@@ -51,6 +61,18 @@ const CustomButton = styled.button<ButtonStyleProps & TNewButtonCustomProps>`
     css`
       cursor: pointer;
     `}
+`;
+
+export const IconButton = styled.button<ButtonStyleProps>`
+  ${buttonStyle}
+  height: fit-content;
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 `;
 
 const determineElementType = (as: string) => {

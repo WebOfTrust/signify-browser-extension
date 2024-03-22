@@ -1,4 +1,4 @@
-import { Box } from "@components/ui";
+import { Box, Subtext } from "@components/ui";
 import { styled } from "styled-components";
 
 interface IHeader {
@@ -9,6 +9,8 @@ interface IHeader {
 const StyledLogoLink = styled.a`
   display: flex;
   align-items: center;
+  column-gap: 8px;
+  text-decoration-line: none;
 
   & > img {
     height: 32px;
@@ -26,9 +28,12 @@ const StyledLogoLink = styled.a`
 export function Header(props: IHeader): JSX.Element {
   return (
     <Box>
-      <StyledLogoLink href="https://github.com/WebOfTrust/signify-browser-extension">
+      <StyledLogoLink
+        target="_blank"
+        href="https://github.com/WebOfTrust/signify-browser-extension"
+      >
         <img src={props?.logo} alt="logo" />
-        <span>{props?.title}</span>
+        <Subtext $color="bodyColor">{props?.title}</Subtext>
       </StyledLogoLink>
     </Box>
   );

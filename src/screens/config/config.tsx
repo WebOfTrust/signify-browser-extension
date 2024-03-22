@@ -142,10 +142,8 @@ export function Config(props: any): JSX.Element {
         />
       </Box>
       <Box paddingX={3}>
-        <Text $color="" fontSize={1} fontWeight="bold">
-          {formatMessage({ id: "config.language.label" })}
-        </Text>
         <Dropdown
+          label={formatMessage({ id: "config.language.label" })}
           selectedOption={langMap.find((s) => s.value === currentLocale)}
           options={langMap}
           onSelect={(option) => changeLocale(option.value)}

@@ -9,6 +9,7 @@ import {
   StyledSidebar,
   StyledMenu,
   StyledBottomMenu,
+  StyledHeaderContainer,
   StyledLiContainer,
 } from "./styled";
 
@@ -50,11 +51,11 @@ export function Sidebar(props: ISidebar): JSX.Element {
   return (
     <StyledSidebar id="default-sidebar" aria-label="Sidebar">
       <Flex paddingX={3}>
-        <ul>
+        <StyledHeaderContainer>
           <StyledLiContainer>
             <Header logo={props?.logo} title={props?.title} />
           </StyledLiContainer>
-        </ul>
+        </StyledHeaderContainer>
       </Flex>
       <Flex
         flexDirection="column"

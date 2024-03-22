@@ -17,6 +17,7 @@ interface ITypography {
 type TText = TypographyProps & ITypography & MaxWidthProps;
 
 export const Text = styled.p<TText>`
+  margin: 0;
   ${typography}
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
   ${({ $capitalize }) =>
@@ -39,6 +40,7 @@ export const Text = styled.p<TText>`
 export const Subtext = styled.span<TText>`
   ${typography}
   ${maxWidth}
+  margin: 0;
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
   ${({ $breakWord }) =>
     $breakWord &&

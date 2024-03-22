@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
-import { Box, Card, Button, Flex, Text, Input } from "@components/ui";
+import {
+  Box,
+  Card,
+  Button,
+  Flex,
+  Text,
+  Input,
+  IconButton,
+} from "@components/ui";
 import EyeIcon from "@components/shared/icons/eye";
 import EyeOffIcon from "@components/shared/icons/eye-off";
 import { IMessage } from "@config/types";
@@ -13,6 +21,7 @@ interface ISignup {
 }
 
 const StyledGeneratedPassword = styled.p<{ blur: boolean }>`
+  margin: 0;
   ${({ blur, theme }) =>
     blur &&
     css`
@@ -115,7 +124,7 @@ export function Signup({
                 <StyledGeneratedPassword blur={!showPassword}>
                   {generatedPasscode}
                 </StyledGeneratedPassword>
-                <button
+                <IconButton
                   onClick={() => {
                     setShowPassword(!showPassword);
                   }}
@@ -125,7 +134,7 @@ export function Signup({
                   ) : (
                     <EyeOffIcon size={3} />
                   )}
-                </button>
+                </IconButton>
               </Flex>
             </Card>
           ) : (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Button, Input, Box, Flex, NewButton } from "@components/ui";
+import { Button, Input, Text, Box, Flex, NewButton } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 
 interface ICreateIdentifierCard {
@@ -76,7 +76,7 @@ export function CreateIdentifierCard(
               handleClick={onCreateIdentifier}
               isLoading={props.isLoading}
             >
-              <p>{formatMessage({ id: "action.create" })}</p>
+              <Text $color="">{formatMessage({ id: "action.create" })}</Text>
             </Button>
           </Flex>
         </Flex>

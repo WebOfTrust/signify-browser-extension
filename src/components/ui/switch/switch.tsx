@@ -7,6 +7,7 @@ interface ISwitch {
 }
 
 const StyledSwitch = styled.button<Pick<ISwitch, "isChecked">>`
+  cursor: pointer;
   background-color: ${(props) => props.theme?.colors?.bodyBg};
   border-color: ${(props) => props.theme?.colors?.primary};
   border-width: 1px;
@@ -33,8 +34,8 @@ const StyledSwitchDiv = styled.div<Pick<ISwitch, "isChecked">>`
     isChecked ? "unset" : `1px solid ${theme?.colors?.primary}`};
   color: ${({ isChecked, theme }) =>
     isChecked ? theme?.colors?.bodyBg : theme?.colors?.bodyColor};
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   position: relative;
   border-radius: 9999px;
   transition-property: color, background-color, border-color,
@@ -54,7 +55,7 @@ const StyledSwitchDiv = styled.div<Pick<ISwitch, "isChecked">>`
             skewY(0) scaleX(1) scaleY(1);
         `
       : css`
-          --sc-translate-x: -4px;
+          --sc-translate-x: -8px;
           transform: translate(var(--sc-translate-x), 0) rotate(0) skewX(0)
             skewY(0) scaleX(1) scaleY(1);
         `}}
@@ -66,18 +67,8 @@ export function Switch({
   icon,
 }: ISwitch): JSX.Element {
   return (
-    <StyledSwitch
-      isChecked={isChecked}
-      // {` transition duration-300`}
-      onClick={handleToggle}
-    >
-      <StyledSwitchDiv
-        id="switch-toggle"
-        isChecked={isChecked}
-        // {`transform ${
-        //   isChecked ? "translate-x-full" : " -translate-x-1"
-        // }`}
-      >
+    <StyledSwitch isChecked={isChecked} onClick={handleToggle}>
+      <StyledSwitchDiv id="switch-toggle" isChecked={isChecked}>
         {icon}
       </StyledSwitchDiv>
     </StyledSwitch>

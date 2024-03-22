@@ -26,18 +26,20 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
   return (
     <Card>
       <>
-        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
-          <div>
-            <Text fontWeight="bold" $color="heading">
-              {credential.schema.title}
-            </Text>
-            <Text $color="text">{credential.schema.credentialType}</Text>
-          </div>
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Text fontSize={1} fontWeight="bold" $color="heading">
+            {credential.schema.title}
+          </Text>
           <CredentialIcon size={6} />
         </Flex>
-        <Box fontSize={0}>
+        <Box marginBottom={1} fontSize={0}>
+          <Text $color="text">{credential.schema.credentialType}</Text>
+        </Box>
+        <Box marginBottom={1} fontSize={0}>
           <Text $color="text">{credential.schema.description}</Text>
-          <Text fontWeight="bold" $color="heading">
+        </Box>
+        <Box marginBottom={1}>
+          <Text fontSize={0} fontWeight="bold" $color="heading">
             <>
               {formatMessage({ id: "credential.issue.label" })}{" "}
               <Subtext fontWeight="normal" $color="text">
@@ -56,12 +58,14 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
           {credential.status?.et === "iss" ? (
             <Flex flexDirection="column" alignItems="center" color="green">
               <ValidIcon size={6} />
-              <p>{formatMessage({ id: "credential.valid" })}</p>
+              <Text $color="">{formatMessage({ id: "credential.valid" })}</Text>
             </Flex>
           ) : (
             <Flex flexDirection="column" alignItems="center" color="red">
               <RevokedIcon size={6} />
-              <p>{formatMessage({ id: "credential.revoked" })}</p>
+              <Text $color="">
+                {formatMessage({ id: "credential.revoked" })}
+              </Text>
             </Flex>
           )}
         </Flex>

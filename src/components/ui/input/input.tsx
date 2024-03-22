@@ -1,5 +1,6 @@
 import React, { isValidElement } from "react";
 import styled from "styled-components";
+import { Flex } from "../flex";
 
 interface IInput {
   label?: string;
@@ -20,6 +21,11 @@ const StyledInputLabel = styled.label`
 `;
 
 const StyledInput = styled.input<Pick<IInput, "error">>`
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
   border-radius: 4px;
   display: block;
   font-size: 14px;
@@ -36,6 +42,7 @@ const StyledInput = styled.input<Pick<IInput, "error">>`
 const StyledInputError = styled.p`
   color: ${({ theme }) => theme?.colors?.error};
   font-size: 12px;
+  margin: 0;
 `;
 
 export const Input = ({
@@ -50,7 +57,7 @@ export const Input = ({
   type = "text",
 }: IInput) => {
   return (
-    <div>
+    <Flex flexDirection="column" $flexGap={1}>
       {label ? (
         <StyledInputLabel htmlFor={id}>{label}</StyledInputLabel>
       ) : (
@@ -73,6 +80,6 @@ export const Input = ({
           <StyledInputError>{error}</StyledInputError>
         )
       ) : null}
-    </div>
+    </Flex>
   );
 };

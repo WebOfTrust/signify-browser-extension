@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Subtext, Box, Flex } from "@components/ui";
+import { Text, Subtext, Box, Flex, IconButton } from "@components/ui";
 import CloseIcon from "@components/shared/icons/close";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
@@ -18,16 +18,24 @@ const StyledMain = styled(Box)`
   color: ${(props) => props.theme?.colors?.bodyColor};
 `;
 
-const StyledClose = styled.button`
+const StyledClose = styled(IconButton)`
   position: absolute;
-  top: 16px;
+  top: 24px;
   left: 0px;
-  background-color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  text-align: center;
   border-radius: 50%;
+  background: ${(props) => props.theme?.colors?.bodyBg};
+  color: ${(props) => props.theme?.colors?.bodyColor};
   &:hover {
     background-color: #f55877;
     color: white;
   }
+  border: ${(props) =>
+    `1px solid ${
+      props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
+    }`};
 `;
 
 const StyledImgSpan = styled.span`
@@ -121,12 +129,12 @@ export function Dialog({
           />
         ) : null}
         <StyledClose type="button" onClick={onClickRemove}>
-          <CloseIcon size={6} />
+          x
         </StyledClose>
         <StyledMain borderRadius="4px" textAlign="center" padding={3}>
-          <Flex flexDirection="row" $flexGap={2} marginBottom={2}>
+          <Flex flexDirection="row" $flexGap={2} alignItems="center">
             <StyledImg src={logo} height="32px" alt="logo" />
-            <Text fontWeight="bold" fontSize={4} $color="bodyColor">
+            <Text fontWeight="bold" fontSize={3} $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
           </Flex>

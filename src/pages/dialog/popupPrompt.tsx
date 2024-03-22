@@ -7,6 +7,7 @@ interface IPopupPrompt {
 }
 
 const StyledContainer = styled(Flex)`
+  border: solid;
   background-color: ${({ theme }) => theme?.colors?.secondary};
   color: ${({ theme }) => theme?.colors?.subtext};
 `;

@@ -1,7 +1,7 @@
 import { obfuscateString } from "@pages/background/utils";
 import { useIntl } from "react-intl";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { Card, Text, Subtext, Flex } from "@components/ui";
+import { Card, Text, Subtext, Flex, IconButton } from "@components/ui";
 import IdentifierIcon from "@components/shared/icons/identifier";
 import CopyIcon from "@components/shared/icons/copy";
 import { IIdentifier } from "@config/types";
@@ -45,14 +45,14 @@ export function IdentifierCard({ aid }: IIdentifierCard): JSX.Element {
         </div>
         <ReactTooltip id={aid.prefix} clickable delayShow={500}>
           <Flex flexDirection="row" fontSize={0} $flexGap={1}>
-            <p>{aid.prefix}</p>
-            <button
+            <Text $color="">{aid.prefix}</Text>
+            <IconButton
               onClick={() => {
                 navigator.clipboard.writeText(aid.prefix);
               }}
             >
               <CopyIcon size={3} />
-            </button>
+            </IconButton>
           </Flex>
         </ReactTooltip>
 

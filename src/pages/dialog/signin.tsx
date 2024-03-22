@@ -5,6 +5,7 @@ import { resetTabState } from "@pages/content";
 import { ISignin } from "@config/types";
 
 const StyledSigninItem = styled(Flex)`
+  border: 1px solid;
   background-color: ${(props) => props.theme?.colors?.cardBg};
   color: ${(props) => props.theme?.colors?.cardColor};
 `;
@@ -36,7 +37,6 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
       margin={2}
       alignItems="start"
       borderRadius="4px"
-      borderWidth="1px"
       borderColor="black"
     >
       <Box maxWidth="200px" $breakWord>

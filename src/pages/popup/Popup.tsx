@@ -34,6 +34,15 @@ export const GlobalStyles = createGlobalStyle`
       `1px solid ${theme?.colors?.bodyBorder ?? theme?.colors?.bodyBg}`};
     transition: background 0.2s ease-in, color 0.2s ease-in;
   }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    > li {
+      margin-bottom: 8px;
+    }
+  }
 `;
 
 const StyledLoaderBox = styled(Box)`

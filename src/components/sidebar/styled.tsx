@@ -37,6 +37,10 @@ export const StyledBottomMenu = styled(Flex)`
   }
 `;
 
+export const StyledHeaderContainer = styled.ul`
+  margin: 0;
+`;
+
 export const StyledLiContainer = styled.li<{ disabled?: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;

@@ -19,7 +19,12 @@ export function SigninCard({
   return (
     <Card>
       <>
-        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          fontSize={0}
+          marginBottom={1}
+        >
           <div>
             <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "signin.website" })}
@@ -29,7 +34,12 @@ export function SigninCard({
           <SigninIcon size={6} />
         </Flex>
 
-        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          fontSize={0}
+          marginBottom={1}
+        >
           <div>
             <Text fontWeight="bold" $color="heading">
               {signin?.identifier
