@@ -1,36 +1,55 @@
-import React from "react";
-import { styled } from "styled-components";
+import { styled, css } from "styled-components";
+import {
+  typography,
+  TypographyProps,
+  maxWidth,
+  MaxWidthProps,
+} from "styled-system";
 
 interface ITypography {
   children: JSX.Element | any;
-  className?: string;
   $color: string;
+  $capitalize?: boolean;
+  $breakWord?: boolean;
+  $cursorPointer?: boolean;
 }
 
-interface IStyledTypography {
-  $color: string;
-}
+type TText = TypographyProps & ITypography & MaxWidthProps;
 
-const StyledTypography = styled.p<IStyledTypography>`
+export const Text = styled.p<TText>`
+  margin: 0;
+  ${typography}
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
+  ${({ $capitalize }) =>
+    $capitalize &&
+    css`
+      text-transform: capitalize;
+    `}
+  ${({ $breakWord }) =>
+    $breakWord &&
+    css`
+      overflow-wrap: break-word;
+    `}
+  ${({ $cursorPointer }) =>
+    $cursorPointer &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
-const StyledSubtext = styled.span<IStyledTypography>`
+export const Subtext = styled.span<TText>`
+  ${typography}
+  ${maxWidth}
+  margin: 0;
   color: ${({ $color, theme }) => theme?.colors?.[$color]};
+  ${({ $breakWord }) =>
+    $breakWord &&
+    css`
+      overflow-wrap: break-word;
+    `}
+  ${({ $cursorPointer }) =>
+    $cursorPointer &&
+    css`
+      cursor: pointer;
+    `}
 `;
-
-export function Text(props: ITypography): JSX.Element {
-  return (
-    <StyledTypography className={props.className} $color={props.$color}>
-      {props.children}
-    </StyledTypography>
-  );
-}
-
-export function Subtext(props: ITypography): JSX.Element {
-  return (
-    <StyledSubtext className={props.className} $color={props.$color}>
-      {props.children}
-    </StyledSubtext>
-  );
-}

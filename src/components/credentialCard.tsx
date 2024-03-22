@@ -26,25 +26,23 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
   return (
     <Card>
       <>
-        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
-          <div>
-            <Text className="font-bold" $color="heading">
-              {credential.schema.title}
-            </Text>
-            <Text className="font-normal text-md" $color="text">
-              {credential.schema.credentialType}
-            </Text>
-          </div>
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Text fontSize={1} fontWeight="bold" $color="heading">
+            {credential.schema.title}
+          </Text>
           <CredentialIcon size={6} />
         </Flex>
-        <Box fontSize={0}>
-          <Text className="font-normal text-md" $color="text">
-            {credential.schema.description}
-          </Text>
-          <Text className="font-bold" $color="heading">
+        <Box marginBottom={1} fontSize={0}>
+          <Text $color="text">{credential.schema.credentialType}</Text>
+        </Box>
+        <Box marginBottom={1} fontSize={0}>
+          <Text $color="text">{credential.schema.description}</Text>
+        </Box>
+        <Box marginBottom={1}>
+          <Text fontSize={0} fontWeight="bold" $color="heading">
             <>
               {formatMessage({ id: "credential.issue.label" })}{" "}
-              <Subtext className="font-normal" $color="text">
+              <Subtext fontWeight="normal" $color="text">
                 {credential.issueeName}
               </Subtext>
             </>
@@ -52,23 +50,23 @@ export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
         </Box>
         <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "credential.lastUsed.label" })}{" "}
             </Text>
-            <Text className="font-normal" $color="text">
-              November 08, 2023
-            </Text>
+            <Text $color="text">November 08, 2023</Text>
           </div>
           {credential.status?.et === "iss" ? (
-            <div className="flex flex-col items-center text-green">
+            <Flex flexDirection="column" alignItems="center" color="green">
               <ValidIcon size={6} />
-              <p>{formatMessage({ id: "credential.valid" })}</p>
-            </div>
+              <Text $color="">{formatMessage({ id: "credential.valid" })}</Text>
+            </Flex>
           ) : (
-            <div className="flex flex-col items-center text-red">
+            <Flex flexDirection="column" alignItems="center" color="red">
               <RevokedIcon size={6} />
-              <p>{formatMessage({ id: "credential.revoked" })}</p>
-            </div>
+              <Text $color="">
+                {formatMessage({ id: "credential.revoked" })}
+              </Text>
+            </Flex>
           )}
         </Flex>
       </>

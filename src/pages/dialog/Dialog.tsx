@@ -1,20 +1,49 @@
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Subtext } from "@components/ui";
+import { Text, Subtext, Box, Flex, IconButton } from "@components/ui";
+import CloseIcon from "@components/shared/icons/close";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 
-const StyledMain = styled.div`
+const StyledMain = styled(Box)`
   border: ${(props) =>
     `1px solid ${
       props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
     }`};
   background: ${(props) => props.theme?.colors?.bodyBg};
   color: ${(props) => props.theme?.colors?.bodyColor};
+`;
+
+const StyledClose = styled(IconButton)`
+  position: absolute;
+  top: 24px;
+  left: 0px;
+  font-size: 12px;
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: 50%;
+  background: ${(props) => props.theme?.colors?.bodyBg};
+  color: ${(props) => props.theme?.colors?.bodyColor};
+  &:hover {
+    background-color: #f55877;
+    color: white;
+  }
+  border: ${(props) =>
+    `1px solid ${
+      props.theme?.colors?.bodyBorder ?? props.theme?.colors?.bodyBg
+    }`};
+`;
+
+const StyledImgSpan = styled.span`
+  display: inline-block;
+`;
+
+const StyledImg = styled.img`
+  height: ${({ height }) => height};
 `;
 
 interface IDialog {
@@ -77,69 +106,72 @@ export function Dialog({
   return (
     <ThemeProvider theme={vendorData?.theme}>
       {" "}
-      <div className="absolute top-10 right-10 w-[320px] max-h-[540px] overflow-auto pt-7">
+      <Box
+        position="absolute"
+        width="320px"
+        maxHeight="540px"
+        paddingTop={4}
+        top="40px"
+        right="40px"
+        overflow="auto"
+      >
         {showPopupPrompt ? (
           <PopupPrompt
             message={
-              <Text className="text-sm" $color="subtext">
+              <Text fontSize={1} $color="subtext">
                 {formatMessage({ id: "action.open" })}{" "}
-                <span className="inline-block">
-                  <img src={logo} className="h-4" alt="logo" />
-                </span>{" "}
+                <StyledImgSpan>
+                  <StyledImg src={logo} height="16px" alt="logo" />
+                </StyledImgSpan>{" "}
                 {formatMessage({ id: "action.toProceed" })}
               </Text>
             }
           />
         ) : null}
-        <button
-          type="button"
-          onClick={onClickRemove}
-          className=" absolute opacity-90 hover:opacity-100 top-4 left-0 hover:bg-red hover:text-white text-gray-dark bg-white font-medium rounded-full text-xs px-2 py-1 text-center"
-        >
-          {"x"}
-        </button>
-        <StyledMain className="items-center justify-center rounded text-center p-3">
-          <div className="flex flex-row gap-x-2 mb-2">
-            <img src={logo} className="h-8" alt="logo" />
-            <Text className="text-2xl font-bold" $color="bodyColor">
+        <StyledClose type="button" onClick={onClickRemove}>
+          x
+        </StyledClose>
+        <StyledMain borderRadius="4px" textAlign="center" padding={3}>
+          <Flex flexDirection="row" $flexGap={2} alignItems="center">
+            <StyledImg src={logo} height="32px" alt="logo" />
+            <Text fontWeight="bold" fontSize={3} $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
-          </div>
+          </Flex>
           {showRequestAuthPrompt ? (
-            <Text
-              className="mt-2 text-sm max-w-[280px] font-bold"
-              $color="bodyColor"
-            >
-              <Subtext className="" $color="">
-                {tabUrl}
-              </Subtext>{" "}
-              {formatMessage({ id: "signin.requestAuth" })}{" "}
-              {formatMessage({ id: getTextKeyByEventType() })}
-            </Text>
+            <Box marginTop={2} maxWidth="280px">
+              <Text fontSize={1} fontWeight="bold" $color="bodyColor">
+                <Subtext $color="">{tabUrl}</Subtext>{" "}
+                {formatMessage({ id: "signin.requestAuth" })}{" "}
+                {formatMessage({ id: getTextKeyByEventType() })}
+              </Text>
+            </Box>
           ) : (
             <>
               {signins?.map((signin) => (
                 <SigninItem signin={signin} />
               ))}
               {eventType !== TAB_STATE.NONE ? (
-                <div
+                <Box
                   onClick={handleClick}
-                  className="font-bold text-sm cursor-pointer"
+                  fontWeight="bold"
+                  fontSize={1}
+                  $cursorPointer
                 >
                   {formatMessage({ id: "action.click" })}{" "}
-                  <span className="inline-block">
-                    <img src={logo} className="h-4" alt="logo" />
-                  </span>{" "}
+                  <StyledImgSpan>
+                    <StyledImg height="16px" src={logo} alt="logo" />
+                  </StyledImgSpan>{" "}
                   {formatMessage({ id: "action.toSelectOther" })}{" "}
                   {formatMessage({ id: getTextKeyByEventType() })}
-                </div>
+                </Box>
               ) : (
                 <></>
               )}
             </>
           )}
         </StyledMain>
-      </div>
+      </Box>
     </ThemeProvider>
   );
 }

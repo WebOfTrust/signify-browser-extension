@@ -1,5 +1,5 @@
 import { useIntl } from "react-intl";
-import { Card, Button, Text, Switch } from "@components/ui";
+import { Card, Button, Text, Switch, Flex } from "@components/ui";
 import SigninIcon from "@components/shared/icons/signin";
 import AutoSigninIcon from "@components/shared/icons/auto-signin";
 import { ISignin } from "@config/types";
@@ -19,41 +19,47 @@ export function SigninCard({
   return (
     <Card>
       <>
-        <div className="flex flex-row justify-between text-xs">
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          fontSize={0}
+          marginBottom={1}
+        >
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "signin.website" })}
             </Text>
-            <Text className="font-normal text-md" $color="text">
-              {signin?.domain}
-            </Text>
+            <Text $color="text">{signin?.domain}</Text>
           </div>
           <SigninIcon size={6} />
-        </div>
+        </Flex>
 
-        <div className="flex flex-row justify-between text-xs">
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          fontSize={0}
+          marginBottom={1}
+        >
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {signin?.identifier
                 ? formatMessage({ id: "signin.identifierAlias" })
                 : formatMessage({ id: "credential.title" })}
             </Text>
-            <Text className="font-normal text-md" $color="text">
-              {signin?.identifier?.name}
-            </Text>
+            <Text $color="text">{signin?.identifier?.name}</Text>
           </div>
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "signin.lastUsed.label" })}
             </Text>
-            <Text className="font-normal text-md" $color="text">
+            <Text $color="text">
               {new Date(signin?.updatedAt).toDateString()}
             </Text>
           </div>
-        </div>
-        <div className="flex flex-row justify-between text-xs">
+        </Flex>
+        <Flex flexDirection="row" justifyContent="space-between" fontSize={0}>
           <div>
-            <Text className="font-bold" $color="heading">
+            <Text fontWeight="bold" $color="heading">
               {formatMessage({ id: "signin.autoSignin" })}
             </Text>
             <Switch
@@ -62,15 +68,12 @@ export function SigninCard({
               icon={<AutoSigninIcon size={4} />}
             />
           </div>
-          <div className="flex items-end">
-            <Button
-              handleClick={handleDelete}
-              className="text-white hover:bg-red font-medium rounded-full text-xs px-2 py-1"
-            >
+          <Flex alignItems="end">
+            <Button handleClick={handleDelete}>
               <>{formatMessage({ id: "action.delete" })}</>
             </Button>
-          </div>
-        </div>
+          </Flex>
+        </Flex>
       </>
     </Card>
   );

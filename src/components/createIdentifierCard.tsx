@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Button, Input } from "@components/ui";
+import { Button, Input, Text, Box, Flex, NewButton } from "@components/ui";
 import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
 
 interface ICreateIdentifierCard {
@@ -35,16 +35,17 @@ export function CreateIdentifierCard(
       hasError = true;
     } else if (hasWhiteSpace(name)) {
       setNameError(
-        <div className="text-red text-xs mt-1">
+        <Box fontSize={0} marginTop={1} color="red">
           {formatMessage({ id: "identifier.error.noWhiteSpace" })}{" "}
-          <button
-            className=" underline cursor-pointer"
+          <NewButton
+            $cursorPointer
+            $underline
             type="button"
             onClick={handleRemoveWhiteSpace}
           >
             {formatMessage({ id: "action.clickToRemove" })}
-          </button>
-        </div>
+          </NewButton>
+        </Box>
       );
       hasError = true;
     }
@@ -57,32 +58,28 @@ export function CreateIdentifierCard(
 
   return (
     <>
-      <form
-        onSubmit={onCreateIdentifier}
-        className=" max-w-xs m-4 flex flex-col gap-y-4"
-      >
-        <div>
-          <Input
-            type="text"
-            id="vendor_url"
-            error={nameError}
-            placeholder={formatMessage({ id: "identifier.uniqueName" })}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className=" flex flex-row justify-center mt-2">
-          <Button
-            type="submit"
-            handleClick={onCreateIdentifier}
-            isLoading={props.isLoading}
-            className="text-white flex flex-row font-medium rounded-full text-sm px-5 py-2"
-          >
-            <p className="font-medium text-md">
-              {formatMessage({ id: "action.create" })}
-            </p>
-          </Button>
-        </div>
+      <form onSubmit={onCreateIdentifier}>
+        <Flex maxWidth="320px" $flexGap={4} flexDirection="column" margin={3}>
+          <div>
+            <Input
+              type="text"
+              id="vendor_url"
+              error={nameError}
+              placeholder={formatMessage({ id: "identifier.uniqueName" })}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <Flex flexDirection="row" justifyContent="center" marginTop={2}>
+            <Button
+              type="submit"
+              handleClick={onCreateIdentifier}
+              isLoading={props.isLoading}
+            >
+              <Text $color="">{formatMessage({ id: "action.create" })}</Text>
+            </Button>
+          </Flex>
+        </Flex>
       </form>
     </>
   );

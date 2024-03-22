@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { CredentialCard } from "@components/credentialCard";
-import { Loader } from "@components/ui";
+import { Loader, Flex, Box, Text } from "@components/ui";
 import { IMessage } from "@config/types";
 
 export function CredentialList(): JSX.Element {
@@ -25,17 +25,19 @@ export function CredentialList(): JSX.Element {
   return (
     <>
       {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
           <Loader size={6} />
-        </div>
+        </Flex>
       ) : null}
       {credentials.map((credential, index) => (
-        <div key={index} className="my-2 mx-4">
+        <Box marginY={2} marginX={3} key={index}>
           <CredentialCard credential={credential} />
-        </div>
+        </Box>
       ))}
       {!isLoading && !credentials?.length ? (
-        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
+        <Text fontSize={0} $color="">
+          {formatMessage({ id: "message.noItems" })}
+        </Text>
       ) : (
         <></>
       )}

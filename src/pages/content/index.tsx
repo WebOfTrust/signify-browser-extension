@@ -3,7 +3,7 @@ import { LocaleProvider } from "@src/_locales";
 import { IMessage } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "../dialog/Dialog";
-import "./style.css";
+// import "./style.css";
 
 var tabState = TAB_STATE.NONE;
 

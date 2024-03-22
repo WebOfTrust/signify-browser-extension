@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { IdentifierCard } from "@components/identifierCard";
-import { Button, Drawer, Text, Loader } from "@components/ui";
+import { Box, Button, Drawer, Flex, Text, Loader } from "@components/ui";
 import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
@@ -82,24 +82,21 @@ export function SelectIdentifier(): JSX.Element {
 
   return (
     <>
-      <div className=" flex flex-row-reverse">
-        <Button
-          handleClick={() => setShowDrawer(true)}
-          className=" text-white font-medium rounded-full text-xs px-2 py-1"
-        >
+      <Flex flexDirection="row-reverse">
+        <Button handleClick={() => setShowDrawer(true)}>
           <>{`+ ${formatMessage({ id: "action.createNew" })}`}</>
         </Button>
-      </div>
+      </Flex>
       {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
           <Loader size={6} />
-        </div>
+        </Flex>
       ) : null}
       <Drawer
         isOpen={showDrawer}
         handleClose={() => setShowDrawer(false)}
         header={
-          <Text $color="subtext" className="text-xl capitalize font-bold">
+          <Text fontSize={3} fontWeight="bold" $color="subtext" $capitalize>
             {formatMessage({ id: "identifier.create.title" })}
           </Text>
         }
@@ -111,17 +108,16 @@ export function SelectIdentifier(): JSX.Element {
         />
       </Drawer>
       {aids.map((aid, index) => (
-        <div key={index} className="my-2 mx-4">
-          <div className=" relative opacity-80 hover:opacity-100">
+        <Box marginY={2} marginX={3} key={index}>
+          <Box position="relative" $hoverableOpacity>
             <IdentifierCard aid={aid} />
-            <Button
-              handleClick={() => createSigninWithIdentifiers(aid)}
-              className=" absolute right-[2px] bottom-[2px] text-white font-medium rounded-full text-xs px-2 py-1"
-            >
-              <>{`${formatMessage({ id: "action.select" })} >`}</>
-            </Button>
-          </div>
-        </div>
+            <Box position="absolute" right="2px" bottom="2px">
+              <Button handleClick={() => createSigninWithIdentifiers(aid)}>
+                <>{`${formatMessage({ id: "action.select" })} >`}</>
+              </Button>
+            </Box>
+          </Box>
+        </Box>
       ))}
     </>
   );

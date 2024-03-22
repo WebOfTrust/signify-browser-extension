@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button, Input } from "@components/ui";
+import { styled } from "styled-components";
+import { Button, Box, Flex, Input, Text } from "@components/ui";
 import { useIntl } from "react-intl";
 
 interface ISignin {
@@ -9,6 +10,11 @@ interface ISignin {
   isLoading?: boolean;
   logo?: string;
 }
+
+const StyledLogo = styled.img`
+  width: 128px;
+  height: 128px;
+`;
 
 export function Signin(props: ISignin): JSX.Element {
   const { formatMessage } = useIntl();
@@ -45,10 +51,10 @@ export function Signin(props: ISignin): JSX.Element {
 
   return (
     <>
-      <div className="flex flex-row justify-center">
-        <img src={props.logo} className="w-32 h-32" alt="logo" />
-      </div>
-      <div className=" px-4 py-2">
+      <Flex flexDirection="row" justifyContent="center">
+        <StyledLogo src={props.logo} alt="logo" />
+      </Flex>
+      <Box paddingX={3} paddingY={2}>
         <Input
           type="password"
           id="passcode"
@@ -58,16 +64,12 @@ export function Signin(props: ISignin): JSX.Element {
           onChange={(e) => setPasscode(e.target.value)}
           onBlur={onBlurPasscode}
         />
-      </div>
-      <div className="flex flex-row justify-center">
-        <Button
-          handleClick={handleConnect}
-          isLoading={props.isLoading}
-          className="text-white flex flex-row focus:outline-none font-medium rounded-full text-sm px-5 py-2.5"
-        >
-          <p className="font-medium text-md">{connectMessage}</p>
+      </Box>
+      <Flex flexDirection="row" justifyContent="center">
+        <Button handleClick={handleConnect} isLoading={props.isLoading}>
+          <Text $color="">{connectMessage}</Text>
         </Button>
-      </div>
+      </Flex>
     </>
   );
 }

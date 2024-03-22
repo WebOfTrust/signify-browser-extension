@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { SigninCard } from "@components/signinCard";
-import { Loader } from "@components/ui";
+import { Loader, Flex, Box, Text } from "@components/ui";
 import { IMessage, ISignin } from "@config/types";
 
 interface IResourceSignin {
@@ -90,21 +90,23 @@ export function SigninList(): JSX.Element {
   return (
     <>
       {isLoading ? (
-        <div className="flex flex-row justify-center items-center">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
           <Loader size={6} />
-        </div>
+        </Flex>
       ) : null}
       {signins.map((signin, index) => (
-        <div key={index} className="my-2 mx-4">
+        <Box marginY={2} marginX={3} key={index}>
           <SigninCard
             signin={signin}
             handleDelete={() => deleteSignin(index)}
             handleAutoSignin={() => updateAutoSignin(index, signin)}
           />
-        </div>
+        </Box>
       ))}
       {!isLoading && !signins?.length ? (
-        <p className="text-xs">{formatMessage({ id: "message.noItems" })}</p>
+        <Text fontSize={0} $color="">
+          {formatMessage({ id: "message.noItems" })}
+        </Text>
       ) : (
         <></>
       )}

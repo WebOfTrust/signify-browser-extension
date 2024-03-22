@@ -1,12 +1,17 @@
 import { styled } from "styled-components";
-import { Button, Text, Subtext } from "@components/ui";
+import { Box, Button, Text, Subtext, Flex } from "@components/ui";
 import SigninIcon from "@src/components/shared/icons/signin";
 import { resetTabState } from "@pages/content";
 import { ISignin } from "@config/types";
 
-const StyledSigninItem = styled.div`
+const StyledSigninItem = styled(Flex)`
+  border: 1px solid;
   background-color: ${(props) => props.theme?.colors?.cardBg};
   color: ${(props) => props.theme?.colors?.cardColor};
+`;
+
+const AutoSigninTag = styled(Box)<{ visible?: boolean }>`
+  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
 `;
 
 // TODO do not pass the full signins stored object (only AID name, schema name, web url)
@@ -25,18 +30,26 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
   };
 
   return (
-    <StyledSigninItem className="flex m-2 flex-row justify-between p-2 items-start border border-black rounded">
-      <div className="max-w-[200px] break-words">
-        <Text className="text-start text-sm font-bold" $color="heading">
+    <StyledSigninItem
+      flexDirection="row"
+      justifyContent="space-between"
+      padding={2}
+      margin={2}
+      alignItems="start"
+      borderRadius="4px"
+      borderColor="black"
+    >
+      <Box maxWidth="180px" $breakWord>
+        <Text fontWeight="bold" fontSize={1} textAlign="start" $color="heading">
           URL:{" "}
-          <Subtext className="font-normal" $color="text">
+          <Subtext fontWeight="normal" $color="text">
             {signin.domain}
           </Subtext>
         </Text>
         {signin?.identifier ? (
-          <Text className=" text-start text-sm" $color="heading">
+          <Text textAlign="start" fontSize={1} $color="heading">
             <strong>AID: </strong>{" "}
-            <Subtext className="font-normal" $color="text">
+            <Subtext fontWeight="normal" $color="text">
               {signin?.identifier?.name}
             </Subtext>
           </Text>
@@ -44,36 +57,40 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
           <></>
         )}
         {signin?.credential ? (
-          <Text className=" text-sm text-start font-normal" $color="heading">
+          <Text
+            fontWeight="normal"
+            textAlign="start"
+            fontSize={1}
+            $color="heading"
+          >
             <strong>Cred: </strong>{" "}
-            <Subtext className="font-normal" $color="text">
+            <Subtext fontWeight="normal" $color="text">
               {signin?.credential?.schema?.title}
             </Subtext>
           </Text>
         ) : (
           <></>
         )}
-        <Text className=" text-start text-xs font-bold" $color="heading">
+        <Text fontWeight="bold" textAlign="start" fontSize={0} $color="heading">
           Last used:{" "}
-          <Subtext className="font-normal" $color="text">
+          <Subtext fontWeight="normal" $color="text">
             {new Date(signin.updatedAt).toDateString()}
           </Subtext>
         </Text>
-      </div>
-      <div className="flex flex-col gap-y-2">
-        <div className={`${signin?.autoSignin ? "visible" : "invisible"}`}>
-          <p className=" text-end text-[8px] font-bold">Auto Sign in</p>
-          <div className="float-right">
+      </Box>
+      <Flex flexDirection="column" $flexGap={2}>
+        <AutoSigninTag visible={signin?.autoSignin}>
+          <Text $color="" textAlign="end" fontSize="8px" fontWeight="bold">
+            Auto Sign in
+          </Text>
+          <Box $float="right">
             <SigninIcon size={6} />
-          </div>
-        </div>
-        <Button
-          handleClick={handleClick}
-          className="text-white self-end font-medium rounded-full text-xs px-2 py-1"
-        >
+          </Box>
+        </AutoSigninTag>
+        <Button handleClick={handleClick}>
           <>Sign in</>
         </Button>
-      </div>
+      </Flex>
     </StyledSigninItem>
   );
 };
