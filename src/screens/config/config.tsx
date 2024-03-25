@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
-import { isValidUrl, setActionIcon } from "@pages/background/utils";
+import { isValidUrl, getBootUrl, setActionIcon } from "@pages/background/utils";
 import { Box, Button, Dropdown, Input, Text, Flex } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({
@@ -57,7 +57,8 @@ export function Config(props: any): JSX.Element {
     }
     if (urlObject && urlObject?.origin) {
       try {
-        await (await fetch(`${urlObject?.origin}/health`)).json();
+        const bootUrl = getBootUrl(urlObject.origin);
+        await (await fetch(`${bootUrl}/health`)).json();
       } catch (error) {
         setAgentUrlError(invalidAgentUrlMsg);
         return true;
