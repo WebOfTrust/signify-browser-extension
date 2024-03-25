@@ -15,6 +15,12 @@ export const isValidUrl = (str: string) => {
   }
 };
 
+export const getBootUrl = (url: string) => {
+  return url.includes("localhost") || url.includes("127.0.0.1")
+    ? "http://127.0.0.1:3903"
+    : url;
+};
+
 export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
   return new Promise((resolve) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

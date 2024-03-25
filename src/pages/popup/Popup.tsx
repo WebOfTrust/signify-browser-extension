@@ -4,7 +4,7 @@ import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
-import { isValidUrl } from "@pages/background/utils";
+import { isValidUrl, getBootUrl } from "@pages/background/utils";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
@@ -126,6 +126,7 @@ export default function Popup(): JSX.Element {
     if (!urlObject || !urlObject?.origin) return;
     setIsLoading(true);
 
+    const bootUrl = getBootUrl(urlObject.origin);
     const { data, error } = await chrome.runtime.sendMessage<
       IMessage<IBootAndConnect>
     >({
@@ -134,7 +135,7 @@ export default function Popup(): JSX.Element {
       data: {
         passcode,
         agentUrl,
-        bootUrl: urlObject.origin,
+        bootUrl,
       },
     });
 

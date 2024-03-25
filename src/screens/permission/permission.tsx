@@ -4,7 +4,7 @@ import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
-import { isValidUrl, setActionIcon } from "@pages/background/utils";
+import { isValidUrl, getBootUrl, setActionIcon } from "@pages/background/utils";
 import { Box, Card, Button, Text, Flex } from "@components/ui";
 import { IMessage } from "@config/types";
 
@@ -49,7 +49,8 @@ export function Permission({
     }
     if (urlObject && urlObject?.origin) {
       try {
-        await (await fetch(`${urlObject?.origin}/health`)).json();
+        const bootUrl = getBootUrl(urlObject.origin);
+        await (await fetch(`${bootUrl}/health`)).json();
       } catch (error) {
         return true;
       }
