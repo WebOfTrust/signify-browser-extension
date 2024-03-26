@@ -3,11 +3,11 @@
 ### Installation
 
 1. Install [polaris-web-extension](FUTURE_DEPLOYED_EXTENSION_LINK) from [Chrome Web Store](https://chromewebstore.google.com/category/extensions)
-2. Install [signify-polaris-web](https://github.com/roots-id/polaris-web) by listing it into `package.json` dependencies:
+2. Install [signify-polaris-web](https://github.com/WebOfTrust/polaris-web) by listing it into `package.json` dependencies:
    
 ```  
 "dependencies": {
-  "signify-polaris-web": "https://github.com/roots-id/polaris-web.git",
+  "signify-polaris-web": "https://github.com/WebOfTrust/polaris-web.git",
 }
 ```
 
