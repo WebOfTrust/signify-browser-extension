@@ -18,6 +18,7 @@ const StyledInputLabel = styled.label`
   font-size: 14px;
   line-height: 20px;
   font-weight: 700;
+  width: fit-content;
 `;
 
 const StyledInput = styled.input<Pick<IInput, "error">>`

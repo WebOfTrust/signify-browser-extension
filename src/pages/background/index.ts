@@ -22,7 +22,7 @@ console.log("Background script loaded");
 
 chrome.runtime.onStartup.addListener(function () {
   (async () => {
-    const vendorData = await configService.getData();
+    const vendorData = await configService.getVendorData();
     if (vendorData?.icon) {
       setActionIcon(vendorData?.icon);
     }
@@ -95,7 +95,7 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "vendor-info" &&
         message.subtype === "get-vendor-data"
       ) {
-        const vendorData = await configService.getData();
+        const vendorData = await configService.getVendorData();
         sendResponse({ data: { vendorData } });
       }
 

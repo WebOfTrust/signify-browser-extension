@@ -6,6 +6,7 @@ const CONFIG_ENUMS = {
   VENDOR_DATA: "vendor-data",
   VENDOR_LANG: "vendor-lang",
   AGENT_URL: "agent-url",
+  BOOT_URL: "boot-url",
   HAS_ONBOARDED: "has-onboarded",
   WEB_APP_PERMISSION: "WEB_APP_PERMISSION",
 };
@@ -15,21 +16,21 @@ export const WEB_APP_PERMS = {
 };
 
 const Config = () => {
-  const getUrl = async (): Promise<string> => {
+  const getVendorUrl = async (): Promise<string> => {
     return (await browserStorageService.getValue(
       CONFIG_ENUMS.VENDOR_URL
     )) as string;
   };
 
-  const removeUrl = async () => {
+  const removeVendorUrl = async () => {
     await browserStorageService.removeKey(CONFIG_ENUMS.VENDOR_URL);
   };
 
-  const setUrl = async (token: string) => {
+  const setVendorUrl = async (token: string) => {
     await browserStorageService.setValue(CONFIG_ENUMS.VENDOR_URL, token);
   };
 
-  const getData = async (): Promise<any> => {
+  const getVendorData = async (): Promise<any> => {
     const _vendor = await browserStorageService.getValue(
       CONFIG_ENUMS.VENDOR_DATA
     );
@@ -37,11 +38,11 @@ const Config = () => {
     return _vendor ?? defaultVendor;
   };
 
-  const removeData = async () => {
+  const removeVendorData = async () => {
     await browserStorageService.removeKey(CONFIG_ENUMS.VENDOR_DATA);
   };
 
-  const setData = async (data: any) => {
+  const setVendorData = async (data: any) => {
     await browserStorageService.setValue(CONFIG_ENUMS.VENDOR_DATA, data);
   };
 
@@ -58,6 +59,16 @@ const Config = () => {
   const getAgentUrl = async (): Promise<string> => {
     return (await browserStorageService.getValue(
       CONFIG_ENUMS.AGENT_URL
+    )) as string;
+  };
+
+  const setBootUrl = async (token: string) => {
+    await browserStorageService.setValue(CONFIG_ENUMS.BOOT_URL, token);
+  };
+
+  const getBootUrl = async (): Promise<string> => {
+    return (await browserStorageService.getValue(
+      CONFIG_ENUMS.BOOT_URL
     )) as string;
   };
 
@@ -81,12 +92,14 @@ const Config = () => {
       CONFIG_ENUMS.VENDOR_URL,
       CONFIG_ENUMS.VENDOR_DATA,
       CONFIG_ENUMS.HAS_ONBOARDED,
+      CONFIG_ENUMS.BOOT_URL,
     ])) as any;
     return {
       vendorUrl: resp[CONFIG_ENUMS.VENDOR_URL],
       agentUrl: resp[CONFIG_ENUMS.AGENT_URL],
       vendorData: resp[CONFIG_ENUMS.VENDOR_DATA],
       hasOnboarded: resp[CONFIG_ENUMS.HAS_ONBOARDED],
+      bootUrl: resp[CONFIG_ENUMS.BOOT_URL],
     };
   };
 
@@ -111,16 +124,18 @@ const Config = () => {
   };
 
   return {
-    setUrl,
-    removeUrl,
-    getUrl,
-    getData,
-    removeData,
-    setData,
+    setVendorUrl,
+    removeVendorUrl,
+    getVendorUrl,
+    getVendorData,
+    removeVendorData,
+    setVendorData,
     getLanguage,
     setLanguage,
     getAgentUrl,
     setAgentUrl,
+    setBootUrl,
+    getBootUrl,
     getHasOnboarded,
     setHasOnboarded,
     getAgentAndVendorInfo,

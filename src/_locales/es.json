@@ -23,6 +23,8 @@
   "action.toSelectOther": "seleccionar otro",
   "config.agentUrl.label": "URL del agente:",
   "config.agentUrl.placeholder": "Ingrese la URL del agente",
+  "config.bootUrl.label": "URL de inicio:",
+  "config.bootUrl.placeholder": "Ingrese la URL de inicio",
   "config.error.enterUrl": "Introduce una URL válida",
   "config.error.invalidAgentUrl": "URL de agente inválido",
   "config.error.invalidVendorUrl": "URL no válida, configuración del proveedor no encontrada",

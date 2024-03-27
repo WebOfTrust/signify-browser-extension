@@ -42,21 +42,6 @@ export function Permission({
     }
   };
 
-  const checkErrorAgentUrl = async (_url: string) => {
-    const urlObject = isValidUrl(_url);
-    if (!_url || !urlObject) {
-      return true;
-    }
-    if (urlObject && urlObject?.origin) {
-      try {
-        const bootUrl = getBootUrl(urlObject.origin);
-        await (await fetch(`${bootUrl}/health`)).json();
-      } catch (error) {
-        return true;
-      }
-    }
-  };
-
   const removePostPermissionFlags = async () => {
     await configService.setWebRequestedPermission(
       WEB_APP_PERMS.SET_VENDOR_URL,
@@ -67,9 +52,14 @@ export function Permission({
       subtype: "unset-action-icon",
     });
   };
+
+  const handleSetBootUrl = async (_url: string) => {
+    if (!isValidUrl(_url)) return;
+    await configService.setBootUrl(_url);
+  };
+
   const handleSetAgentUrl = async (_url: string) => {
-    const hasError = await checkErrorAgentUrl(_url);
-    if (hasError) return;
+    if (!_url || !isValidUrl(_url)) return;
 
     await configService.setAgentUrl(_url);
     await configService.setHasOnboarded(true);
@@ -92,7 +82,11 @@ export function Permission({
         await handleSetAgentUrl(resp?.agentUrl);
       }
 
-      await configService.setData(resp);
+      if(resp?.bootUrl) {
+        await handleSetBootUrl(resp?.bootUrl);
+      }
+
+      await configService.setVendorData(resp);
       if (resp?.icon) {
         await setActionIcon(resp?.icon);
       }
@@ -102,7 +96,7 @@ export function Permission({
       hasError = true;
     }
     if (!hasError) {
-      await configService.setUrl(permissionData?.vendorUrl);
+      await configService.setVendorUrl(permissionData?.vendorUrl);
       await removePostPermissionFlags();
       afterCallback();
     }
@@ -114,7 +108,7 @@ export function Permission({
   };
 
   const handleProceedWithoutAgent = async () => {
-    await configService.setData(receivedVendorData);
+    await configService.setVendorData(receivedVendorData);
     if (receivedVendorData?.icon) {
       await setActionIcon(receivedVendorData?.icon);
     }
@@ -128,7 +122,7 @@ export function Permission({
       await handleSetAgentUrl(receivedVendorData?.agentUrl);
     }
 
-    await configService.setData(receivedVendorData);
+    await configService.setVendorData(receivedVendorData);
     if (receivedVendorData?.icon) {
       await setActionIcon(receivedVendorData?.icon);
     }
