@@ -24,11 +24,11 @@ interface ISignin {
 
 export function Signin(props: ISignin): JSX.Element {
   const { formatMessage } = useIntl();
-  const [hasOnboarded, setHasOnboarded] = useState(false);
+  const [hasAgentAndBootUrls, setHasAgentAndBootUrls] = useState(false);
 
   const checkIfOnboarded = async () => {
-    const _hasOnboarded = await configService.getHasOnboarded();
-    setHasOnboarded(_hasOnboarded);
+    const response = await configService.getAgentAndVendorInfo();
+    setHasAgentAndBootUrls(response.agentUrl && response.bootUrl);
   };
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export function Signin(props: ISignin): JSX.Element {
             props.setShowConfig(false);
             checkIfOnboarded();
           }}
+          afterBootUrlUpdate={checkIfOnboarded}
           afterSetUrl={props?.afterSetUrl}
         />
       ) : (
@@ -63,8 +64,8 @@ export function Signin(props: ISignin): JSX.Element {
           logo={props.logo}
         />
       )}
-      <Box fontSize={0} position="absolute" width="100%" bottom={2}>
-        {hasOnboarded ? (
+      <Box fontSize={0} padding={2} bottom={2}>
+        {hasAgentAndBootUrls ? (
           <Box textAlign="center">
             <NewButton onClick={props.handleSignup} $hoverUnderline>
               {formatMessage({ id: "account.onboard.cta" })}

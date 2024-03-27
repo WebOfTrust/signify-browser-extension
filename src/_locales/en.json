@@ -23,6 +23,8 @@
   "action.toSelectOther": "to select other",
   "config.agentUrl.label": "Agent Url:",
   "config.agentUrl.placeholder": "Enter agent url",
+  "config.bootUrl.label": "Boot Url:",
+  "config.bootUrl.placeholder": "Enter boot url",
   "config.error.enterUrl": "Enter a valid url",
   "config.error.invalidAgentUrl": "Invalid agent url",
   "config.error.invalidVendorUrl": "Invalid url, Vendor configuration not found",

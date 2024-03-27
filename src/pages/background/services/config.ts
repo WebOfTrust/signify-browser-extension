@@ -92,12 +92,14 @@ const Config = () => {
       CONFIG_ENUMS.VENDOR_URL,
       CONFIG_ENUMS.VENDOR_DATA,
       CONFIG_ENUMS.HAS_ONBOARDED,
+      CONFIG_ENUMS.BOOT_URL,
     ])) as any;
     return {
       vendorUrl: resp[CONFIG_ENUMS.VENDOR_URL],
       agentUrl: resp[CONFIG_ENUMS.AGENT_URL],
       vendorData: resp[CONFIG_ENUMS.VENDOR_DATA],
       hasOnboarded: resp[CONFIG_ENUMS.HAS_ONBOARDED],
+      bootUrl: resp[CONFIG_ENUMS.BOOT_URL],
     };
   };
 
