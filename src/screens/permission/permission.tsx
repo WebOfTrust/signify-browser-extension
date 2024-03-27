@@ -92,7 +92,7 @@ export function Permission({
         await handleSetAgentUrl(resp?.agentUrl);
       }
 
-      await configService.setData(resp);
+      await configService.setVendorData(resp);
       if (resp?.icon) {
         await setActionIcon(resp?.icon);
       }
@@ -102,7 +102,7 @@ export function Permission({
       hasError = true;
     }
     if (!hasError) {
-      await configService.setUrl(permissionData?.vendorUrl);
+      await configService.setVendorUrl(permissionData?.vendorUrl);
       await removePostPermissionFlags();
       afterCallback();
     }
@@ -114,7 +114,7 @@ export function Permission({
   };
 
   const handleProceedWithoutAgent = async () => {
-    await configService.setData(receivedVendorData);
+    await configService.setVendorData(receivedVendorData);
     if (receivedVendorData?.icon) {
       await setActionIcon(receivedVendorData?.icon);
     }
@@ -128,7 +128,7 @@ export function Permission({
       await handleSetAgentUrl(receivedVendorData?.agentUrl);
     }
 
-    await configService.setData(receivedVendorData);
+    await configService.setVendorData(receivedVendorData);
     if (receivedVendorData?.icon) {
       await setActionIcon(receivedVendorData?.icon);
     }

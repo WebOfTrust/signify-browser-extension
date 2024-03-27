@@ -87,7 +87,7 @@ export function Config(props: any): JSX.Element {
       if (resp?.agentUrl) {
         await handleSetAgentUrl(resp?.agentUrl);
       }
-      await configService.setData(resp);
+      await configService.setVendorData(resp);
       if (resp?.icon) {
         await setActionIcon(resp?.icon);
       }
@@ -96,7 +96,7 @@ export function Config(props: any): JSX.Element {
       hasError = true;
     }
     if (!hasError) {
-      await configService.setUrl(vendorUrl);
+      await configService.setVendorUrl(vendorUrl);
       props.afterSetUrl();
     }
   };
