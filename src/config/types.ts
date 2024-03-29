@@ -1,3 +1,7 @@
+export interface ObjectOfArrays<T> {
+  [key: string]: T[];
+}
+
 export interface IMessage<T> {
   type: string;
   subtype?: string;
@@ -31,18 +35,22 @@ export interface IVendorData {
 }
 
 export interface ISignin {
+  id: string;
   domain: string;
   identifier?: {
     name?: string;
+    prefix?: string;
   };
   credential?: {
     issueeName?: string;
+    sad: { d: string };
     schema?: {
       title: string;
     };
   };
-  updatedAt: string;
-  autoSignin: boolean;
+  createdAt: number;
+  updatedAt: number;
+  autoSignin?: boolean;
 }
 
 export interface IIdentifier {
@@ -52,7 +60,7 @@ export interface IIdentifier {
 
 export interface ICredential {
   issueeName: string;
-  sad: { a: { i: string } };
+  sad: { a: { i: string }, d: string };
   schema: {
     title: string;
     credentialType: string;

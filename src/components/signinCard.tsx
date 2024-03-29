@@ -46,7 +46,7 @@ export function SigninCard({
                 ? formatMessage({ id: "signin.identifierAlias" })
                 : formatMessage({ id: "credential.title" })}
             </Text>
-            <Text $color="text">{signin?.identifier?.name}</Text>
+            <Text $color="text">{signin?.identifier?.name ?? signin?.credential?.schema?.title}</Text>
           </div>
           <div>
             <Text fontWeight="bold" $color="heading">
@@ -63,7 +63,7 @@ export function SigninCard({
               {formatMessage({ id: "signin.autoSignin" })}
             </Text>
             <Switch
-              isChecked={signin.autoSignin}
+              isChecked={!!signin.autoSignin}
               handleToggle={handleAutoSignin}
               icon={<AutoSigninIcon size={4} />}
             />

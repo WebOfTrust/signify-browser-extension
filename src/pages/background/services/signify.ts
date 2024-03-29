@@ -150,6 +150,11 @@ const Signify = () => {
     return signed_headers;
   };
 
+  const getAgentID = (): string => {
+    validateClient();
+    return _client?.agent?.pre!;
+  };
+
   const createAID = async (name: string) => {
     validateClient();
     let res = await _client?.identifiers().create(name);
@@ -166,6 +171,7 @@ const Signify = () => {
     createAID,
     generatePasscode,
     bootAndConnect,
+    getAgentID,
   };
 };
 

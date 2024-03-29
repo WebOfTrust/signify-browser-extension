@@ -5,6 +5,7 @@ import {
 } from "@pages/background/services/config";
 import { userService } from "@pages/background/services/user";
 import { signifyService } from "@pages/background/services/signify";
+import * as signinResource from "@pages/background/resource/signin";
 import { IMessage, IIdentifier, ICredential } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import {
@@ -12,11 +13,6 @@ import {
   getCurrentUrl,
   setActionIcon,
 } from "@pages/background/utils";
-import {
-  updateDomainAutoSigninByIndex,
-  getSigninsByDomain,
-  deleteSigninByIndex,
-} from "@pages/background/signins-utils";
 
 console.log("Background script loaded");
 
@@ -116,8 +112,7 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "auto-signin-signature"
       ) {
         // Validate that message comes from a page that has a signin
-        const origin = removeSlash(sender.url);
-        const signins = await getSigninsByDomain(origin);
+        const signins = await signinResource.getSigninsByDomain(sender.url!);
         const autoSignin = signins?.find((signin) => signin.autoSignin);
         if (!signins?.length || !autoSignin) {
           sendResponse({
@@ -179,7 +174,7 @@ chrome.runtime.onMessage.addListener(function (
         message.type === "fetch-resource" &&
         message.subtype === "tab-signin"
       ) {
-        const signins = await getSigninsByDomain(removeSlash(sender.url));
+        const signins = await signinResource.getSigninsByDomain(sender.url);
         const autoSigninObj = signins?.find((signin) => signin.autoSignin);
         sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
       }
@@ -277,47 +272,44 @@ chrome.runtime.onMessage.addListener(function (
     }
 
     if (message.type === "create-resource" && message.subtype === "signin") {
-      const signins = (await browserStorageService.getValue(
-        "signins"
-      )) as any[];
+      const signins = await signinResource.getSignins();
       const currentUrl = await getCurrentUrl();
       const { identifier, credential } = message.data;
       let signinExists = false;
       if (identifier && identifier.prefix) {
-        signinExists = signins?.find(
-          (signin) =>
-            signin.domain === currentUrl?.origin &&
-            signin?.identifier?.prefix === identifier.prefix
+        signinExists = Boolean(
+          signins?.find(
+            (signin) =>
+              signin.domain === currentUrl?.origin &&
+              signin?.identifier?.prefix === identifier.prefix
+          )
         );
       }
 
       if (credential && credential.sad.d) {
-        signinExists = signins?.find(
-          (signin) =>
-            signin.domain === currentUrl?.origin &&
-            signin?.credential?.sad?.d === credential.sad.d
+        signinExists = Boolean(
+          signins?.find(
+            (signin) =>
+              signin.domain === currentUrl?.origin &&
+              signin?.credential?.sad?.d === credential.sad.d
+          )
         );
       }
 
       if (signinExists) {
         sendResponse({ data: { signins: signins } });
       } else {
-        const signinObj = {
+        const signinObj = signinResource.newSigninObject({
           identifier,
           credential,
-          createdAt: new Date().getTime(),
-          updatedAt: new Date().getTime(),
           domain: currentUrl!.origin,
-        };
+        });
         if (signins && signins?.length) {
-          await browserStorageService.setValue("signins", [
-            ...signins,
-            signinObj,
-          ]);
+          await signinResource.updateSignins([...signins, signinObj]);
         } else {
-          await browserStorageService.setValue("signins", [signinObj]);
+          await signinResource.updateSignins([signinObj]);
         }
-        const storageSignins = await browserStorageService.getValue("signins");
+        const storageSignins = await signinResource.getSignins();
         sendResponse({ data: { signins: storageSignins } });
       }
     }
@@ -344,10 +336,10 @@ chrome.runtime.onMessage.addListener(function (
     }
 
     if (message.type === "fetch-resource" && message.subtype === "signins") {
-      const signins = await browserStorageService.getValue("signins");
+      const signins = await signinResource.getSignins();
       sendResponse({
         data: {
-          signins: signins ?? [],
+          signins,
         },
       });
     }
@@ -356,10 +348,7 @@ chrome.runtime.onMessage.addListener(function (
       message.type === "update-resource" &&
       message.subtype === "auto-signin"
     ) {
-      const resp = await updateDomainAutoSigninByIndex(
-        message?.data?.index,
-        message?.data?.signin
-      );
+      const resp = await signinResource.updateAutoSigninByDomain(message?.data?.signin);
       sendResponse({
         data: {
           ...resp,
@@ -368,7 +357,7 @@ chrome.runtime.onMessage.addListener(function (
     }
 
     if (message.type === "delete-resource" && message.subtype === "signins") {
-      const resp = await deleteSigninByIndex(message?.data?.index);
+      const resp = await signinResource.deleteSigninById(message?.data?.id);
       sendResponse({
         data: {
           ...resp,
@@ -415,8 +404,7 @@ chrome.runtime.onMessageExternal.addListener(function (
       message.subtype === "auto-signin-signature"
     ) {
       // Validate that message comes from a page that has a signin
-      const origin = removeSlash(sender.url);
-      const signins = await getSigninsByDomain(origin);
+      const signins = await signinResource.getSigninsByDomain(sender.url);
       console.log("signins", signins);
       const autoSignin = signins?.find((signin) => signin.autoSignin);
       if (!signins?.length || !autoSignin) {
@@ -431,7 +419,7 @@ chrome.runtime.onMessageExternal.addListener(function (
         autoSignin?.identifier
           ? autoSignin?.identifier?.name
           : autoSignin?.credential?.issueeName,
-        origin
+        removeSlash(sender.url)
       );
       let jsonHeaders: { [key: string]: string } = {};
       for (const pair of signedHeaders.entries()) {
