@@ -4,9 +4,12 @@ import { SigninCard } from "@components/signinCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
 import { IMessage, ISignin } from "@config/types";
 
-interface IResourceSignin {
-  index: number;
-  signin?: ISignin;
+interface IDeleteSignin {
+  id: string;
+}
+
+interface IUpdateSignin {
+  signin: ISignin;
 }
 
 export function SigninList(): JSX.Element {
@@ -23,14 +26,14 @@ export function SigninList(): JSX.Element {
     setIsLoading(false);
   };
 
-  const deleteSignin = async (index: number) => {
+  const deleteSignin = async (id: string) => {
     const { data } = await chrome.runtime.sendMessage<
-      IMessage<IResourceSignin>
+      IMessage<IDeleteSignin>
     >({
       type: "delete-resource",
       subtype: "signins",
       data: {
-        index,
+        id,
       },
     });
     if (data?.isDeleted) {
@@ -52,15 +55,13 @@ export function SigninList(): JSX.Element {
     }
   };
 
-  const updateAutoSignin = async (index: number, signin: ISignin) => {
-    console.log("signin", signin, index);
+  const updateAutoSignin = async (signin: ISignin) => {
     const { data } = await chrome.runtime.sendMessage<
-      IMessage<IResourceSignin>
+      IMessage<IUpdateSignin>
     >({
       type: "update-resource",
       subtype: "auto-signin",
       data: {
-        index,
         signin,
       },
     });
@@ -94,12 +95,12 @@ export function SigninList(): JSX.Element {
           <Loader size={6} />
         </Flex>
       ) : null}
-      {signins.map((signin, index) => (
-        <Box marginY={2} marginX={3} key={index}>
+      {signins.map((signin) => (
+        <Box marginY={2} marginX={3} key={signin.id}>
           <SigninCard
             signin={signin}
-            handleDelete={() => deleteSignin(index)}
-            handleAutoSignin={() => updateAutoSignin(index, signin)}
+            handleDelete={() => deleteSignin(signin.id)}
+            handleAutoSignin={() => updateAutoSignin(signin)}
           />
         </Box>
       ))}
