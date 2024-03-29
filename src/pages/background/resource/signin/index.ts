@@ -20,12 +20,14 @@ const getSigninsObject = async (): Promise<IObjectSignins> => {
 
 export const getSignins = async (): Promise<ISignin[]> => {
   const signinsObj = await getSigninsObject();
-  return signinsObj[signifyService.getAgentID()] ?? [];
+  const controllerId = await signifyService.getControllerID();
+  return signinsObj[controllerId] ?? [];
 };
 
 export const updateSignins = async (signins: ISignin[]) => {
   const signinsObj = await getSigninsObject();
-  signinsObj[signifyService.getAgentID()] = signins;
+  const controllerId = await signifyService.getControllerID();
+  signinsObj[controllerId] = signins;
   await browserStorageService.setValue("signins", signinsObj);
 };
 

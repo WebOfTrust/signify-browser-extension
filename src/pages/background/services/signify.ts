@@ -20,6 +20,7 @@ const Signify = () => {
       } catch (error) {
           console.log("Timer expired, client and passcode zeroed out");
           _client = null;
+          await userService.removeControllerId();
           await userService.removePasscode();
       }
             
@@ -47,6 +48,8 @@ const Signify = () => {
       _client = new SignifyClient(agentUrl, passcode, Tier.low, bootUrl);
       await _client.boot();
       await _client.connect();
+      const state = await getState();
+      await userService.setControllerId(state?.controller?.state?.i);
       setTimeoutAlarm();
     } catch (error) {
       console.error(error);
@@ -60,6 +63,8 @@ const Signify = () => {
       await ready();
       _client = new SignifyClient(agentUrl, passcode, Tier.low);
       await _client.connect();
+      const state = await getState();
+      await userService.setControllerId(state?.controller?.state?.i);
       setTimeoutAlarm();
     } catch (error) {
       console.error(error);
@@ -117,6 +122,7 @@ const Signify = () => {
 
   const disconnect = async () => {
     _client = null;
+    await userService.removeControllerId();
     await userService.removePasscode();
   };
 
@@ -150,9 +156,9 @@ const Signify = () => {
     return signed_headers;
   };
 
-  const getAgentID = (): string => {
-    validateClient();
-    return _client?.agent?.pre!;
+  const getControllerID = async (): Promise<string> => {
+    const controllerId = await userService.getControllerId();
+    return controllerId;
   };
 
   const createAID = async (name: string) => {
@@ -171,7 +177,7 @@ const Signify = () => {
     createAID,
     generatePasscode,
     bootAndConnect,
-    getAgentID,
+    getControllerID,
   };
 };
 

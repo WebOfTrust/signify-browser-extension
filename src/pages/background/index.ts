@@ -1,4 +1,3 @@
-import { browserStorageService } from "@pages/background/services/browser-storage";
 import {
   WEB_APP_PERMS,
   configService,
@@ -209,7 +208,6 @@ chrome.runtime.onMessage.addListener(function (
         message.subtype === "disconnect-agent"
       ) {
         await signifyService.disconnect();
-        await userService.removePasscode();
         sendResponse({ data: { isConnected: false } });
       }
 
