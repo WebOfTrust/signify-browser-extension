@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener(function (
   (async () => {
     // Handle mesages from content script on active tab
     if (sender.tab && sender.tab.active) {
-      console.log("Message received from content script at ", sender.tab.url);
+      console.log("Message received from content script at ", sender?.tab?.url);
       console.log("Message Type", message.type);
 
       const processor = csHandler.get(message.type);
