@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import {
   Box,
   Card,
@@ -60,8 +61,7 @@ export function Signup({
 
   const handleGeneratePasscode = async () => {
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "authentication",
-      subtype: "generate-passcode",
+      type: UI_EVENTS.authentication_generate_passcode,
     });
     if (data?.passcode) {
       setGeneratedPasscode(data.passcode);

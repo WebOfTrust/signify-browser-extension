@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
+import { UI_EVENTS } from "@config/event-types";
 import {
   WEB_APP_PERMS,
   configService,
@@ -89,8 +90,7 @@ export default function Popup(): JSX.Element {
 
   const checkConnection = async () => {
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "authentication",
-      subtype: "check-agent-connection",
+      type: UI_EVENTS.authentication_check_agent_connection,
     });
 
     setIsConnected(!!data.isConnected);
@@ -126,12 +126,11 @@ export default function Popup(): JSX.Element {
 
     if (!urlObject || !urlObject?.origin) return;
     setIsLoading(true);
-    
+
     const { data, error } = await chrome.runtime.sendMessage<
       IMessage<IBootAndConnect>
     >({
-      type: "authentication",
-      subtype: "boot-and-connect-agent",
+      type: UI_EVENTS.authentication_boot_connect_agent,
       data: {
         passcode,
         agentUrl,
@@ -157,8 +156,7 @@ export default function Popup(): JSX.Element {
     const { data, error } = await chrome.runtime.sendMessage<
       IMessage<IConnect>
     >({
-      type: "authentication",
-      subtype: "connect-agent",
+      type: UI_EVENTS.authentication_connect_agent,
       data: {
         passcode,
         agentUrl,
@@ -178,16 +176,14 @@ export default function Popup(): JSX.Element {
 
   const handleDisconnect = async () => {
     await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "authentication",
-      subtype: "disconnect-agent",
+      type: UI_EVENTS.authentication_disconnect_agent,
     });
     checkConnection();
   };
 
   const handleDisconnectPermission = async () => {
     await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "authentication",
-      subtype: "disconnect-agent",
+      type: UI_EVENTS.authentication_disconnect_agent
     });
     await checkConnection();
     checkIfVendorDataExists();

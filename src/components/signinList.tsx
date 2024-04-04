@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import { SigninCard } from "@components/signinCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
 import { IMessage, ISignin } from "@config/types";
@@ -19,19 +20,15 @@ export function SigninList(): JSX.Element {
   const fetchSignins = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "fetch-resource",
-      subtype: "signins",
+      type: UI_EVENTS.fetch_resource_signins,
     });
     setSignins(data?.signins);
     setIsLoading(false);
   };
 
   const deleteSignin = async (id: string) => {
-    const { data } = await chrome.runtime.sendMessage<
-      IMessage<IDeleteSignin>
-    >({
-      type: "delete-resource",
-      subtype: "signins",
+    const { data } = await chrome.runtime.sendMessage<IMessage<IDeleteSignin>>({
+      type: UI_EVENTS.delete_resource_signins,
       data: {
         id,
       },
@@ -56,11 +53,8 @@ export function SigninList(): JSX.Element {
   };
 
   const updateAutoSignin = async (signin: ISignin) => {
-    const { data } = await chrome.runtime.sendMessage<
-      IMessage<IUpdateSignin>
-    >({
-      type: "update-resource",
-      subtype: "auto-signin",
+    const { data } = await chrome.runtime.sendMessage<IMessage<IUpdateSignin>>({
+      type: UI_EVENTS.update_resource_auto_signin,
       data: {
         signin,
       },

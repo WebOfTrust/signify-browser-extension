@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import { IdentifierCard } from "@components/identifierCard";
 import { Box, Button, Drawer, Flex, Text, Loader } from "@components/ui";
 import { IMessage } from "@config/types";
@@ -20,8 +21,7 @@ export function SelectIdentifier(): JSX.Element {
   const fetchIdentifiers = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "fetch-resource",
-      subtype: "identifiers",
+      type: UI_EVENTS.fetch_resource_identifiers
     });
     console.log("data", data);
     setIsLoading(false);
@@ -30,8 +30,7 @@ export function SelectIdentifier(): JSX.Element {
 
   const createSigninWithIdentifiers = async (aid: any) => {
     await chrome.runtime.sendMessage<IMessage<any>>({
-      type: "create-resource",
-      subtype: "signin",
+      type: UI_EVENTS.create_resource_signin,
       data: {
         identifier: aid,
       },
@@ -64,8 +63,7 @@ export function SelectIdentifier(): JSX.Element {
     const { data, error } = await chrome.runtime.sendMessage<
       IMessage<ISelectIdentifier>
     >({
-      type: "create-resource",
-      subtype: "identifier",
+      type: UI_EVENTS.create_resource_identifier,
       data: { name },
     });
     if (error) {

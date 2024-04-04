@@ -1,8 +1,9 @@
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
+import { CS_EVENTS } from "@config/event-types";
 import { IMessage } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
-import { Dialog } from "../dialog/Dialog";
+import { Dialog } from "./dialog/Dialog";
 // import "./style.css";
 
 var tabState = TAB_STATE.NONE;
@@ -34,24 +35,20 @@ window.addEventListener(
         case TAB_STATE.SELECT_ID_CRED:
         case TAB_STATE.SELECT_AUTO_SIGNIN:
           await chrome.runtime.sendMessage<IMessage<void>>({
-            type: "action-icon",
-            subtype: "set-tab-action-icon",
+            type: CS_EVENTS.action_icon_set_tab,
           });
           const respVendorData = await chrome.runtime.sendMessage<
             IMessage<void>
           >({
-            type: "vendor-info",
-            subtype: "get-vendor-data",
+            type: CS_EVENTS.vendor_info_get_vendor_data,
           });
           const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-            type: "authentication",
-            subtype: "check-agent-connection",
+            type: CS_EVENTS.authentication_check_agent_connection,
           });
           const tabSigninResp = await chrome.runtime.sendMessage<
             IMessage<void>
           >({
-            type: "fetch-resource",
-            subtype: "tab-signin",
+            type: CS_EVENTS.fetch_resource_tab_signin,
           });
 
           const filteredSignins = getFilteredSignins(
@@ -72,12 +69,10 @@ window.addEventListener(
         case "vendor-info":
           if (event.data.subtype === "attempt-set-vendor-url") {
             await chrome.runtime.sendMessage<IMessage<void>>({
-              type: "action-icon",
-              subtype: "set-action-icon",
+              type: CS_EVENTS.action_icon_set,
             });
             await chrome.runtime.sendMessage(chrome.runtime.id, {
-              type: "vendor-info",
-              subtype: "attempt-set-vendor-url",
+              type: CS_EVENTS.vendor_info_attempt_set_vendor_url,
               data: {
                 vendorUrl: event.data.data.vendorUrl,
               },
@@ -89,8 +84,7 @@ window.addEventListener(
             const { data, error } = await chrome.runtime.sendMessage(
               chrome.runtime.id,
               {
-                type: "fetch-resource",
-                subtype: "auto-signin-signature",
+                type: CS_EVENTS.fetch_resource_auto_signin_signature,
               }
             );
             if (error) {
@@ -134,18 +128,15 @@ chrome.runtime.onMessage.addListener(async function (
         removeDialog();
         const respVendorData = await chrome.runtime.sendMessage<IMessage<void>>(
           {
-            type: "vendor-info",
-            subtype: "get-vendor-data",
+            type: CS_EVENTS.vendor_info_get_vendor_data,
           }
         );
 
         const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-          type: "authentication",
-          subtype: "check-agent-connection",
+          type: CS_EVENTS.authentication_check_agent_connection,
         });
         const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
-          type: "fetch-resource",
-          subtype: "tab-signin",
+          type: CS_EVENTS.fetch_resource_tab_signin,
         });
         const filteredSignins = getFilteredSignins(
           tabSigninResp?.data?.signins,
@@ -211,8 +202,7 @@ function removeDialog() {
   if (element) element.remove();
 
   chrome.runtime.sendMessage<IMessage<void>>({
-    type: "action-icon",
-    subtype: "unset-tab-action-icon",
+    type: CS_EVENTS.action_icon_unset_tab,
   });
 }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import { CredentialCard } from "@components/credentialCard";
 import { Button, Loader, Flex, Box } from "@components/ui";
 import { IMessage } from "@config/types";
@@ -11,8 +12,7 @@ export function SelectCredential(): JSX.Element {
   const fetchCredentials = async () => {
     setIsLoading(true);
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "fetch-resource",
-      subtype: "credentials",
+      type: UI_EVENTS.fetch_resource_credentials
     });
     setCredentials(data.credentials);
     setIsLoading(false);
@@ -20,8 +20,7 @@ export function SelectCredential(): JSX.Element {
 
   const createSigninWithCredential = async (credential: any) => {
     await chrome.runtime.sendMessage<IMessage<any>>({
-      type: "create-resource",
-      subtype: "signin",
+      type: UI_EVENTS.create_resource_signin,
       data: {
         credential,
       },
