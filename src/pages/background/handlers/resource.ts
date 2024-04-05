@@ -16,19 +16,14 @@ export async function handleFetchAutoSigninSignature({
     });
     return;
   }
+  const resp = await signifyService.getSignedHeaders({
+    url: url!,
+    signin: autoSignin,
+  });
 
-  const signedHeaders = await signifyService.signHeaders(
-    // sigin can either have identifier or credential
-    autoSignin?.identifier
-      ? autoSignin?.identifier?.name
-      : autoSignin?.credential?.issueeName,
-    url!
-  );
-  let jsonHeaders: { [key: string]: string } = {};
-  for (const pair of signedHeaders.entries()) {
-    jsonHeaders[pair[0]] = pair[1];
-  }
-  sendResponse({ data: { headers: jsonHeaders } });
+  sendResponse({
+    data: resp,
+  });
 }
 
 export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {

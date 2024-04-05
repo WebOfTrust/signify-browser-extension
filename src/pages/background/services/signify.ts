@@ -1,7 +1,13 @@
-import { SignifyClient, Tier, ready, Authenticater, randomPasscode, b } from "signify-ts";
+import {
+  SignifyClient,
+  Tier,
+  ready,
+  Authenticater,
+  randomPasscode,
+} from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
-import { IIdentifier } from "@config/types";
+import { IIdentifier, ISignin } from "@config/types";
 
 const PASSCODE_TIMEOUT = 5;
 
@@ -10,20 +16,21 @@ const Signify = () => {
 
   chrome.alarms.onAlarm.addListener(async (alarm) => {
     if (alarm.name == "passcode-timeout") {
-      
       try {
-        const response = await chrome.runtime.sendMessage({type: "popup", subtype: "isOpened"});
+        const response = await chrome.runtime.sendMessage({
+          type: "popup",
+          subtype: "isOpened",
+        });
         if (response.data.isOpened) {
           console.log("Timer expired, but extsenion is open. Resetting timer.");
           resetTimeoutAlarm();
         }
       } catch (error) {
-          console.log("Timer expired, client and passcode zeroed out");
-          _client = null;
-          await userService.removeControllerId();
-          await userService.removePasscode();
+        console.log("Timer expired, client and passcode zeroed out");
+        _client = null;
+        await userService.removeControllerId();
+        await userService.removePasscode();
       }
-            
     }
   });
 
@@ -38,11 +45,15 @@ const Signify = () => {
     setTimeoutAlarm();
   };
 
-  const generatePasscode =  () => {
+  const generatePasscode = () => {
     return randomPasscode();
   };
 
-  const bootAndConnect = async (agentUrl: string, bootUrl: string, passcode: string) => {
+  const bootAndConnect = async (
+    agentUrl: string,
+    bootUrl: string,
+    passcode: string
+  ) => {
     try {
       await ready();
       _client = new SignifyClient(agentUrl, passcode, Tier.low, bootUrl);
@@ -84,7 +95,8 @@ const Signify = () => {
     console.log(
       _client
         ? "Signify client is connected"
-        : "Signify client is not connected", _client
+        : "Signify client is not connected",
+      _client
     );
     return _client ? true : false;
   };
@@ -101,16 +113,16 @@ const Signify = () => {
 
   const listIdentifiers = async () => {
     validateClient();
-    let aids: IIdentifier[] = []
+    let aids: IIdentifier[] = [];
     let start = 0;
     let total = 0;
     do {
       const res = await _client?.identifiers().list(start);
-      if(res.aids?.length){
+      if (res.aids?.length) {
         aids.push(...res.aids);
       }
       total = res.total;
-      start = aids.length; 
+      start = aids.length;
     } while (aids.length < total);
     return aids;
   };
@@ -156,6 +168,25 @@ const Signify = () => {
     return signed_headers;
   };
 
+  const getSignedHeaders = async ({ url, signin } : { url: string, signin: ISignin }) => {
+    const origin = url!;
+    const signedHeaders = await signHeaders(
+      signin.identifier
+        ? signin.identifier?.name
+        : signin.credential?.issueeName,
+      origin
+    );
+    let jsonHeaders: { [key: string]: string } = {};
+    for (const pair of signedHeaders.entries()) {
+      jsonHeaders[pair[0]] = pair[1];
+    }
+
+    return {
+      headers: jsonHeaders,
+      credential: signin?.credential ?? null,
+    };
+  };
+
   const getControllerID = async (): Promise<string> => {
     const controllerId = await userService.getControllerId();
     return controllerId;
@@ -178,6 +209,7 @@ const Signify = () => {
     generatePasscode,
     bootAndConnect,
     getControllerID,
+    getSignedHeaders
   };
 };
 

@@ -68,21 +68,12 @@ export async function handleGetSignedHeaders({
   url,
   data,
 }: IHandler) {
-  const origin = url!;
-  const signedHeaders = await signifyService.signHeaders(
-    data.signin.identifier
-      ? data.signin.identifier.name
-      : data.signin.credential.issueeName,
-    origin
-  );
-  let jsonHeaders: { [key: string]: string } = {};
-  for (const pair of signedHeaders.entries()) {
-    jsonHeaders[pair[0]] = pair[1];
-  }
+  const resp = await signifyService.getSignedHeaders({
+    url: url!,
+    signin: data.signin,
+  });
+
   sendResponse({
-    data: {
-      headers: jsonHeaders,
-      credential: data.signin.credential ? data.signin.credential : null,
-    },
+    data: resp,
   });
 }

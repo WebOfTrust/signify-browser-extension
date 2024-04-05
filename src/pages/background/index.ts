@@ -1,10 +1,9 @@
 import { configService } from "@pages/background/services/config";
-import { signifyService } from "@pages/background/services/signify";
-import * as signinResource from "@pages/background/resource/signin";
 import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
-import { removeSlash, setActionIcon } from "@pages/background/utils";
+import { setActionIcon } from "@pages/background/utils";
 import { initCSHandler, initUIHandler } from "@pages/background/handlers";
+import { handleFetchAutoSigninSignature } from "@pages/background/handlers/resource";
 
 console.log("Background script loaded");
 
@@ -80,33 +79,12 @@ chrome.runtime.onMessageExternal.addListener(function (
     console.log("Message received from external source: ", sender);
     console.log("Message received from external request: ", message);
 
+    // TODO: replace with External Handler like we did for uiHandler and csHandler
     if (
       message.type === "fetch-resource" &&
       message.subtype === "auto-signin-signature"
     ) {
-      // Validate that message comes from a page that has a signin
-      const signins = await signinResource.getSigninsByDomain(sender.url);
-      console.log("signins", signins);
-      const autoSignin = signins?.find((signin) => signin.autoSignin);
-      if (!signins?.length || !autoSignin) {
-        sendResponse({
-          error: { code: 404, message: "auto signin not found" },
-        });
-        return;
-      }
-
-      const signedHeaders = await signifyService.signHeaders(
-        // sigin can either have identifier or credential
-        autoSignin?.identifier
-          ? autoSignin?.identifier?.name
-          : autoSignin?.credential?.issueeName,
-        removeSlash(sender.url)
-      );
-      let jsonHeaders: { [key: string]: string } = {};
-      for (const pair of signedHeaders.entries()) {
-        jsonHeaders[pair[0]] = pair[1];
-      }
-      sendResponse({ data: { headers: jsonHeaders } });
+      handleFetchAutoSigninSignature({ sendResponse, url: sender.url });
     }
   })();
 
