@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Flex, Box } from "@components/ui";
-import PopupArrowIcon from "@src/components/shared/icons/popup-arrow";
+import PopupArrowIcon from "@components/shared/icons/popup-arrow";
 
 interface IPopupPrompt {
   message: JSX.Element;

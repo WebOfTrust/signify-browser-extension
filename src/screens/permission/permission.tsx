@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
-import { isValidUrl, getBootUrl, setActionIcon } from "@pages/background/utils";
+import { isValidUrl, setActionIcon } from "@pages/background/utils";
 import { Box, Card, Button, Text, Flex } from "@components/ui";
 import { IMessage } from "@config/types";
 
@@ -48,8 +49,7 @@ export function Permission({
       "delete"
     );
     await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "action-icon",
-      subtype: "unset-action-icon",
+      type: UI_EVENTS.action_icon_unset,
     });
   };
 
@@ -82,7 +82,7 @@ export function Permission({
         await handleSetAgentUrl(resp?.agentUrl);
       }
 
-      if(resp?.bootUrl) {
+      if (resp?.bootUrl) {
         await handleSetBootUrl(resp?.bootUrl);
       }
 

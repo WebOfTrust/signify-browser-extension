@@ -1,8 +1,9 @@
 import { styled } from "styled-components";
-import { Box, Button, Text, Subtext, Flex } from "@components/ui";
-import SigninIcon from "@src/components/shared/icons/signin";
-import { resetTabState } from "@pages/content";
+import { CS_EVENTS } from "@config/event-types";
 import { ISignin } from "@config/types";
+import { Box, Button, Text, Subtext, Flex } from "@components/ui";
+import SigninIcon from "@components/shared/icons/signin";
+import { resetTabState } from "@pages/content";
 
 const StyledSigninItem = styled(Flex)`
   border: 1px solid;
@@ -18,8 +19,7 @@ const AutoSigninTag = styled(Box)<{ visible?: boolean }>`
 export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
   const handleClick = async () => {
     const headers = await chrome.runtime.sendMessage({
-      type: "authentication",
-      subtype: "get-signed-headers",
+      type: CS_EVENTS.authentication_get_signed_headers,
       data: {
         signin: signin,
       },

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { UI_EVENTS } from "@config/event-types";
 import { IdentifierCard } from "@components/identifierCard";
 import { Button, Box, Drawer, Flex, Text, Loader } from "@components/ui";
 import { IMessage } from "@config/types";
@@ -19,8 +20,7 @@ export function IdentifierList(): JSX.Element {
 
   const fetchIdentifiers = async () => {
     const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: "fetch-resource",
-      subtype: "identifiers",
+      type: UI_EVENTS.fetch_resource_identifiers
     });
     setAids(data.aids);
   };
@@ -45,8 +45,7 @@ export function IdentifierList(): JSX.Element {
     const { data, error } = await chrome.runtime.sendMessage<
       IMessage<ICreateIdentifier>
     >({
-      type: "create-resource",
-      subtype: "identifier",
+      type: UI_EVENTS.create_resource_identifier,
       data: { name },
     });
     if (error) {

@@ -2,9 +2,15 @@ export interface ObjectOfArrays<T> {
   [key: string]: T[];
 }
 
+export interface IHandler {
+  sendResponse: (response?: any) => void;
+  tabId?: number;
+  url?: string;
+  data?: any;
+
+}
 export interface IMessage<T> {
   type: string;
-  subtype?: string;
   data?: T;
 }
 

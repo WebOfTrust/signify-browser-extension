@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
 import { Text, Subtext, Box, Flex, IconButton } from "@components/ui";
-import CloseIcon from "@components/shared/icons/close";
 import { IVendorData, ISignin } from "@config/types";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
