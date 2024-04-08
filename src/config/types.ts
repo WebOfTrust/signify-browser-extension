@@ -73,11 +73,7 @@ export interface ICredential {
 
 export interface ISignature {
   headers: {
-    origin: string;
-    signature: string;
-    "signature-input": string;
-    "signify-resource": string;
-    "signify-timestamp": string;
+    [key: string]: string;
   };
   credential?: ICredential;
 }
