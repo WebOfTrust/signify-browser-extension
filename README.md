@@ -32,3 +32,28 @@ The following rules are enforced by design to ensure the security of the extensi
 * Request minimum permission in the Manifest.
 * All sensitive data is only accessed by the background script and popup, and never reaches the content script.
 * Never run external scripts in the extension (`eval()`).
+
+## Run for development:
+
+### install packages:
+```
+npm install
+```
+
+In order to run the extension locally, we first need to build. 
+We are using [vite](https://vitejs.dev/) frontend build tool. 
+[vite.config.js](./vite.config.ts) file is configured to generate build for chrome/chromium or firefox.
+
+### generate build for chrome:
+The following command generates a build for chrome in [dist/chrome](./dist/chrome/) folder.
+```
+npm run build
+```
+See [this guide](https://medium.com/@aabroo.jalil/how-to-test-a-chrome-extension-locally-step-by-step-guide-852e4622d4c7) to run extension locally in chrome
+
+### generate build for firefox:
+The following command generates a build for firefox in [dist/firefox](./dist/firefox/) folder.
+```
+npm run build:firefox
+```
+See [this guide](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension) to run extension locally in firefox
