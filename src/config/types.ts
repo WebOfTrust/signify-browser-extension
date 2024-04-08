@@ -7,7 +7,6 @@ export interface IHandler {
   tabId?: number;
   url?: string;
   data?: any;
-
 }
 export interface IMessage<T> {
   type: string;
@@ -47,13 +46,7 @@ export interface ISignin {
     name?: string;
     prefix?: string;
   };
-  credential?: {
-    issueeName?: string;
-    sad: { d: string };
-    schema?: {
-      title: string;
-    };
-  };
+  credential?: ICredential;
   createdAt: number;
   updatedAt: number;
   autoSignin?: boolean;
@@ -66,7 +59,8 @@ export interface IIdentifier {
 
 export interface ICredential {
   issueeName: string;
-  sad: { a: { i: string }, d: string };
+  ancatc: string[];
+  sad: { a: { i: string }; d: string };
   schema: {
     title: string;
     credentialType: string;
@@ -75,4 +69,11 @@ export interface ICredential {
   status: {
     et: string;
   };
+}
+
+export interface ISignature {
+  headers: {
+    [key: string]: string;
+  };
+  credential?: ICredential;
 }

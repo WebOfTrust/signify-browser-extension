@@ -8,7 +8,7 @@ import {
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 import { removeSlash } from "@pages/background/utils";
-import { IIdentifier, ISignin } from "@config/types";
+import { IIdentifier, ISignin, ISignature } from "@config/types";
 
 const PASSCODE_TIMEOUT = 5;
 
@@ -169,7 +169,13 @@ const Signify = () => {
     return signed_headers;
   };
 
-  const getSignedHeaders = async ({ url, signin } : { url: string, signin: ISignin }) => {
+  const getSignedHeaders = async ({
+    url,
+    signin,
+  }: {
+    url: string;
+    signin: ISignin;
+  }): Promise<ISignature> => {
     const origin = removeSlash(url!);
     const signedHeaders = await signHeaders(
       signin.identifier
@@ -184,7 +190,7 @@ const Signify = () => {
 
     return {
       headers: jsonHeaders,
-      credential: signin?.credential ?? null,
+      credential: signin?.credential,
     };
   };
 
@@ -210,7 +216,7 @@ const Signify = () => {
     generatePasscode,
     bootAndConnect,
     getControllerID,
-    getSignedHeaders
+    getSignedHeaders,
   };
 };
 
