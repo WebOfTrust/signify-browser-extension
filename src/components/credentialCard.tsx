@@ -1,26 +1,15 @@
 import { useIntl } from "react-intl";
+import { ICredential } from "@config/types";
 import { Text, Subtext, Card, Flex, Box } from "@components/ui";
 import CredentialIcon from "@components/shared/icons/credential";
 import ValidIcon from "@components/shared/icons/valid";
 import RevokedIcon from "@components/shared/icons/revoked";
 
-interface ICredential {
-  issueeName: string;
-  schema: {
-    title: string;
-    credentialType: string;
-    description: string;
-  };
-  status: {
-    et: string;
-  };
-}
-
-interface ICredentialCard {
+export function CredentialCard({
+  credential,
+}: {
   credential: ICredential;
-}
-
-export function CredentialCard({ credential }: ICredentialCard): JSX.Element {
+}): JSX.Element {
   const { formatMessage } = useIntl();
 
   return (

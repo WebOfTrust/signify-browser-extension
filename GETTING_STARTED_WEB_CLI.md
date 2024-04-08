@@ -12,7 +12,7 @@
 ```
 
 ### Usage
-import following methods from `polaris-web`
+import following methods from `signify-polaris-web`
 
 ```
 import {
@@ -22,14 +22,14 @@ import {
   requestCredential, // call to select credential for signing in
   requestAidORCred, // call to select either aid of credential
   requestAutoSignin, // call for auto signin
-} from "polaris-web";
+} from "signify-polaris-web";
 ```
 
 ### Usage subscribeToSignature
 `subscribeToSignature` is a mandatory subscription call that receives a function to return signature, e.g:
 ```
 
-const handleSignifyData = (data) => {
+const handleSignifyData = (data: ISignature) => {
     console.log("signature", data);
 };
 
@@ -40,6 +40,10 @@ useEffect(() => {
     };
   }, []);
 ```
+
+#### [ISignature](./src/config/types.ts) data type
+The callback from **subscribeToSignature** receives signature that contains header and credential(optional)
+
 
 ### Usage unsubscribeFromSignature
 `unsubscribeFromSignature` to unsubscription e.g:
