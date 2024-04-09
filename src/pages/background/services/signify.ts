@@ -7,7 +7,7 @@ import {
 } from "signify-ts";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
-import { removeSlash } from "@pages/background/utils";
+import { removeSlash } from "@shared/utils";
 import { IIdentifier, ISignin, ISignature } from "@config/types";
 
 const PASSCODE_TIMEOUT = 5;

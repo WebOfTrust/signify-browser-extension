@@ -1,7 +1,7 @@
 import { configService } from "@pages/background/services/config";
 import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
-import { setActionIcon } from "@pages/background/utils";
+import { setActionIcon } from "@shared/utils";
 import { initCSHandler, initUIHandler } from "@pages/background/handlers";
 import { handleFetchAutoSigninSignature } from "@pages/background/handlers/resource";
 
