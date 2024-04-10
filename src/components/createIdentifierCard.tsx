@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { Button, Input, Text, Box, Flex, NewButton } from "@components/ui";
-import { hasWhiteSpace, removeWhiteSpace } from "@pages/background/utils";
+import { hasWhiteSpace, removeWhiteSpace } from "@shared/utils";
 
 interface ICreateIdentifierCard {
   error?: string | JSX.Element;

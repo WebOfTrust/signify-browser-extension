@@ -14,6 +14,7 @@ const pagesDir = resolve(root, "pages");
 const assetsDir = resolve(root, "assets");
 const componentsDir = resolve(root, "components");
 const configDir = resolve(root, "config");
+const sharedDir = resolve(root, "shared");
 const publicDir = resolve(__dirname, "public");
 
 const isDev = process.env.__DEV__ === "false";
@@ -42,6 +43,7 @@ export default defineConfig({
       "@pages": pagesDir,
       "@components": componentsDir,
       "@config": configDir,
+      "@shared": sharedDir,
     },
   },
   plugins: [

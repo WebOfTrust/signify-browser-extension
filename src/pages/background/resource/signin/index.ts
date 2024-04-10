@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { browserStorageService } from "@pages/background/services/browser-storage";
 import { signifyService } from "@pages/background/services/signify";
-import { removeSlash } from "@pages/background/utils";
+import { removeSlash } from "@shared/utils";
 import {
   ObjectOfArrays,
   ISignin,

@@ -1,6 +1,6 @@
-import { obfuscateString } from "@pages/background/utils";
 import { useIntl } from "react-intl";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { obfuscateString } from "@shared/utils";
 import { Card, Text, Subtext, Flex, IconButton } from "@components/ui";
 import IdentifierIcon from "@components/shared/icons/identifier";
 import CopyIcon from "@components/shared/icons/copy";

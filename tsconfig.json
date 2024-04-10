@@ -21,9 +21,9 @@
       "@assets/*": ["src/assets/*"],
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
-      "@config/*": ["src/config/*"]
+      "@config/*": ["src/config/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
-  "include": ["src",
-    "utils", "vite.config.ts"]
+  "include": ["src", "utils", "vite.config.ts"]
 }
