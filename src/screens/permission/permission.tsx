@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@shared/runtime-utils";
 import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
 import { isValidUrl, setActionIcon } from "@shared/utils";
 import { Box, Card, Button, Text, Flex } from "@components/ui";
-import { IMessage } from "@config/types";
 
 interface IPermissions {
   permissionData: any;
@@ -48,7 +48,7 @@ export function Permission({
       WEB_APP_PERMS.SET_VENDOR_URL,
       "delete"
     );
-    await chrome.runtime.sendMessage<IMessage<void>>({
+    await sendMessage({
       type: UI_EVENTS.action_icon_unset,
     });
   };

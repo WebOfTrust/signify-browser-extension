@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@shared/runtime-utils";
 import {
   Box,
   Card,
@@ -13,7 +14,6 @@ import {
 } from "@components/ui";
 import EyeIcon from "@components/shared/icons/eye";
 import EyeOffIcon from "@components/shared/icons/eye-off";
-import { IMessage } from "@config/types";
 
 interface ISignup {
   handleBootAndConnect: (passcode: string) => void;
@@ -60,7 +60,7 @@ export function Signup({
   };
 
   const handleGeneratePasscode = async () => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await sendMessage({
       type: UI_EVENTS.authentication_generate_passcode,
     });
     if (data?.passcode) {
