@@ -1,9 +1,11 @@
+import { getExtId } from "@shared/runtime-utils";
+
 export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
   return (
     (sender.url?.startsWith("moz-extension://") ||
       sender.url?.startsWith("chrome-extension://")) &&
     sender.url?.endsWith("/src/pages/popup/index.html") &&
-    sender.id === chrome.runtime.id
+    sender.id === getExtId()
   );
 };
 

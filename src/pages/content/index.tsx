@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { CS_EVENTS } from "@config/event-types";
-import { sendMessage, sendMessageWithExtId } from "@shared/runtime-utils";
+import {
+  getExtId,
+  sendMessage,
+  sendMessageWithExtId,
+} from "@shared/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
 // import "./style.css";
@@ -13,7 +17,7 @@ window.postMessage(
   {
     type: "signify-extension",
     data: {
-      extensionId: chrome.runtime.id,
+      extensionId: getExtId(),
     },
   },
   "*"
@@ -67,25 +71,19 @@ window.addEventListener(
             await sendMessage({
               type: CS_EVENTS.action_icon_set,
             });
-            await sendMessageWithExtId<{ vendorUrl: string }>(
-              chrome.runtime.id,
-              {
-                type: CS_EVENTS.vendor_info_attempt_set_vendor_url,
-                data: {
-                  vendorUrl: event.data.data.vendorUrl,
-                },
-              }
-            );
+            await sendMessageWithExtId<{ vendorUrl: string }>(getExtId(), {
+              type: CS_EVENTS.vendor_info_attempt_set_vendor_url,
+              data: {
+                vendorUrl: event.data.data.vendorUrl,
+              },
+            });
           }
           break;
         case "fetch-resource":
           if (event.data.subtype === "auto-signin-signature") {
-            const { data, error } = await sendMessageWithExtId(
-              chrome.runtime.id,
-              {
-                type: CS_EVENTS.fetch_resource_auto_signin_signature,
-              }
-            );
+            const { data, error } = await sendMessageWithExtId(getExtId(), {
+              type: CS_EVENTS.fetch_resource_auto_signin_signature,
+            });
             if (error) {
               window.postMessage({ type: "select-auto-signin" }, "*");
             } else {
@@ -114,7 +112,7 @@ chrome.runtime.onMessage.addListener(async function (
   if (
     (sender.url?.startsWith("moz-extension://") ||
       sender.origin?.startsWith("chrome-extension://")) &&
-    sender.id === chrome.runtime.id
+    sender.id === getExtId()
   ) {
     console.log(
       "Message received from browser extension: " +
