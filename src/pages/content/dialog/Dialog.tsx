@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import { useState, useEffect } from "react";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
@@ -67,7 +68,7 @@ export function Dialog({
   const { formatMessage } = useIntl();
   const logo =
     vendorData?.logo ??
-    chrome.runtime.getURL("src/assets/img/128_keri_logo.png");
+    browser.runtime.getURL("src/assets/img/128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
   const showRequestAuthPrompt =
     !signins?.length ||

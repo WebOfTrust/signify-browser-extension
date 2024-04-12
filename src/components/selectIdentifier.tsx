@@ -28,9 +28,15 @@ export function SelectIdentifier(): JSX.Element {
     setAids(data.aids);
   };
 
-  const createSigninWithIdentifiers = async (aid: any) => {
-    await sendMessage({
+  const createSigninWithIdentifiers = async (aid: {
+    prefix: string;
+    name: string;
+  }) => {
+    await sendMessage<{ identifier: { prefix?: string; name: string } }>({
       type: UI_EVENTS.create_resource_signin,
+      data: {
+        identifier: aid,
+      },
     });
 
     chrome.tabs.query(

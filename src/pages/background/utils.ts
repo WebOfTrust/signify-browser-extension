@@ -1,6 +1,7 @@
+import browser from "webextension-polyfill";
 import { getExtId } from "@shared/runtime-utils";
 
-export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
+export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
   return (
     (sender.url?.startsWith("moz-extension://") ||
       sender.url?.startsWith("chrome-extension://")) &&

@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { CS_EVENTS } from "@config/event-types";
@@ -8,7 +9,6 @@ import {
 } from "@shared/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
-// import "./style.css";
 
 var tabState = TAB_STATE.NONE;
 
@@ -104,18 +104,14 @@ window.addEventListener(
 );
 
 // Handle messages from background script and popup
-chrome.runtime.onMessage.addListener(async function (
+browser.runtime.onMessage.addListener(async function (
   message,
   sender,
   sendResponse
 ) {
-  if (
-    (sender.url?.startsWith("moz-extension://") ||
-      sender.origin?.startsWith("chrome-extension://")) &&
-    sender.id === getExtId()
-  ) {
+  if (sender.id === getExtId()) {
     console.log(
-      "Message received from browser extension: " +
+      "Content script received message from browser extension: " +
         message.type +
         ":" +
         message.subtype
@@ -150,11 +146,7 @@ chrome.runtime.onMessage.addListener(async function (
     }
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
-      if (sender.origin?.startsWith("chrome-extension://")) {
-        sendResponse({ data: { tabState: getTabState() } });
-      } else {
-        return Promise.resolve({ data: { tabState: getTabState() } });
-      }
+      return Promise.resolve({ data: { tabState: getTabState() } });
     }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {
