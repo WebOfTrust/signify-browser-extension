@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import { CS_EVENTS } from "@config/event-types";
 import { ISignin } from "@config/types";
+import { sendMessage } from "@shared/runtime-utils";
 import { Box, Button, Text, Subtext, Flex } from "@components/ui";
 import SigninIcon from "@components/shared/icons/signin";
 import { resetTabState } from "@pages/content";
@@ -18,7 +19,7 @@ const AutoSigninTag = styled(Box)<{ visible?: boolean }>`
 // TODO do not pass the full signins stored object (only AID name, schema name, web url)
 export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
   const handleClick = async () => {
-    const headers = await chrome.runtime.sendMessage({
+    const headers = await sendMessage<{ signin: ISignin }>({
       type: CS_EVENTS.authentication_get_signed_headers,
       data: {
         signin: signin,
