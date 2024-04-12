@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import {
   SignifyClient,
   Tier,
@@ -17,7 +18,7 @@ const PASSCODE_TIMEOUT = 5;
 const Signify = () => {
   let _client: SignifyClient | null;
 
-  chrome.alarms.onAlarm.addListener(async (alarm) => {
+  browser.alarms.onAlarm.addListener(async (alarm) => {
     if (alarm.name == "passcode-timeout") {
       try {
         const response = await sendMessage({
@@ -37,13 +38,13 @@ const Signify = () => {
   });
 
   const setTimeoutAlarm = () => {
-    chrome.alarms.create("passcode-timeout", {
+    browser.alarms.create("passcode-timeout", {
       delayInMinutes: PASSCODE_TIMEOUT,
     });
   };
 
   const resetTimeoutAlarm = async () => {
-    await chrome.alarms.clear("passcode-timeout");
+    await browser.alarms.clear("passcode-timeout");
     setTimeoutAlarm();
   };
 
