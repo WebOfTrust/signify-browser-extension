@@ -3,8 +3,8 @@ import { getImageFromUrl } from "../utils";
 
 export const setActionIcon = async (iconUrl: string) => {
   try {
-    const imageData = await getImageFromUrl(iconUrl);
-    chrome.action.setIcon({ imageData });
+    const imageData = (await getImageFromUrl(iconUrl)) as browser.Action.ImageDataType;
+    browser.action.setIcon({ imageData });
   } catch (error) {}
 };
 
