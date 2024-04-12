@@ -6,7 +6,8 @@ import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
-import { isValidUrl, setActionIcon } from "@shared/utils";
+import { isValidUrl } from "@shared/utils";
+import { setActionIcon } from "@shared/browser/action-utils";
 import { Box, Card, Button, Text, Flex } from "@components/ui";
 
 interface IPermissions {
