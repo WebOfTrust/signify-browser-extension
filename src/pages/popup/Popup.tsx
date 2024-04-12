@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import {
   WEB_APP_PERMS,
   configService,
@@ -9,7 +11,7 @@ import { isValidUrl } from "@shared/utils";
 import { ThemeProvider, styled } from "styled-components";
 import { LocaleProvider } from "@src/_locales";
 import { default as defaultVendor } from "@src/config/vendor.json";
-import { IVendorData, IMessage } from "@config/types";
+import { IVendorData } from "@config/types";
 import { Permission } from "@src/screens/permission";
 import { Signin } from "@src/screens/signin";
 import { Signup } from "@src/screens/signup";
@@ -89,28 +91,22 @@ export default function Popup(): JSX.Element {
   };
 
   const checkConnection = async () => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await sendMessage({
       type: UI_EVENTS.authentication_check_agent_connection,
     });
 
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          if (tabs.length === 1) {
-            const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-              type: "tab",
-              subtype: "get-tab-state",
-            });
-            chrome.tabs.sendMessage(tabs[0].id!, {
-              type: "tab",
-              subtype: "reload-state",
-              eventType: data?.tabState,
-            });
-          }
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: data?.tabState,
+      });
     }
   };
 
@@ -127,9 +123,7 @@ export default function Popup(): JSX.Element {
     if (!urlObject || !urlObject?.origin) return;
     setIsLoading(true);
 
-    const { data, error } = await chrome.runtime.sendMessage<
-      IMessage<IBootAndConnect>
-    >({
+    const { data, error } = await sendMessage<IBootAndConnect>({
       type: UI_EVENTS.authentication_boot_connect_agent,
       data: {
         passcode,
@@ -153,9 +147,7 @@ export default function Popup(): JSX.Element {
   const handleConnect = async (passcode: string) => {
     setIsLoading(true);
     const agentUrl = await configService.getAgentUrl();
-    const { data, error } = await chrome.runtime.sendMessage<
-      IMessage<IConnect>
-    >({
+    const { data, error } = await sendMessage<IConnect>({
       type: UI_EVENTS.authentication_connect_agent,
       data: {
         passcode,
@@ -175,15 +167,15 @@ export default function Popup(): JSX.Element {
   };
 
   const handleDisconnect = async () => {
-    await chrome.runtime.sendMessage<IMessage<void>>({
+    await sendMessage({
       type: UI_EVENTS.authentication_disconnect_agent,
     });
     checkConnection();
   };
 
   const handleDisconnectPermission = async () => {
-    await chrome.runtime.sendMessage<IMessage<void>>({
-      type: UI_EVENTS.authentication_disconnect_agent
+    await sendMessage({
+      type: UI_EVENTS.authentication_disconnect_agent,
     });
     await checkConnection();
     checkIfVendorDataExists();

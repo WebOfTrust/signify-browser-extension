@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { SigninCard } from "@components/signinCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
-import { IMessage, ISignin } from "@config/types";
+import { ISignin } from "@config/types";
 
 interface IDeleteSignin {
   id: string;
@@ -19,7 +21,7 @@ export function SigninList(): JSX.Element {
   const { formatMessage } = useIntl();
   const fetchSignins = async () => {
     setIsLoading(true);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await sendMessage({
       type: UI_EVENTS.fetch_resource_signins,
     });
     setSignins(data?.signins);
@@ -27,7 +29,7 @@ export function SigninList(): JSX.Element {
   };
 
   const deleteSignin = async (id: string) => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<IDeleteSignin>>({
+    const { data } = await sendMessage<IDeleteSignin>({
       type: UI_EVENTS.delete_resource_signins,
       data: {
         id,
@@ -35,25 +37,21 @@ export function SigninList(): JSX.Element {
     });
     if (data?.isDeleted) {
       setSignins(data?.signins);
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "get-tab-state",
-          });
-          chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "reload-state",
-            eventType: data?.tabState,
-          });
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data: tabData } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: tabData?.tabState,
+      });
     }
   };
 
   const updateAutoSignin = async (signin: ISignin) => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<IUpdateSignin>>({
+    const { data } = await sendMessage<IUpdateSignin>({
       type: UI_EVENTS.update_resource_auto_signin,
       data: {
         signin,
@@ -61,20 +59,16 @@ export function SigninList(): JSX.Element {
     });
     if (data?.signins) {
       setSignins(data?.signins);
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "get-tab-state",
-          });
-          chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "reload-state",
-            eventType: data?.tabState,
-          });
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data: tabData } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: tabData?.tabState,
+      });
     }
   };
 

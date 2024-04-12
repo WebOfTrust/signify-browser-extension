@@ -32,7 +32,7 @@ export const removeWhiteSpace = (s: string, replace = "") => {
   return s.replace(/\s/g, replace);
 };
 
-export const setActionIcon = async (iconUrl: string) => {
+export const getImageFromUrl = async (iconUrl: string) => {
   try {
     const imageBlob = await fetch(iconUrl).then((r) => r.blob());
     const bitmap = await createImageBitmap(imageBlob);
@@ -40,6 +40,6 @@ export const setActionIcon = async (iconUrl: string) => {
     const context = canvas.getContext("2d");
     context?.drawImage(bitmap, 0, 0);
     const imageData = context?.getImageData(0, 0, bitmap.width, bitmap.height);
-    chrome.action.setIcon({ imageData: imageData });
+    return imageData;
   } catch (error) {}
 };

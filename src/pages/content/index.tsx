@@ -1,10 +1,14 @@
+import browser from "webextension-polyfill";
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { CS_EVENTS } from "@config/event-types";
-import { IMessage } from "@config/types";
+import {
+  getExtId,
+  sendMessage,
+  sendMessageWithExtId,
+} from "@src/shared/browser/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
-// import "./style.css";
 
 var tabState = TAB_STATE.NONE;
 
@@ -13,7 +17,7 @@ window.postMessage(
   {
     type: "signify-extension",
     data: {
-      extensionId: chrome.runtime.id,
+      extensionId: getExtId(),
     },
   },
   "*"
@@ -34,20 +38,16 @@ window.addEventListener(
         case TAB_STATE.SELECT_CREDENTIAL:
         case TAB_STATE.SELECT_ID_CRED:
         case TAB_STATE.SELECT_AUTO_SIGNIN:
-          await chrome.runtime.sendMessage<IMessage<void>>({
+          await sendMessage({
             type: CS_EVENTS.action_icon_set_tab,
           });
-          const respVendorData = await chrome.runtime.sendMessage<
-            IMessage<void>
-          >({
+          const respVendorData = await sendMessage({
             type: CS_EVENTS.vendor_info_get_vendor_data,
           });
-          const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+          const { data } = await sendMessage({
             type: CS_EVENTS.authentication_check_agent_connection,
           });
-          const tabSigninResp = await chrome.runtime.sendMessage<
-            IMessage<void>
-          >({
+          const tabSigninResp = await sendMessage({
             type: CS_EVENTS.fetch_resource_tab_signin,
           });
 
@@ -68,10 +68,10 @@ window.addEventListener(
           break;
         case "vendor-info":
           if (event.data.subtype === "attempt-set-vendor-url") {
-            await chrome.runtime.sendMessage<IMessage<void>>({
+            await sendMessage({
               type: CS_EVENTS.action_icon_set,
             });
-            await chrome.runtime.sendMessage(chrome.runtime.id, {
+            await sendMessageWithExtId<{ vendorUrl: string }>(getExtId(), {
               type: CS_EVENTS.vendor_info_attempt_set_vendor_url,
               data: {
                 vendorUrl: event.data.data.vendorUrl,
@@ -81,12 +81,9 @@ window.addEventListener(
           break;
         case "fetch-resource":
           if (event.data.subtype === "auto-signin-signature") {
-            const { data, error } = await chrome.runtime.sendMessage(
-              chrome.runtime.id,
-              {
-                type: CS_EVENTS.fetch_resource_auto_signin_signature,
-              }
-            );
+            const { data, error } = await sendMessageWithExtId(getExtId(), {
+              type: CS_EVENTS.fetch_resource_auto_signin_signature,
+            });
             if (error) {
               window.postMessage({ type: "select-auto-signin" }, "*");
             } else {
@@ -107,18 +104,14 @@ window.addEventListener(
 );
 
 // Handle messages from background script and popup
-chrome.runtime.onMessage.addListener(async function (
+browser.runtime.onMessage.addListener(async function (
   message,
   sender,
   sendResponse
 ) {
-  if (
-    (sender.url?.startsWith("moz-extension://") ||
-      sender.origin?.startsWith("chrome-extension://")) &&
-    sender.id === chrome.runtime.id
-  ) {
+  if (sender.id === getExtId()) {
     console.log(
-      "Message received from browser extension: " +
+      "Content script received message from browser extension: " +
         message.type +
         ":" +
         message.subtype
@@ -126,16 +119,14 @@ chrome.runtime.onMessage.addListener(async function (
     if (message.type === "tab" && message.subtype === "reload-state") {
       if (getTabState() !== TAB_STATE.NONE) {
         removeDialog();
-        const respVendorData = await chrome.runtime.sendMessage<IMessage<void>>(
-          {
-            type: CS_EVENTS.vendor_info_get_vendor_data,
-          }
-        );
+        const respVendorData = await sendMessage({
+          type: CS_EVENTS.vendor_info_get_vendor_data,
+        });
 
-        const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+        const { data } = await sendMessage({
           type: CS_EVENTS.authentication_check_agent_connection,
         });
-        const tabSigninResp = await chrome.runtime.sendMessage<IMessage<void>>({
+        const tabSigninResp = await sendMessage({
           type: CS_EVENTS.fetch_resource_tab_signin,
         });
         const filteredSignins = getFilteredSignins(
@@ -155,11 +146,7 @@ chrome.runtime.onMessage.addListener(async function (
     }
 
     if (message.type === "tab" && message.subtype === "get-tab-state") {
-      if (sender.origin?.startsWith("chrome-extension://")) {
-        sendResponse({ data: { tabState: getTabState() } });
-      } else {
-        return Promise.resolve({ data: { tabState: getTabState() } });
-      }
+      return Promise.resolve({ data: { tabState: getTabState() } });
     }
 
     if (message.type === "tab" && message.subtype === "set-tab-state") {
@@ -201,7 +188,7 @@ function removeDialog() {
   const element = document.getElementById("__root");
   if (element) element.remove();
 
-  chrome.runtime.sendMessage<IMessage<void>>({
+  sendMessage({
     type: CS_EVENTS.action_icon_unset_tab,
   });
 }

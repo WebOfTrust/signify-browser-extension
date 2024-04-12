@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
+import { getCurrentTab, sendMessageTab } from "@src/shared/browser/tabs-utils";
 import { Text, MainBox, Box } from "@components/ui";
 import { Sidebar, SIDEBAR, SIDEBAR_KEYS } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";
@@ -25,35 +26,31 @@ export function Main(props: IMain): JSX.Element {
   const [currentTabState, setCurrentTabState] = useState(TAB_STATE.NONE);
 
   const fetchTabState = async () => {
-    chrome.tabs.query(
-      { active: true, currentWindow: true },
-      async function (tabs) {
-        const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "get-tab-state",
-        });
-        if (!data) return;
+    const tab = await getCurrentTab();
+    const { data } = await sendMessageTab(tab.id!, {
+      type: "tab",
+      subtype: "get-tab-state",
+    });
+    if (!data) return;
 
-        if (data?.tabState) {
-          setCurrentTabState(data?.tabState);
-          if (
-            data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
-            data?.tabState === TAB_STATE.SELECT_CREDENTIAL ||
+    if (data?.tabState) {
+      setCurrentTabState(data?.tabState);
+      if (
+        data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
+        data?.tabState === TAB_STATE.SELECT_CREDENTIAL ||
+        data?.tabState === TAB_STATE.SELECT_ID_CRED
+      ) {
+        setActiveSidebar(
+          data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
             data?.tabState === TAB_STATE.SELECT_ID_CRED
-          ) {
-            setActiveSidebar(
-              data?.tabState === TAB_STATE.SELECT_IDENTIFIER ||
-                data?.tabState === TAB_STATE.SELECT_ID_CRED
-                ? SIDEBAR[0]
-                : SIDEBAR[1]
-            );
-          }
-          if (data?.tabState === TAB_STATE.SELECT_AUTO_SIGNIN) {
-            setActiveSidebar(SIDEBAR[2]);
-          }
-        }
+            ? SIDEBAR[0]
+            : SIDEBAR[1]
+        );
       }
-    );
+      if (data?.tabState === TAB_STATE.SELECT_AUTO_SIGNIN) {
+        setActiveSidebar(SIDEBAR[2]);
+      }
+    }
   };
 
   useEffect(() => {

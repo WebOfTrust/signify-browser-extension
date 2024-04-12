@@ -1,48 +1,37 @@
+import browser from "webextension-polyfill";
+
 export const getSyncStorage = () => {
-  return chrome.storage.sync;
+  return browser.storage.sync;
 };
 
 export const getNonSyncStorage = () => {
-  return chrome.storage.local;
+  return browser.storage.local;
 };
 
 const BrowserStorage = (storage = getNonSyncStorage()) => {
   const _storage = storage;
 
-  const getAllKeys = () => {
-    return new Promise((resolve) => {
-      _storage.get(null, (allItems) => {
-        resolve(Object.keys(allItems));
-      });
-    });
+  const getAllKeys = async () => {
+    const allItems = await _storage.get(null);
+    return Object.keys(allItems);
   };
 
-  const getValue = (name: string) => {
-    return new Promise((resolve) => {
-      _storage.get(name, (items) => {
-        resolve(items[name]);
-      });
-    });
+  const getValue = async (name: string) => {
+    const items = await _storage.get(name);
+    return items[name];
   };
 
-  const getValues = (names: string[]) => {
-    return new Promise((resolve) => {
-      _storage.get(names, (items) => {
-        resolve(items);
-      });
-    });
+  const getValues = async (names: string[]) => {
+    const items = await _storage.get(names);
+    return items;
   };
 
-  const removeKey = (name: string) => {
-    return new Promise<void>((resolve) => {
-      _storage.remove(name, () => resolve());
-    });
+  const removeKey = async (name: string) => {
+    return await _storage.remove(name);
   };
 
-  const setValue = (name: string, value: any) => {
-    return new Promise<void>((resolve) => {
-      _storage.set({ [name]: value }, () => resolve());
-    });
+  const setValue = async (name: string, value: any) => {
+    return await _storage.set({ [name]: value });
   };
 
   return {

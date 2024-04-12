@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import {
   SignifyClient,
   Tier,
@@ -5,22 +6,23 @@ import {
   Authenticater,
   randomPasscode,
 } from "signify-ts";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 import { removeSlash } from "@shared/utils";
 import { IIdentifier, ISignin, ISignature } from "@config/types";
+import { SW_EVENTS } from "@config/event-types";
 
 const PASSCODE_TIMEOUT = 5;
 
 const Signify = () => {
   let _client: SignifyClient | null;
 
-  chrome.alarms.onAlarm.addListener(async (alarm) => {
+  browser.alarms.onAlarm.addListener(async (alarm) => {
     if (alarm.name == "passcode-timeout") {
       try {
-        const response = await chrome.runtime.sendMessage({
-          type: "popup",
-          subtype: "isOpened",
+        const response = await sendMessage({
+          type: SW_EVENTS.check_popup_open,
         });
         if (response.data.isOpened) {
           console.log("Timer expired, but extsenion is open. Resetting timer.");
@@ -36,13 +38,13 @@ const Signify = () => {
   });
 
   const setTimeoutAlarm = () => {
-    chrome.alarms.create("passcode-timeout", {
+    browser.alarms.create("passcode-timeout", {
       delayInMinutes: PASSCODE_TIMEOUT,
     });
   };
 
   const resetTimeoutAlarm = async () => {
-    await chrome.alarms.clear("passcode-timeout");
+    await browser.alarms.clear("passcode-timeout");
     setTimeoutAlarm();
   };
 

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { UI_EVENTS } from "@config/event-types";
 import { IdentifierCard } from "@components/identifierCard";
 import { Box, Button, Drawer, Flex, Text, Loader } from "@components/ui";
-import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
 interface ISelectIdentifier {
@@ -20,38 +21,36 @@ export function SelectIdentifier(): JSX.Element {
 
   const fetchIdentifiers = async () => {
     setIsLoading(true);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: UI_EVENTS.fetch_resource_identifiers
+    const { data } = await sendMessage({
+      type: UI_EVENTS.fetch_resource_identifiers,
     });
     console.log("data", data);
     setIsLoading(false);
     setAids(data.aids);
   };
 
-  const createSigninWithIdentifiers = async (aid: any) => {
-    await chrome.runtime.sendMessage<IMessage<any>>({
+  const createSigninWithIdentifiers = async (aid: {
+    prefix: string;
+    name: string;
+  }) => {
+    await sendMessage<{ identifier: { prefix?: string; name: string } }>({
       type: UI_EVENTS.create_resource_signin,
       data: {
         identifier: aid,
       },
     });
+    const tab = await getCurrentTab();
+    const { data } = await sendMessageTab(tab.id!, {
+      type: "tab",
+      subtype: "get-tab-state",
+    });
+    await sendMessageTab(tab.id!, {
+      type: "tab",
+      subtype: "reload-state",
+      eventType: data?.tabState,
+    });
 
-    chrome.tabs.query(
-      { active: true, currentWindow: true },
-      async function (tabs) {
-        const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "get-tab-state",
-        });
-        await chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "reload-state",
-          eventType: data?.tabState,
-        });
-
-        window.close();
-      }
-    );
+    window.close();
   };
 
   useEffect(() => {
@@ -60,9 +59,7 @@ export function SelectIdentifier(): JSX.Element {
 
   const handleCreateIdentifier = async (name: string) => {
     setIsCreating(true);
-    const { data, error } = await chrome.runtime.sendMessage<
-      IMessage<ISelectIdentifier>
-    >({
+    const { data, error } = await sendMessage<ISelectIdentifier>({
       type: UI_EVENTS.create_resource_identifier,
       data: { name },
     });

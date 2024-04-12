@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { configService } from "@pages/background/services/config";
 import { useLocale, languageCodeMap } from "@src/_locales";
-import { isValidUrl, setActionIcon } from "@shared/utils";
+import { isValidUrl } from "@shared/utils";
+import { setActionIcon } from "@shared/browser/action-utils";
 import { Box, Button, Dropdown, Input, Text, Flex } from "@components/ui";
 
 const langMap = Object.entries(languageCodeMap).map((s) => ({

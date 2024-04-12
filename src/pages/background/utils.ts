@@ -1,18 +1,14 @@
-export const senderIsPopup = (sender: chrome.runtime.MessageSender) => {
+import browser from "webextension-polyfill";
+import { getExtId } from "@src/shared/browser/runtime-utils";
+import { getCurrentTab } from "@src/shared/browser/tabs-utils";
+
+export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
   return (
     (sender.url?.startsWith("moz-extension://") ||
       sender.url?.startsWith("chrome-extension://")) &&
     sender.url?.endsWith("/src/pages/popup/index.html") &&
-    sender.id === chrome.runtime.id
+    sender.id === getExtId()
   );
-};
-
-export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      resolve(tabs[0]);
-    });
-  });
 };
 
 export const getCurrentUrl = async () => {

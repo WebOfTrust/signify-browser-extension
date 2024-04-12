@@ -1,6 +1,7 @@
 const CS = "cs-"; // content-script
 const UI = "ui-"; // pages like popup, new tab etc
 const EXTERNAL = "external-"; // onExternalMessage
+const SW = "sw-"; // service-worker
 
 const EVENT_TYPE = {
   action_icon: "action-icon",
@@ -26,7 +27,7 @@ export const CS_EVENTS = {
 
   authentication_check_agent_connection: `${CS}-${EVENT_TYPE.authentication}-check-agent-connection`,
   authentication_get_signed_headers: `${CS}-${EVENT_TYPE.authentication}-get-signed-headers`,
-};
+} as const;
 
 export const UI_EVENTS = {
   action_icon_unset: `${UI}-${EVENT_TYPE.action_icon}-unset`,
@@ -45,8 +46,28 @@ export const UI_EVENTS = {
 
   update_resource_auto_signin: `${UI}-${EVENT_TYPE.update_resource}-auto-signin`,
   delete_resource_signins: `${UI}-${EVENT_TYPE.delete_resource}-signins`,
-};
+} as const;
 
 export const EXTERNAL_EVENTS = {
   fetch_resource_auto_signin_signature: `${EXTERNAL}-${EVENT_TYPE.fetch_resource}-auto-signin-signature`,
-};
+} as const;
+
+export const SW_EVENTS = {
+  check_popup_open: `${SW}-check-popup-open`,
+} as const;
+
+type T_CS_EVENTS = (typeof CS_EVENTS)[keyof typeof CS_EVENTS];
+type T_UI_EVENTS = (typeof UI_EVENTS)[keyof typeof UI_EVENTS];
+type T_SW_EVENTS = (typeof SW_EVENTS)[keyof typeof SW_EVENTS];
+
+
+// this would make sure the type must be a string from these objects
+type T_EventType = T_CS_EVENTS | T_UI_EVENTS | T_SW_EVENTS;
+
+type NoInfer<T> = [T][T extends unknown ? 0 : never];
+
+export interface IEventMessage<T> {
+  type: T_EventType;
+  // this would make sure if data is provided its type must be defined
+  data?: NoInfer<T>;
+}

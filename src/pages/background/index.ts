@@ -1,7 +1,8 @@
+import browser from "webextension-polyfill";
 import { configService } from "@pages/background/services/config";
 import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
-import { setActionIcon } from "@shared/utils";
+import { setActionIcon } from "@shared/browser/action-utils";
 import { initCSHandler, initUIHandler } from "@pages/background/handlers";
 import { handleFetchAutoSigninSignature } from "@pages/background/handlers/resource";
 
@@ -10,7 +11,7 @@ console.log("Background script loaded");
 const csHandler = initCSHandler();
 const uiHandler = initUIHandler();
 
-chrome.runtime.onStartup.addListener(function () {
+browser.runtime.onStartup.addListener(function () {
   (async () => {
     const vendorData = await configService.getVendorData();
     if (vendorData?.icon) {
@@ -21,14 +22,14 @@ chrome.runtime.onStartup.addListener(function () {
   return true;
 });
 
-chrome.runtime.onInstalled.addListener(function (object) {
-  if (object.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+browser.runtime.onInstalled.addListener(function (object) {
+  if (object.reason === "install") {
     console.log("Signify Browser Extension installed");
   }
 });
 
 // Listener to handle internal messages from content scripts from active tab and popup
-chrome.runtime.onMessage.addListener(function (
+browser.runtime.onMessage.addListener(function (
   message: IMessage<any>,
   sender,
   sendResponse
@@ -70,7 +71,7 @@ chrome.runtime.onMessage.addListener(function (
 });
 
 // Listener to handle external messages from allowed web pages with auto signin
-chrome.runtime.onMessageExternal.addListener(function (
+browser.runtime.onMessageExternal.addListener(function (
   message,
   sender,
   sendResponse
