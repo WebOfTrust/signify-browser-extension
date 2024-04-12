@@ -12,3 +12,15 @@ export const sendMessage = async <
     data,
   });
 };
+
+export const sendMessageWithExtId = async <
+  T = "Custom Error! No type parameter was supplied for data"
+>(
+  id: string,
+  { type, data }: IEventMessage<T>
+) => {
+  return browser.runtime.sendMessage(id, {
+    type,
+    data,
+  });
+};
