@@ -1,25 +1,27 @@
 import { IHandler } from "@config/types";
+import {
+  setBadge,
+  unsetBadge,
+  setTabBadge,
+  unsetTabBadge,
+} from "@shared/browser/action-utils";
 
-export function handleSetActionIcon({ sendResponse }: IHandler) {
-  chrome.action.setBadgeBackgroundColor({ color: "#008000" }, () => {
-    chrome.action.setBadgeText({ text: "1" });
-    sendResponse({ data: { success: true } });
-  });
-}
-
-export function handleUnsetActionIcon({ sendResponse }: IHandler) {
-  chrome.action.setBadgeText({ text: "" });
+export async function handleSetActionIcon({ sendResponse }: IHandler) {
+  await setBadge();
   sendResponse({ data: { success: true } });
 }
 
-export function handleSetTabActionIcon({ sendResponse, tabId }: IHandler) {
-  chrome.action.setBadgeBackgroundColor({ color: "#008000" }, () => {
-    chrome.action.setBadgeText({ tabId: tabId, text: "1" });
-    sendResponse({ data: { success: true } });
-  });
+export async function handleUnsetActionIcon({ sendResponse }: IHandler) {
+  await unsetBadge();
+  sendResponse({ data: { success: true } });
 }
 
-export function handleUnsetTabActionIcon({ sendResponse, tabId }: IHandler) {
-  chrome.action.setBadgeText({ tabId: tabId, text: "" });
+export async function handleSetTabActionIcon({ sendResponse, tabId }: IHandler) {
+  await setTabBadge({ tabId: tabId! });
+  sendResponse({ data: { success: true } });
+}
+
+export async function handleUnsetTabActionIcon({ sendResponse, tabId }: IHandler) {
+  await unsetTabBadge({ tabId: tabId! });
   sendResponse({ data: { success: true } });
 }
