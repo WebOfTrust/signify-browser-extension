@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import { getExtId } from "@shared/runtime-utils";
+import { getCurrentTab } from "@shared/tabs-utils";
 
 export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
   return (
@@ -8,14 +9,6 @@ export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
     sender.url?.endsWith("/src/pages/popup/index.html") &&
     sender.id === getExtId()
   );
-};
-
-export const getCurrentTab = (): Promise<chrome.tabs.Tab> => {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      resolve(tabs[0]);
-    });
-  });
 };
 
 export const getCurrentUrl = async () => {

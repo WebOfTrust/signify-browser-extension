@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
 import { UI_EVENTS } from "@config/event-types";
 import { sendMessage } from "@shared/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
 import {
   WEB_APP_PERMS,
   configService,
@@ -96,22 +97,16 @@ export default function Popup(): JSX.Element {
 
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          if (tabs.length === 1) {
-            const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-              type: "tab",
-              subtype: "get-tab-state",
-            });
-            chrome.tabs.sendMessage(tabs[0].id!, {
-              type: "tab",
-              subtype: "reload-state",
-              eventType: data?.tabState,
-            });
-          }
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: data?.tabState,
+      });
     }
   };
 

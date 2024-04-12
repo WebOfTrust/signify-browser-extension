@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { sendMessage } from "@shared/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
 import { UI_EVENTS } from "@config/event-types";
 import { IdentifierCard } from "@components/identifierCard";
 import { Box, Button, Drawer, Flex, Text, Loader } from "@components/ui";
@@ -38,23 +39,18 @@ export function SelectIdentifier(): JSX.Element {
         identifier: aid,
       },
     });
+    const tab = await getCurrentTab();
+    const { data } = await sendMessageTab(tab.id!, {
+      type: "tab",
+      subtype: "get-tab-state",
+    });
+    await sendMessageTab(tab.id!, {
+      type: "tab",
+      subtype: "reload-state",
+      eventType: data?.tabState,
+    });
 
-    chrome.tabs.query(
-      { active: true, currentWindow: true },
-      async function (tabs) {
-        const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "get-tab-state",
-        });
-        await chrome.tabs.sendMessage(tabs[0].id!, {
-          type: "tab",
-          subtype: "reload-state",
-          eventType: data?.tabState,
-        });
-
-        window.close();
-      }
-    );
+    window.close();
   };
 
   useEffect(() => {

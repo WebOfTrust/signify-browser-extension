@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
 import { sendMessage } from "@shared/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
 import { SigninCard } from "@components/signinCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
 import { ISignin } from "@config/types";
@@ -36,20 +37,16 @@ export function SigninList(): JSX.Element {
     });
     if (data?.isDeleted) {
       setSignins(data?.signins);
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "get-tab-state",
-          });
-          chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "reload-state",
-            eventType: data?.tabState,
-          });
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data: tabData } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: tabData?.tabState,
+      });
     }
   };
 
@@ -62,20 +59,16 @@ export function SigninList(): JSX.Element {
     });
     if (data?.signins) {
       setSignins(data?.signins);
-      chrome.tabs.query(
-        { active: true, currentWindow: true },
-        async function (tabs) {
-          const { data } = await chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "get-tab-state",
-          });
-          chrome.tabs.sendMessage(tabs[0].id!, {
-            type: "tab",
-            subtype: "reload-state",
-            eventType: data?.tabState,
-          });
-        }
-      );
+      const tab = await getCurrentTab();
+      const { data: tabData } = await sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "get-tab-state",
+      });
+      sendMessageTab(tab.id!, {
+        type: "tab",
+        subtype: "reload-state",
+        eventType: tabData?.tabState,
+      });
     }
   };
 

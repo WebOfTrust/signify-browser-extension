@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import { IEventMessage } from "@config/event-types";
 
 export const getExtId = () => {
-  return browser.runtime.id
+  return browser.runtime.id;
 };
 
 export const sendMessage = async <
