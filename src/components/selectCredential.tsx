@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@shared/runtime-utils";
 import { CredentialCard } from "@components/credentialCard";
 import { Button, Loader, Flex, Box } from "@components/ui";
-import { IMessage } from "@config/types";
+import { ICredential } from "@config/types";
 
 export function SelectCredential(): JSX.Element {
   const [credentials, setCredentials] = useState([]);
@@ -11,15 +12,15 @@ export function SelectCredential(): JSX.Element {
   const { formatMessage } = useIntl();
   const fetchCredentials = async () => {
     setIsLoading(true);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: UI_EVENTS.fetch_resource_credentials
+    const { data } = await sendMessage({
+      type: UI_EVENTS.fetch_resource_credentials,
     });
     setCredentials(data.credentials);
     setIsLoading(false);
   };
 
-  const createSigninWithCredential = async (credential: any) => {
-    await chrome.runtime.sendMessage<IMessage<any>>({
+  const createSigninWithCredential = async (credential: ICredential) => {
+    await sendMessage<{ credential: ICredential }>({
       type: UI_EVENTS.create_resource_signin,
       data: {
         credential,

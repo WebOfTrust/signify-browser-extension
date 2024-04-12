@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@shared/runtime-utils";
 import { IdentifierCard } from "@components/identifierCard";
 import { Button, Box, Drawer, Flex, Text, Loader } from "@components/ui";
-import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
 interface ICreateIdentifier {
@@ -19,8 +19,8 @@ export function IdentifierList(): JSX.Element {
   const { formatMessage } = useIntl();
 
   const fetchIdentifiers = async () => {
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: UI_EVENTS.fetch_resource_identifiers
+    const { data } = await sendMessage({
+      type: UI_EVENTS.fetch_resource_identifiers,
     });
     setAids(data.aids);
   };
@@ -42,9 +42,7 @@ export function IdentifierList(): JSX.Element {
 
   const handleCreateIdentifier = async (name: string) => {
     setIsCreating(true);
-    const { data, error } = await chrome.runtime.sendMessage<
-      IMessage<ICreateIdentifier>
-    >({
+    const { data, error } = await sendMessage<ICreateIdentifier>({
       type: UI_EVENTS.create_resource_identifier,
       data: { name },
     });

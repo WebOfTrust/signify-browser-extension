@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
+import { sendMessage } from "@shared/runtime-utils";
 import { CredentialCard } from "@components/credentialCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
-import { IMessage } from "@config/types";
 
 export function CredentialList(): JSX.Element {
   const [credentials, setCredentials] = useState([]);
@@ -11,7 +11,7 @@ export function CredentialList(): JSX.Element {
   const { formatMessage } = useIntl();
   const fetchCredentials = async () => {
     setIsLoading(true);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
+    const { data } = await sendMessage({
       type: UI_EVENTS.fetch_resource_credentials,
     });
     setCredentials(data.credentials);

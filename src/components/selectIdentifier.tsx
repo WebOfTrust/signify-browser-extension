@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { sendMessage } from "@shared/runtime-utils";
 import { UI_EVENTS } from "@config/event-types";
 import { IdentifierCard } from "@components/identifierCard";
 import { Box, Button, Drawer, Flex, Text, Loader } from "@components/ui";
-import { IMessage } from "@config/types";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";
 
 interface ISelectIdentifier {
@@ -20,8 +20,8 @@ export function SelectIdentifier(): JSX.Element {
 
   const fetchIdentifiers = async () => {
     setIsLoading(true);
-    const { data } = await chrome.runtime.sendMessage<IMessage<void>>({
-      type: UI_EVENTS.fetch_resource_identifiers
+    const { data } = await sendMessage({
+      type: UI_EVENTS.fetch_resource_identifiers,
     });
     console.log("data", data);
     setIsLoading(false);
@@ -29,11 +29,8 @@ export function SelectIdentifier(): JSX.Element {
   };
 
   const createSigninWithIdentifiers = async (aid: any) => {
-    await chrome.runtime.sendMessage<IMessage<any>>({
+    await sendMessage({
       type: UI_EVENTS.create_resource_signin,
-      data: {
-        identifier: aid,
-      },
     });
 
     chrome.tabs.query(
@@ -60,9 +57,7 @@ export function SelectIdentifier(): JSX.Element {
 
   const handleCreateIdentifier = async (name: string) => {
     setIsCreating(true);
-    const { data, error } = await chrome.runtime.sendMessage<
-      IMessage<ISelectIdentifier>
-    >({
+    const { data, error } = await sendMessage<ISelectIdentifier>({
       type: UI_EVENTS.create_resource_identifier,
       data: { name },
     });
