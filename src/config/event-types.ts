@@ -1,6 +1,7 @@
 const CS = "cs-"; // content-script
 const UI = "ui-"; // pages like popup, new tab etc
 const EXTERNAL = "external-"; // onExternalMessage
+const SW = "sw-"; // service-worker
 
 const EVENT_TYPE = {
   action_icon: "action-icon",
@@ -49,13 +50,19 @@ export const UI_EVENTS = {
 
 export const EXTERNAL_EVENTS = {
   fetch_resource_auto_signin_signature: `${EXTERNAL}-${EVENT_TYPE.fetch_resource}-auto-signin-signature`,
-};
+} as const;
+
+export const SW_EVENTS = {
+  check_popup_open: `${SW}-check-popup-open`,
+} as const;
 
 type T_CS_EVENTS = (typeof CS_EVENTS)[keyof typeof CS_EVENTS];
 type T_UI_EVENTS = (typeof UI_EVENTS)[keyof typeof UI_EVENTS];
+type T_SW_EVENTS = (typeof SW_EVENTS)[keyof typeof SW_EVENTS];
 
-// this would make sure the type must be a string from these two objects
-type T_EventType = T_CS_EVENTS | T_UI_EVENTS;
+
+// this would make sure the type must be a string from these objects
+type T_EventType = T_CS_EVENTS | T_UI_EVENTS | T_SW_EVENTS;
 
 type NoInfer<T> = [T][T extends unknown ? 0 : never];
 

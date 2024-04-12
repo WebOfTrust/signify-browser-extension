@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { SW_EVENTS } from "@config/event-types";
 import Popup from "@pages/popup/Popup";
 import "@pages/popup/index.css";
 
@@ -18,8 +19,7 @@ function init() {
         sender.url?.startsWith("chrome-extension://")) &&
       sender.url?.endsWith("/service-worker-loader.js") &&
       sender.id === chrome.runtime.id &&
-      request.type === "popup" &&
-      request.subtype === "isOpened"
+      request.type === SW_EVENTS.check_popup_open
     ) {
       sendResponse({ data: { isOpened: true } });
     }
