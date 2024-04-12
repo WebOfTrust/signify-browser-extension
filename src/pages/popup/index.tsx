@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { createRoot } from "react-dom/client";
 import { SW_EVENTS } from "@config/event-types";
-import { getExtId } from "@shared/runtime-utils";
+import { getExtId } from "@src/shared/browser/runtime-utils";
 import Popup from "@pages/popup/Popup";
 import "@pages/popup/index.css";
 

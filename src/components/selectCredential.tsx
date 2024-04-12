@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
-import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { CredentialCard } from "@components/credentialCard";
 import { Button, Loader, Flex, Box } from "@components/ui";
 import { ICredential } from "@config/types";

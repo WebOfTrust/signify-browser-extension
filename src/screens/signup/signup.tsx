@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import {
   Box,
   Card,

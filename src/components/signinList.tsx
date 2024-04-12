@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
-import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { SigninCard } from "@components/signinCard";
 import { Loader, Flex, Box, Text } from "@components/ui";
 import { ISignin } from "@config/types";

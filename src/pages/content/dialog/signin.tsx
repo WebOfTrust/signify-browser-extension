@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { CS_EVENTS } from "@config/event-types";
 import { ISignin } from "@config/types";
-import { sendMessage } from "@shared/runtime-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { Box, Button, Text, Subtext, Flex } from "@components/ui";
 import SigninIcon from "@components/shared/icons/signin";
 import { resetTabState } from "@pages/content";

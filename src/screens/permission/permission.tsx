@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import {
   WEB_APP_PERMS,
   configService,

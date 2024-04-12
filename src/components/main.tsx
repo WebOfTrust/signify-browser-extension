@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { getCurrentTab, sendMessageTab } from "@shared/tabs-utils";
+import { getCurrentTab, sendMessageTab } from "@src/shared/browser/tabs-utils";
 import { Text, MainBox, Box } from "@components/ui";
 import { Sidebar, SIDEBAR, SIDEBAR_KEYS } from "@components/sidebar";
 import { SelectIdentifier } from "@components/selectIdentifier";

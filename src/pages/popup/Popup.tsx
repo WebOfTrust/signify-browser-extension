@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
-import { sendMessageTab, getCurrentTab } from "@shared/tabs-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import {
   WEB_APP_PERMS,
   configService,

@@ -6,7 +6,7 @@ import {
   getExtId,
   sendMessage,
   sendMessageWithExtId,
-} from "@shared/runtime-utils";
+} from "@src/shared/browser/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
 

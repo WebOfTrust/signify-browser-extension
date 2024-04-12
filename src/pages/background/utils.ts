@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
-import { getExtId } from "@shared/runtime-utils";
-import { getCurrentTab } from "@shared/tabs-utils";
+import { getExtId } from "@src/shared/browser/runtime-utils";
+import { getCurrentTab } from "@src/shared/browser/tabs-utils";
 
 export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
   return (

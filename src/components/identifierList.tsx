@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { UI_EVENTS } from "@config/event-types";
-import { sendMessage } from "@shared/runtime-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { IdentifierCard } from "@components/identifierCard";
 import { Button, Box, Drawer, Flex, Text, Loader } from "@components/ui";
 import { CreateIdentifierCard } from "@components/createIdentifierCard";

@@ -5,7 +5,7 @@ import {
   Authenticater,
   randomPasscode,
 } from "signify-ts";
-import { sendMessage } from "@shared/runtime-utils";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 import { removeSlash } from "@shared/utils";
