@@ -26,6 +26,18 @@ export async function handleFetchAutoSigninSignature({
   });
 }
 
+export async function handleFetchSignifyHeaders({
+  sendResponse,
+  url,
+  data,
+}: IHandler) {
+  const { aidName } = data ?? {};
+  const resp = await signifyService.signHeaders(aidName, url!);
+  sendResponse({
+    data: resp,
+  });
+}
+
 export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {
   const signins = await signinResource.getSigninsByDomain(url);
   const autoSigninObj = signins?.find((signin) => signin.autoSignin);

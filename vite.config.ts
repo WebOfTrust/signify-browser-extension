@@ -26,6 +26,12 @@ const backgroundConfig =
     ? { scripts: [manifest.background.service_worker], type: "module" }
     : { service_worker: manifest.background.service_worker };
 
+if (targetBrowser === "firefox") {
+  manifest.permissions.push("webRequest");
+  manifest.permissions.push("webRequestBlocking");
+  manifest.host_permissions = ["<all_urls>"];
+}
+
 const extensionManifest = {
   ...merge(manifest, isDev ? devManifest : {}),
   manifest_version: 3,
