@@ -11,6 +11,7 @@ import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
 
 var tabState = TAB_STATE.NONE;
+let requestId = "";
 
 // Advertize extensionId to web page
 window.postMessage(
@@ -57,13 +58,15 @@ window.addEventListener(
             event.data.schema
           );
 
+          requestId = event?.data?.requestId ?? "";
           insertDialog(
             data.isConnected,
             data.tabUrl,
             filteredSignins,
             event.data.type,
             tabSigninResp?.data?.autoSigninObj,
-            respVendorData?.data?.vendorData
+            respVendorData?.data?.vendorData,
+            requestId
           );
           break;
         case "vendor-info":
@@ -84,11 +87,13 @@ window.addEventListener(
             const { data, error } = await sendMessageWithExtId(getExtId(), {
               type: CS_EVENTS.fetch_resource_auto_signin_signature,
             });
+            requestId = event?.data?.requestId ?? "";
+              
             if (error) {
-              window.postMessage({ type: "select-auto-signin" }, "*");
+              window.postMessage({ type: "select-auto-signin", requestId }, "*");
             } else {
               window.postMessage(
-                { type: "signify-signature", data: data },
+                { type: "signify-signature", data: data, requestId },
                 "*"
               );
             }
@@ -140,7 +145,8 @@ browser.runtime.onMessage.addListener(async function (
           filteredSignins,
           message.eventType ?? "",
           tabSigninResp?.data?.autoSigninObj,
-          respVendorData?.data?.vendorData
+          respVendorData?.data?.vendorData,
+          requestId
         );
       }
     }
@@ -161,7 +167,8 @@ function insertDialog(
   signins: any,
   eventType: string,
   autoSigninObj: any,
-  vendorData: any
+  vendorData: any,
+  requestId: string,
 ) {
   const div = document.createElement("div");
   div.id = "__root";
@@ -179,6 +186,7 @@ function insertDialog(
         autoSigninObjExists={!!autoSigninObj}
         eventType={eventType}
         handleRemove={resetTabState}
+        requestId={requestId}
       />
     </LocaleProvider>
   );

@@ -9,7 +9,7 @@ import {
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
-import { removeSlash } from "@shared/utils";
+import { getDomainFromUrl } from "@shared/utils";
 import { IIdentifier, ISignin, ISignature } from "@config/types";
 import { SW_EVENTS } from "@config/event-types";
 
@@ -168,7 +168,11 @@ const Signify = () => {
 
     const signed_headers = authenticator.sign(headers, "", "", fields);
     resetTimeoutAlarm();
-    return signed_headers;
+    let jsonHeaders: { [key: string]: string } = {};
+    for (const pair of signed_headers.entries()) {
+      jsonHeaders[pair[0]] = pair[1];
+    }
+    return jsonHeaders;
   };
 
   const getSignedHeaders = async ({
@@ -178,21 +182,19 @@ const Signify = () => {
     url: string;
     signin: ISignin;
   }): Promise<ISignature> => {
-    const origin = removeSlash(url!);
+    const origin = getDomainFromUrl(url);
     const signedHeaders = await signHeaders(
       signin.identifier
         ? signin.identifier?.name
         : signin.credential?.issueeName,
       origin
     );
-    let jsonHeaders: { [key: string]: string } = {};
-    for (const pair of signedHeaders.entries()) {
-      jsonHeaders[pair[0]] = pair[1];
-    }
-
+  
     return {
-      headers: jsonHeaders,
+      headers: signedHeaders,
       credential: signin?.credential,
+      identifier: signin?.identifier,
+      autoSignin: signin?.autoSignin
     };
   };
 

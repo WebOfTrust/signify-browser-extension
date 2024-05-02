@@ -54,6 +54,7 @@ interface IDialog {
   signins: ISignin[];
   vendorData: IVendorData;
   autoSigninObjExists?: boolean;
+  requestId: string;
 }
 
 export function Dialog({
@@ -64,6 +65,7 @@ export function Dialog({
   autoSigninObjExists,
   eventType = TAB_STATE.NONE,
   handleRemove,
+  requestId
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const logo =
@@ -149,7 +151,7 @@ export function Dialog({
           ) : (
             <>
               {signins?.map((signin) => (
-                <SigninItem signin={signin} />
+                <SigninItem signin={signin} requestId={requestId} />
               ))}
               {eventType !== TAB_STATE.NONE ? (
                 <Box

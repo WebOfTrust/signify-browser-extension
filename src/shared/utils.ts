@@ -20,6 +20,13 @@ export const obfuscateString = (inputString: string) => {
   return `${prefix}...${suffix}`;
 };
 
+export const getDomainFromUrl = (url: string): string => {
+  const parsedUrl = new URL(url);
+  return `${parsedUrl.protocol}//${parsedUrl.hostname}${
+    parsedUrl.port ? ":" + parsedUrl.port : ""
+  }`;
+};
+
 export const removeSlash = (site = "") => {
   return site.replace(/\/$/, "");
 };

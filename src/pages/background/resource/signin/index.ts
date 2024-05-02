@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { browserStorageService } from "@pages/background/services/browser-storage";
 import { signifyService } from "@pages/background/services/signify";
-import { removeSlash } from "@shared/utils";
+import { getDomainFromUrl } from "@shared/utils";
 import {
   ObjectOfArrays,
   ISignin,
@@ -32,7 +32,9 @@ export const updateSignins = async (signins: ISignin[]) => {
 };
 
 export const getSigninsByDomain = async (url?: string) => {
-  const domain = removeSlash(url);
+  if (!url) return [];
+
+  const domain = getDomainFromUrl(url);
   const signins = await getSignins();
   return signins?.filter((signin) => signin.domain === domain);
 };

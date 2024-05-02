@@ -76,4 +76,9 @@ export interface ISignature {
     [key: string]: string;
   };
   credential?: ICredential;
+  identifier?: {
+    name?: string;
+    prefix?: string;
+  };
+  autoSignin?: boolean;
 }
