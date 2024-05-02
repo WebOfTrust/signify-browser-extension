@@ -17,7 +17,13 @@ const AutoSigninTag = styled(Box)<{ visible?: boolean }>`
 `;
 
 // TODO do not pass the full signins stored object (only AID name, schema name, web url)
-export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
+export const SigninItem = ({
+  signin,
+  requestId,
+}: {
+  signin: ISignin;
+  requestId: string;
+}): JSX.Element => {
   const handleClick = async () => {
     const headers = await sendMessage<{ signin: ISignin }>({
       type: CS_EVENTS.authentication_get_signed_headers,
@@ -27,7 +33,10 @@ export const SigninItem = ({ signin }: { signin: ISignin }): JSX.Element => {
     });
     resetTabState();
     // Communicate headers to web page
-    window.postMessage({ type: "signify-signature", data: headers.data }, "*");
+    window.postMessage(
+      { type: "signify-signature", requestId, data: headers.data },
+      "*"
+    );
   };
 
   return (
