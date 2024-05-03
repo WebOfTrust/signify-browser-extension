@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { getDomainSigninByIssueName } from "@pages/background/resource/signin";
+import { getDomainSigninByIssueeName } from "@pages/background/resource/signin";
 import { signifyService } from "@pages/background/services/signify";
 
 export const getSignifyHeaders = async (
@@ -9,7 +9,7 @@ export const getSignifyHeaders = async (
   const xAidName = headers?.find((header) => header.name === "x-aid-name");
 
   if (xAidName?.value) {
-    const signin = await getDomainSigninByIssueName(url, xAidName?.value);
+    const signin = await getDomainSigninByIssueeName(url, xAidName?.value);
     if (!signin?.autoSignin) {
       return headers;
     }

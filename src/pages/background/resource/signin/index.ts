@@ -39,7 +39,7 @@ export const getDomainSignins = async (url?: string) => {
   return signins?.filter((signin) => signin.domain === domain);
 };
 
-export const getDomainSigninByIssueName = async (
+export const getDomainSigninByIssueeName = async (
   url: string,
   aidName: string
 ) => {

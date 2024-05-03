@@ -32,7 +32,7 @@ export async function handleFetchSignifyHeaders({
   data,
 }: IHandler) {
   const { aidName } = data ?? {};
-  const signin = await signinResource.getDomainSigninByIssueName(url!, aidName);
+  const signin = await signinResource.getDomainSigninByIssueeName(url!, aidName);
   if (!signin?.autoSignin) {
     sendResponse({
       data: {},
