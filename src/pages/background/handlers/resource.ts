@@ -8,7 +8,7 @@ export async function handleFetchAutoSigninSignature({
   url,
 }: IHandler) {
   // Validate that message comes from a page that has a signin
-  const signins = await signinResource.getSigninsByDomain(url);
+  const signins = await signinResource.getDomainSignins(url);
   const autoSignin = signins?.find((signin) => signin.autoSignin);
   if (!signins?.length || !autoSignin) {
     sendResponse({
@@ -32,6 +32,14 @@ export async function handleFetchSignifyHeaders({
   data,
 }: IHandler) {
   const { aidName } = data ?? {};
+  const signin = await signinResource.getDomainSigninByIssueName(url!, aidName);
+  if (!signin?.autoSignin) {
+    sendResponse({
+      data: {},
+    });
+    return;
+  }
+
   const resp = await signifyService.signHeaders(aidName, url!);
   sendResponse({
     data: resp,
@@ -39,7 +47,7 @@ export async function handleFetchSignifyHeaders({
 }
 
 export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {
-  const signins = await signinResource.getSigninsByDomain(url);
+  const signins = await signinResource.getDomainSignins(url);
   const autoSigninObj = signins?.find((signin) => signin.autoSignin);
   sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
 }
@@ -130,7 +138,7 @@ export async function handleCreateSignin({ sendResponse, data }: IHandler) {
 }
 
 export async function handleUpdateAutoSignin({ sendResponse, data }: IHandler) {
-  const resp = await signinResource.updateAutoSigninByDomain(data?.signin);
+  const resp = await signinResource.updateDomainAutoSignin(data?.signin);
   sendResponse({
     data: {
       ...resp,
