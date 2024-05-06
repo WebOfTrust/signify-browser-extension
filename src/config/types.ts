@@ -69,6 +69,7 @@ export interface ICredential {
   status: {
     et: string;
   };
+  cesr?: string;
 }
 
 export interface ISignature {
