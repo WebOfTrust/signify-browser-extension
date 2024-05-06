@@ -135,6 +135,16 @@ const Signify = () => {
     return await _client?.credentials().list();
   };
 
+  // credential identifier => credential.sad.d
+  const getCredentialWithCESR = async (credentialIdentifier: string) => {
+    validateClient();
+    try {
+      return await _client?.credentials().get(credentialIdentifier, true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const disconnect = async () => {
     _client = null;
     await userService.removeControllerId();
@@ -189,12 +199,17 @@ const Signify = () => {
         : signin.credential?.issueeName,
       origin
     );
-  
+
+    if (signin.credential) {
+      const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
+      signin.credential.cesr = cesr;
+    }
+
     return {
       headers: signedHeaders,
       credential: signin?.credential,
       identifier: signin?.identifier,
-      autoSignin: signin?.autoSignin
+      autoSignin: signin?.autoSignin,
     };
   };
 

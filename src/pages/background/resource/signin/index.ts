@@ -31,7 +31,7 @@ export const updateSignins = async (signins: ISignin[]) => {
   await browserStorageService.setValue("signins", signinsObj);
 };
 
-export const getSigninsByDomain = async (url?: string) => {
+export const getDomainSignins = async (url?: string) => {
   if (!url) return [];
 
   const domain = getDomainFromUrl(url);
@@ -39,7 +39,19 @@ export const getSigninsByDomain = async (url?: string) => {
   return signins?.filter((signin) => signin.domain === domain);
 };
 
-export const updateAutoSigninByDomain = async (signin: ISignin) => {
+export const getDomainSigninByIssueeName = async (
+  url: string,
+  aidName: string
+) => {
+  const signins = await getDomainSignins(url);
+  return signins?.find(
+    (signin) =>
+      signin.identifier?.name === aidName ||
+      signin.credential?.issueeName === aidName
+  );
+};
+
+export const updateDomainAutoSignin = async (signin: ISignin) => {
   let signins = await getSignins();
   if (signins?.length) {
     const newSignins = signins.map((_ele) => {
