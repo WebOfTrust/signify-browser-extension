@@ -68,12 +68,18 @@ export async function handleGetSignedHeaders({
   url,
   data,
 }: IHandler) {
-  const resp = await signifyService.getSignedHeaders({
-    url: url!,
-    signin: data.signin,
-  });
+  try {
+    const resp = await signifyService.getSignedHeaders({
+      url: url!,
+      signin: data.signin,
+    });
 
-  sendResponse({
-    data: resp,
-  });
+    sendResponse({
+      data: resp,
+    });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
 }

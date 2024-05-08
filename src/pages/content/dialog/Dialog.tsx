@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
 import { Text, Subtext, Box, Flex, IconButton } from "@components/ui";
@@ -65,7 +66,7 @@ export function Dialog({
   autoSigninObjExists,
   eventType = TAB_STATE.NONE,
   handleRemove,
-  requestId
+  requestId,
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const logo =
@@ -107,7 +108,16 @@ export function Dialog({
 
   return (
     <ThemeProvider theme={vendorData?.theme}>
-      {" "}
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
       <Box
         position="absolute"
         width="320px"

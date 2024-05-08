@@ -90,7 +90,9 @@ window.addEventListener(
             requestId = event?.data?.requestId ?? "";
               
             if (error) {
-              window.postMessage({ type: "select-auto-signin", requestId }, "*");
+              if(error.code === 404){
+                window.postMessage({ type: "select-auto-signin", requestId }, "*");
+              }
             } else {
               window.postMessage(
                 { type: "signify-signature", data: data, requestId },

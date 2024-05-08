@@ -95,13 +95,20 @@ const Signify = () => {
       await resetTimeoutAlarm();
     }
 
-    console.log(
-      _client
-        ? "Signify client is connected"
-        : "Signify client is not connected",
-      _client
-    );
-    return _client ? true : false;
+    try {
+      // _client?.state() did not throw exception, so connected agent is valid
+      const state = await getState();
+      console.log("Signify client is connected", _client);
+      return _client && state?.controller?.state?.i ? true : false;
+    } catch (error) {
+      console.log(
+        _client
+          ? "Signify client is not valid, unable to connect"
+          : "Signify client is not connected",
+        _client
+      );
+      return false;
+    }
   };
 
   const validateClient = () => {
@@ -111,11 +118,15 @@ const Signify = () => {
   };
   const getState = async () => {
     validateClient();
+    const data = await browser.storage.local.get("is-invalid");
+    if(data["is-invalid"]){
+      throw new Error("Unable to connect with Signify Client");
+    }
     return await _client?.state();
   };
 
   const listIdentifiers = async () => {
-    validateClient();
+    await getState();
     let aids: IIdentifier[] = [];
     let start = 0;
     let total = 0;
@@ -131,7 +142,7 @@ const Signify = () => {
   };
 
   const listCredentials = async () => {
-    validateClient();
+    await getState();
     return await _client?.credentials().list();
   };
 
@@ -152,6 +163,7 @@ const Signify = () => {
   };
 
   const signHeaders = async (aidName = "", origin: string) => {
+    await getState();
     const hab = await _client?.identifiers().get(aidName);
     const keeper = _client?.manager!.get(hab);
 
@@ -219,7 +231,7 @@ const Signify = () => {
   };
 
   const createAID = async (name: string) => {
-    validateClient();
+    await getState();
     let res = await _client?.identifiers().create(name);
     return await res?.op();
   };

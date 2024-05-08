@@ -16,14 +16,21 @@ export async function handleFetchAutoSigninSignature({
     });
     return;
   }
-  const resp = await signifyService.getSignedHeaders({
-    url: url!,
-    signin: autoSignin,
-  });
 
-  sendResponse({
-    data: resp,
-  });
+  try {
+    const resp = await signifyService.getSignedHeaders({
+      url: url!,
+      signin: autoSignin,
+    });
+
+    sendResponse({
+      data: resp,
+    });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
 }
 
 export async function handleFetchSignifyHeaders({
@@ -32,7 +39,10 @@ export async function handleFetchSignifyHeaders({
   data,
 }: IHandler) {
   const { aidName } = data ?? {};
-  const signin = await signinResource.getDomainSigninByIssueeName(url!, aidName);
+  const signin = await signinResource.getDomainSigninByIssueeName(
+    url!,
+    aidName
+  );
   if (!signin?.autoSignin) {
     sendResponse({
       data: {},
@@ -40,10 +50,14 @@ export async function handleFetchSignifyHeaders({
     return;
   }
 
-  const resp = await signifyService.signHeaders(aidName, url!);
-  sendResponse({
-    data: resp,
-  });
+  try {
+    const resp = await signifyService.signHeaders(aidName, url!);
+    sendResponse({
+      data: resp,
+    });
+  } catch (error: any) {
+    sendResponse({ error: { code: 503, message: error?.message } });
+  }
 }
 
 export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {
@@ -53,8 +67,14 @@ export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {
 }
 
 export async function handleFetchIdentifiers({ sendResponse }: IHandler) {
-  const identifiers = await signifyService.listIdentifiers();
-  sendResponse({ data: { aids: identifiers ?? [] } });
+  try {
+    const identifiers = await signifyService.listIdentifiers();
+    sendResponse({ data: { aids: identifiers ?? [] } });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
 }
 
 export async function handleFetchSignins({ sendResponse, url }: IHandler) {
@@ -67,19 +87,25 @@ export async function handleFetchSignins({ sendResponse, url }: IHandler) {
 }
 
 export async function handleFetchCredentials({ sendResponse }: IHandler) {
-  var credentials = await signifyService.listCredentials();
-  const indentifiers = await signifyService.listIdentifiers();
-  console.log(indentifiers);
-  // Add holder name to credential
-  credentials?.forEach((credential: ICredential) => {
-    const issueePrefix = credential.sad.a.i;
-    const aidIssuee = indentifiers.find((aid: IIdentifier) => {
-      return aid.prefix === issueePrefix;
+  try {
+    var credentials = await signifyService.listCredentials();
+    const indentifiers = await signifyService.listIdentifiers();
+    console.log(indentifiers);
+    // Add holder name to credential
+    credentials?.forEach((credential: ICredential) => {
+      const issueePrefix = credential.sad.a.i;
+      const aidIssuee = indentifiers.find((aid: IIdentifier) => {
+        return aid.prefix === issueePrefix;
+      });
+      credential.issueeName = aidIssuee?.name!;
     });
-    credential.issueeName = aidIssuee?.name!;
-  });
 
-  sendResponse({ data: { credentials: credentials ?? [] } });
+    sendResponse({ data: { credentials: credentials ?? [] } });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
 }
 
 export async function handleCreateIdentifier({ sendResponse, data }: IHandler) {
@@ -87,9 +113,8 @@ export async function handleCreateIdentifier({ sendResponse, data }: IHandler) {
     const resp = await signifyService.createAID(data.name);
     sendResponse({ data: { ...(resp ?? {}) } });
   } catch (error: any) {
-    const errorMsg = JSON.parse(error?.message ?? "");
     sendResponse({
-      error: { code: 404, message: errorMsg?.title },
+      error: { code: 503, message: error?.message },
     });
   }
 }

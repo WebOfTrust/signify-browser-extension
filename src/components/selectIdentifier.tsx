@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useIntl } from "react-intl";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
@@ -21,12 +22,17 @@ export function SelectIdentifier(): JSX.Element {
 
   const fetchIdentifiers = async () => {
     setIsLoading(true);
-    const { data } = await sendMessage({
+    const { data, error } = await sendMessage({
       type: UI_EVENTS.fetch_resource_identifiers,
     });
     console.log("data", data);
     setIsLoading(false);
-    setAids(data.aids);
+    if (error) {
+      toast.error(error?.message);
+    } else {
+      setAids(data.aids);
+    
+    }
   };
 
   const createSigninWithIdentifiers = async (aid: {

@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import toast from "react-hot-toast";
 import { CS_EVENTS } from "@config/event-types";
 import { ISignin } from "@config/types";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
@@ -25,18 +26,20 @@ export const SigninItem = ({
   requestId: string;
 }): JSX.Element => {
   const handleClick = async () => {
-    const headers = await sendMessage<{ signin: ISignin }>({
+    const { data, error } = await sendMessage<{ signin: ISignin }>({
       type: CS_EVENTS.authentication_get_signed_headers,
       data: {
         signin: signin,
       },
     });
-    resetTabState();
-    // Communicate headers to web page
-    window.postMessage(
-      { type: "signify-signature", requestId, data: headers.data },
-      "*"
-    );
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      resetTabState();
+      // Communicate headers to web page
+      window.postMessage({ type: "signify-signature", requestId, data }, "*");
+    }
   };
 
   return (
