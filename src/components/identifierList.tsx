@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import toast from "react-hot-toast";
 import { UI_EVENTS } from "@config/event-types";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { IdentifierCard } from "@components/identifierCard";
@@ -19,10 +20,14 @@ export function IdentifierList(): JSX.Element {
   const { formatMessage } = useIntl();
 
   const fetchIdentifiers = async () => {
-    const { data } = await sendMessage({
+    const { data, error } = await sendMessage({
       type: UI_EVENTS.fetch_resource_identifiers,
     });
-    setAids(data.aids);
+    if (error) {
+      toast.error(error?.message);
+    } else {
+      setAids(data.aids);
+    }
   };
 
   const initialFetchIdentifiers = async () => {

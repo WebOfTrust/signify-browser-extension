@@ -95,18 +95,25 @@ const Signify = () => {
       await resetTimeoutAlarm();
     }
 
-    console.log(
-      _client
-        ? "Signify client is connected"
-        : "Signify client is not connected",
-      _client
-    );
-    return _client ? true : false;
+    try {
+      // _client.state() did not throw exception, so connected agent is valid
+      const state = await getState();
+      console.log("Signify client is connected", _client);
+      return _client && state?.controller?.state?.i ? true : false;
+    } catch (error) {
+      console.log(
+        _client
+          ? "Signify client is not valid, unable to connect"
+          : "Signify client is not connected",
+        _client
+      );
+      return false;
+    }
   };
 
   const validateClient = () => {
     if (!_client) {
-      throw new Error("Client not connected");
+      throw new Error("Signify Client not connected");
     }
   };
   const getState = async () => {
@@ -152,6 +159,7 @@ const Signify = () => {
   };
 
   const signHeaders = async (aidName = "", origin: string) => {
+    validateClient();
     const hab = await _client?.identifiers().get(aidName);
     const keeper = _client?.manager!.get(hab);
 

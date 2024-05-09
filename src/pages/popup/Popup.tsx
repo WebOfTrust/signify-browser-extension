@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { createGlobalStyle } from "styled-components";
 import { UI_EVENTS } from "@config/event-types";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
@@ -94,7 +95,6 @@ export default function Popup(): JSX.Element {
     const { data } = await sendMessage({
       type: UI_EVENTS.authentication_check_agent_connection,
     });
-
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
       const tab = await getCurrentTab();
@@ -185,6 +185,16 @@ export default function Popup(): JSX.Element {
   const logo = vendorData?.logo ?? "/128_keri_logo.png";
   return (
     <LocaleProvider>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
       <ThemeProvider theme={vendorData?.theme}>
         <GlobalStyles />
         <div>

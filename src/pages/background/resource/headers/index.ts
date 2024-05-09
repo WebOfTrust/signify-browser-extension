@@ -13,11 +13,13 @@ export const getSignifyHeaders = async (
     if (!signin?.autoSignin) {
       return headers;
     }
-    const resp = await signifyService.signHeaders(xAidName?.value, url!);
-    headers = headers?.filter((header) => header.name !== "x-aid-name");
-    Object.entries(resp).forEach((entry) => {
-      headers?.push({ name: entry[0], value: entry[1] });
-    });
+    try {
+      const resp = await signifyService.signHeaders(xAidName?.value, url!);
+      headers = headers?.filter((header) => header.name !== "x-aid-name");
+      Object.entries(resp).forEach((entry) => {
+        headers?.push({ name: entry[0], value: entry[1] });
+      });
+    } catch (error: any) {}
   }
 
   return headers;
