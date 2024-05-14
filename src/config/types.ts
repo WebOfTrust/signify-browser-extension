@@ -73,9 +73,7 @@ export interface ICredential {
 }
 
 export interface ISignature {
-  headers: {
-    [key: string]: string;
-  };
+  headers: HeadersInit;
   credential?: ICredential;
   identifier?: {
     name?: string;

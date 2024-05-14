@@ -158,54 +158,69 @@ const Signify = () => {
     await userService.removePasscode();
   };
 
-  const signHeaders = async (aidName = "", origin: string) => {
-    validateClient();
-    const hab = await _client?.identifiers().get(aidName);
-    const keeper = _client?.manager!.get(hab);
+  // const signHeaders = async (
+  //   aidName: string,
+  //   method: string,
+  //   path: string,
+  //   req: RequestInit
+  // ) => {
+  //   validateClient();
+  //   const hab = await _client?.identifiers().get(aidName);
+  //   const keeper = _client?.manager!.get(hab);
 
-    const authenticator = new Authenticater(
-      keeper.signers[0],
-      keeper.signers[0].verfer
-    );
+  //   const authenticator = new Authenticater(
+  //     keeper.signers[0],
+  //     keeper.signers[0].verfer
+  //   );
 
-    const headers = new Headers();
-    headers.set("Signify-Resource", hab.prefix);
-    headers.set(
-      "Signify-Timestamp",
-      new Date().toISOString().replace("Z", "000+00:00")
-    );
-    headers.set("Origin", origin);
+  //   const headers = new Headers(req.headers);
+  //   headers.set("Signify-Resource", hab.prefix);
+  //   headers.set(
+  //     "Signify-Timestamp",
+  //     new Date().toISOString().replace("Z", "000+00:00")
+  //   );
+  //   // headers.set("Origin", origin);
 
-    const fields = [
-      // '@method',
-      // '@path',
-      "signify-resource",
-      "signify-timestamp",
-      "origin",
-    ];
+  //   const fields = [
+  //     "@method",
+  //     "@path",
+  //     "signify-resource",
+  //     "signify-timestamp",
+  //   ];
 
-    const signed_headers = authenticator.sign(headers, "", "", fields);
-    resetTimeoutAlarm();
-    let jsonHeaders: { [key: string]: string } = {};
-    for (const pair of signed_headers.entries()) {
-      jsonHeaders[pair[0]] = pair[1];
-    }
-    return jsonHeaders;
-  };
+  //   const signed_headers = authenticator.sign(headers, method, path);
+  //   resetTimeoutAlarm();
+  //   let jsonHeaders: { [key: string]: string } = {};
+  //   for (const pair of signed_headers.entries()) {
+  //     jsonHeaders[pair[0]] = pair[1];
+  //   }
+  //   return jsonHeaders;
+  // };
 
   const getSignedHeaders = async ({
     url,
+    path,
+    reqInit,
     signin,
   }: {
     url: string;
+    path: string;
+    reqInit: RequestInit;
     signin: ISignin;
   }): Promise<ISignature> => {
     const origin = getDomainFromUrl(url);
-    const signedHeaders = await signHeaders(
-      signin.identifier
-        ? signin.identifier?.name
-        : signin.credential?.issueeName,
-      origin
+    let heads = new Headers(reqInit.headers);
+    heads.set("Origin", origin);
+    const req = { ...reqInit, headers: heads };
+    
+    let aidName = signin.identifier
+    ? signin.identifier?.name
+    : signin.credential?.issueeName
+    const sreq = await _client?.addSignedHeaders(
+      aidName!,
+      url,
+      path,
+      req
     );
 
     if (signin.credential) {
@@ -214,7 +229,7 @@ const Signify = () => {
     }
 
     return {
-      headers: signedHeaders,
+      headers: sreq?.headers!,
       credential: signin?.credential,
       identifier: signin?.identifier,
       autoSignin: signin?.autoSignin,
@@ -238,7 +253,6 @@ const Signify = () => {
     disconnect,
     listIdentifiers,
     listCredentials,
-    signHeaders,
     createAID,
     generatePasscode,
     bootAndConnect,
