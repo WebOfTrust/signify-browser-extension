@@ -158,13 +158,13 @@ const Signify = () => {
     await userService.removePasscode();
   };
 
-  // const signHeaders = async (
-  //   aidName: string,
-  //   method: string,
-  //   path: string,
-  //   req: RequestInit
-  // ) => {
-  //   validateClient();
+  const signedHeaders = async(
+    wurl: string,
+    rurl: string,
+    reqInit: RequestInit,
+    signin: ISignin) => {
+    validateClient();
+    return getSignedHeaders({wurl, rurl, reqInit, signin});
   //   const hab = await _client?.identifiers().get(aidName);
   //   const keeper = _client?.manager!.get(hab);
 
@@ -196,19 +196,27 @@ const Signify = () => {
   //   }
   //   return jsonHeaders;
   // };
-
+  };
+  
+  /**
+   * 
+   * @param wurl - webapp url to get the origin from
+   * @param rurl - resource url that the request is being made to
+   * @param reqInit - request init object 
+   * @returns Promise<Request> - returns a signed headers request object
+   */
   const getSignedHeaders = async ({
-    url,
-    path,
+    wurl,
+    rurl,
     reqInit,
     signin,
   }: {
-    url: string;
-    path: string;
+    wurl: string;
+    rurl: string;
     reqInit: RequestInit;
     signin: ISignin;
   }): Promise<ISignature> => {
-    const origin = getDomainFromUrl(url);
+    const origin = getDomainFromUrl(wurl);
     let heads = new Headers(reqInit.headers);
     heads.set("Origin", origin);
     const req = { ...reqInit, headers: heads };
@@ -216,10 +224,9 @@ const Signify = () => {
     let aidName = signin.identifier
     ? signin.identifier?.name
     : signin.credential?.issueeName
-    const sreq = await _client?.addSignedHeaders(
+    const sreq = await _client?.createSignedRequest(
       aidName!,
-      url,
-      path,
+      rurl,
       req
     );
 

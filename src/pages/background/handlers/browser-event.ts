@@ -7,8 +7,10 @@ export const onBeforeSendHeadersHandler = async (
   console.log("details", details);
   let headers = await getSignifyHeaders(
     details.originUrl!,
+    details.url,
     details.requestHeaders
   );
+  details.requestHeaders = new browser.webRequest.HttpHeaders(headers);
 
-  return { requestHeaders: headers };
+  return { requestHeaders: details.requestHeaders };
 };
