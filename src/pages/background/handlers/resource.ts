@@ -21,8 +21,7 @@ export async function handleFetchAutoSigninSignature({
   try {
     const isig = await signifyService.getSignedHeaders({
       wurl: url!,
-      rurl: data.url,
-      reqInit: data.reqInit,
+      rurl: data.rurl,
       signin: autoSignin,
     });
 
@@ -41,8 +40,11 @@ export async function handleFetchSignifyHeaders({
   url,
   data,
 }: IHandler) {
-  const { aidName } = data.aidName;
-  const signin = await signinResource.getDomainSigninByIssueeName(url!, aidName);
+  const { aidName } = data;
+  const signin = await signinResource.getDomainSigninByIssueeName(
+    url!,
+    aidName
+  );
   if (!signin?.autoSignin) {
     sendResponse({
       data: {},
@@ -51,7 +53,12 @@ export async function handleFetchSignifyHeaders({
   }
 
   try {
-    const isig = await signifyService.getSignedHeaders({wurl: url!, rurl: data.url, reqInit: data.reqInit, signin});
+    const isig = await signifyService.getSignedHeaders({
+      wurl: url!,
+      rurl: data.rurl,
+      reqInit: data.reqInit,
+      signin,
+    });
     sendResponse({
       data: isig,
     });

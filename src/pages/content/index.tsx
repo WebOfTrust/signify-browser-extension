@@ -12,6 +12,7 @@ import { Dialog } from "./dialog/Dialog";
 
 var tabState = TAB_STATE.NONE;
 let requestId = "";
+let rurl = "";
 
 // Advertize extensionId to web page
 window.postMessage(
@@ -59,6 +60,7 @@ window.addEventListener(
           );
 
           requestId = event?.data?.requestId ?? "";
+          rurl = event?.data?.rurl ?? rurl;
           insertDialog(
             data.isConnected,
             data.tabUrl,
@@ -66,7 +68,8 @@ window.addEventListener(
             event.data.type,
             tabSigninResp?.data?.autoSigninObj,
             respVendorData?.data?.vendorData,
-            requestId
+            requestId,
+            rurl
           );
           break;
         case "vendor-info":
@@ -84,18 +87,28 @@ window.addEventListener(
           break;
         case "fetch-resource":
           if (event.data.subtype === "auto-signin-signature") {
-            const { data, error } = await sendMessageWithExtId(getExtId(), {
-              type: CS_EVENTS.fetch_resource_auto_signin_signature,
-            });
+            const { data, error } = await sendMessageWithExtId<{ rurl: string }>(
+              getExtId(),
+              {
+                type: CS_EVENTS.fetch_resource_auto_signin_signature,
+                data: {
+                  rurl: event.data.rurl,
+                },
+              }
+            );
             requestId = event?.data?.requestId ?? "";
-              
+            rurl = event?.data?.rurl ?? rurl;
+
             if (error) {
-              if(error.code === 404){
-                window.postMessage({ type: "select-auto-signin", requestId }, "*");
+              if (error.code === 404) {
+                window.postMessage(
+                  { type: "select-auto-signin", requestId, rurl },
+                  "*"
+                );
               }
             } else {
               window.postMessage(
-                { type: "signify-signature", data: data, requestId },
+                { type: "signify-signature", data: data, requestId, rurl },
                 "*"
               );
             }
@@ -148,7 +161,8 @@ browser.runtime.onMessage.addListener(async function (
           message.eventType ?? "",
           tabSigninResp?.data?.autoSigninObj,
           respVendorData?.data?.vendorData,
-          requestId
+          requestId,
+          rurl
         );
       }
     }
@@ -171,13 +185,19 @@ function insertDialog(
   autoSigninObj: any,
   vendorData: any,
   requestId: string,
+  rurl: string,
 ) {
-  const div = document.createElement("div");
-  div.id = "__root";
-  document.body.appendChild(div);
+  let rootContainer = document.querySelector("#__root");
 
-  const rootContainer = document.querySelector("#__root");
+  if (!rootContainer) {
+    const div = document.createElement("div");
+    div.id = "__root";
+    document.body.appendChild(div);
+    rootContainer = document.querySelector("#__root");
+  }
+
   const root = createRoot(rootContainer!);
+  
   root.render(
     <LocaleProvider>
       <Dialog
@@ -189,6 +209,7 @@ function insertDialog(
         eventType={eventType}
         handleRemove={resetTabState}
         requestId={requestId}
+        rurl={rurl}
       />
     </LocaleProvider>
   );

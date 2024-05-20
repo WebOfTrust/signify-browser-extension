@@ -1,14 +1,13 @@
 import browser from "webextension-polyfill";
 import { getDomainSigninByIssueeName } from "@pages/background/resource/signin";
 import { signifyService } from "@pages/background/services/signify";
-import { Header } from "@src/components/sidebar/header";
 
 export const getSignifyHeaders = async (
   wurl: string,
-  rurl: string,
   headers?: browser.WebRequest.HttpHeaders
 ) => {
   const xAidName = headers?.find((header) => header.name === "x-aid-name");
+  const rUrl = headers?.find((header) => header.name === "rurl");
 
   if (xAidName?.value) {
     const signin = await getDomainSigninByIssueeName(wurl, xAidName?.value);
@@ -17,9 +16,20 @@ export const getSignifyHeaders = async (
     }
     try {
       const reqInit = { headers: headers } as RequestInit;
-      const isign = await signifyService.getSignedHeaders({wurl, rurl, reqInit, signin});
-      headers = headers ? Array.from(headers).concat(isign.headers.map(([name, value]) => ({ name, value }))) : [];
-      headers.push({ name: "x-aid-name", value: xAidName?.value })
+      const isign = await signifyService.getSignedHeaders({
+        wurl,
+        rurl: rUrl?.value!,
+        reqInit,
+        signin,
+      });
+
+      headers = headers?.filter((header) => header.name !== "x-aid-name");
+
+      if (isign?.headers) {
+        Object.entries(isign?.headers).forEach((entry) => {
+          headers?.push({ name: entry[0], value: entry[1] });
+        });
+      }
     } catch (error: any) {}
   }
 
