@@ -13,7 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
-    "signify-polaris-web": "../../polaris-web",
+    "signify-polaris-web": "github:WebOfTrust/polaris-web",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
