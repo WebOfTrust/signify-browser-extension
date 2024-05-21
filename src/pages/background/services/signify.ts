@@ -182,7 +182,6 @@ const Signify = () => {
     const origin = getDomainFromUrl(wurl);
     let heads = new Headers(reqInit.headers);
     heads.set("Origin", origin);
-    heads.set("r-url", rurl); // TODO: remove this header
     const req = { ...reqInit, headers: heads };
     
     let aidName = signin.identifier
