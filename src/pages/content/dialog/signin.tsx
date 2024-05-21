@@ -21,14 +21,17 @@ const AutoSigninTag = styled(Box)<{ visible?: boolean }>`
 export const SigninItem = ({
   signin,
   requestId,
+  rurl
 }: {
   signin: ISignin;
   requestId: string;
+  rurl: string;
 }): JSX.Element => {
   const handleClick = async () => {
-    const { data, error } = await sendMessage<{ signin: ISignin }>({
+    const { data, error } = await sendMessage<{ rurl: string, signin: ISignin }>({
       type: CS_EVENTS.authentication_get_signed_headers,
       data: {
+        rurl,
         signin: signin,
       },
     });

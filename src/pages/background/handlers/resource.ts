@@ -6,6 +6,7 @@ import { getCurrentUrl } from "@pages/background/utils";
 export async function handleFetchAutoSigninSignature({
   sendResponse,
   url,
+  data,
 }: IHandler) {
   // Validate that message comes from a page that has a signin
   const signins = await signinResource.getDomainSignins(url);
@@ -18,13 +19,14 @@ export async function handleFetchAutoSigninSignature({
   }
 
   try {
-    const resp = await signifyService.getSignedHeaders({
-      url: url!,
+    const isig = await signifyService.getSignedHeaders({
+      wurl: url!,
+      rurl: data.rurl,
       signin: autoSignin,
     });
 
     sendResponse({
-      data: resp,
+      data: isig,
     });
   } catch (error: any) {
     sendResponse({
@@ -38,7 +40,7 @@ export async function handleFetchSignifyHeaders({
   url,
   data,
 }: IHandler) {
-  const { aidName } = data ?? {};
+  const { aidName } = data;
   const signin = await signinResource.getDomainSigninByIssueeName(
     url!,
     aidName
@@ -51,12 +53,19 @@ export async function handleFetchSignifyHeaders({
   }
 
   try {
-    const resp = await signifyService.signHeaders(aidName, url!);
+    const isig = await signifyService.getSignedHeaders({
+      wurl: url!,
+      rurl: data.rurl,
+      reqInit: data.reqInit,
+      signin,
+    });
     sendResponse({
-      data: resp,
+      data: isig,
     });
   } catch (error: any) {
-    sendResponse({ error: { code: 503, message: error?.message } });
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
   }
 }
 
@@ -87,19 +96,20 @@ export async function handleFetchSignins({ sendResponse, url }: IHandler) {
 }
 
 export async function handleFetchCredentials({ sendResponse }: IHandler) {
-  try {
-    var credentials = await signifyService.listCredentials();
-    const indentifiers = await signifyService.listIdentifiers();
-    console.log(indentifiers);
-    // Add holder name to credential
-    credentials?.forEach((credential: ICredential) => {
-      const issueePrefix = credential.sad.a.i;
-      const aidIssuee = indentifiers.find((aid: IIdentifier) => {
-        return aid.prefix === issueePrefix;
-      });
-      credential.issueeName = aidIssuee?.name!;
+  var credentials = await signifyService.listCredentials();
+  const indentifiers = await signifyService.listIdentifiers();
+  console.log(indentifiers);
+  // Add holder name to credential
+  // Add CESR to credential
+  credentials?.forEach(async (credential: ICredential) => {
+    const issueePrefix = credential.sad.a.i;
+    const aidIssuee = indentifiers.find((aid: IIdentifier) => {
+      return aid.prefix === issueePrefix;
     });
+    credential.issueeName = aidIssuee?.name!;
+  });
 
+  try {
     sendResponse({ data: { credentials: credentials ?? [] } });
   } catch (error: any) {
     sendResponse({

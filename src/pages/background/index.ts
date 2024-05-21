@@ -98,7 +98,7 @@ browser.runtime.onMessageExternal.addListener(function (
       message.type === "fetch-resource" &&
       message.subtype === "auto-signin-signature"
     ) {
-      handleFetchAutoSigninSignature({ sendResponse, url: sender.url });
+      handleFetchAutoSigninSignature({ sendResponse, url: sender.url, data: message.data,});
     }
 
     if (

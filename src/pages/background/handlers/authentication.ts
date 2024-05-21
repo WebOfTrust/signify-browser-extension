@@ -70,7 +70,9 @@ export async function handleGetSignedHeaders({
 }: IHandler) {
   try {
     const resp = await signifyService.getSignedHeaders({
-      url: url!,
+      wurl: url!,
+      rurl: data?.rurl,
+      reqInit: data?.reqInit,
       signin: data.signin,
     });
 
