@@ -158,8 +158,6 @@ const Signify = () => {
     await userService.removePasscode();
   };
 
-
-
   /**
    *
    * @param wurl - webapp url to get the origin from -- required
@@ -179,11 +177,17 @@ const Signify = () => {
     reqInit?: RequestInit;
     signin: ISignin;
   }): Promise<ISignature> => {
+    // in case the client is not connected, try to connect
+    const connected = await isConnected();
+    // connected is false, it means the client session timed out or disconnected by user
+    if (!connected) {
+      validateClient();
+    }
     const origin = getDomainFromUrl(wurl);
     let heads = new Headers(reqInit.headers);
     heads.set("Origin", origin);
     const req = { ...reqInit, headers: heads };
-    
+
     let aidName = signin.identifier
       ? signin.identifier?.name
       : signin.credential?.issueeName;
