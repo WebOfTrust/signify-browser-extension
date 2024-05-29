@@ -7,6 +7,7 @@ interface IButton {
   handleClick?: () => void;
   isLoading?: boolean;
   children?: JSX.Element | any;
+  disabled?: boolean;
 }
 
 type TNewButtonCustomProps = {
@@ -18,7 +19,8 @@ type TNewButtonCustomProps = {
 const StyledButton = styled.button`
   border: none;
   cursor: pointer;
-  background-color: ${(props) => props.theme?.colors?.primary};
+  background-color: ${(props) =>
+    props.disabled ? "grey" : props.theme?.colors?.primary};
   text-align: center;
   font-weight: 500;
   border-radius: 9999px;
@@ -92,7 +94,11 @@ export const NewButton = styled(CustomButton).attrs((props: any) => ({
 
 export function Button(props: IButton): JSX.Element {
   return (
-    <StyledButton type={props.type} onClick={props.handleClick}>
+    <StyledButton
+      disabled={props.disabled}
+      type={props.type}
+      onClick={props.handleClick}
+    >
       {props.isLoading ? <Loader size={4} /> : null}
       {props.children}
     </StyledButton>

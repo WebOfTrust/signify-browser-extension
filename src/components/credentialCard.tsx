@@ -30,7 +30,7 @@ export function CredentialCard({
         <Box marginBottom={1}>
           <Text fontSize={0} fontWeight="bold" $color="heading">
             <>
-              {formatMessage({ id: "credential.issue.label" })}{" "}
+              {formatMessage({ id: "credential.issuee.label" })}{" "}
               <Subtext fontWeight="normal" $color="text">
                 {credential.issueeName}
               </Subtext>

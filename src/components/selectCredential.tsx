@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import toast from "react-hot-toast";
 import { UI_EVENTS } from "@config/event-types";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { CredentialCard } from "@components/credentialCard";
-import { Button, Loader, Flex, Box } from "@components/ui";
+import { Button, Loader, Text, Flex, Box } from "@components/ui";
 import { ICredential } from "@config/types";
 
 export function SelectCredential(): JSX.Element {
-  const [credentials, setCredentials] = useState([]);
+  const [credentials, setCredentials] = useState<ICredential[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { formatMessage } = useIntl();
   const fetchCredentials = async () => {
@@ -62,11 +63,30 @@ export function SelectCredential(): JSX.Element {
           <Box position="relative" $hoverableOpacity>
             <CredentialCard credential={credential} />
             <Box position="absolute" right="2px" bottom="2px">
-              <Button
-                handleClick={() => createSigninWithCredential(credential)}
-              >
-                <>{`${formatMessage({ id: "action.select" })} >`}</>
-              </Button>
+              {credential?.issueeName ? (
+                <Button
+                  handleClick={() => createSigninWithCredential(credential)}
+                  disabled={!credential?.issueeName}
+                >
+                  <>{`${formatMessage({ id: "action.select" })} >`}</>
+                </Button>
+              ) : (
+                <>
+                  <span data-tooltip-id={credential?.sad?.d}>
+                    <Button
+                      handleClick={() => createSigninWithCredential(credential)}
+                      disabled={!credential?.issueeName}
+                    >
+                      <>{`${formatMessage({ id: "action.select" })} >`}</>
+                    </Button>
+                  </span>
+                  <ReactTooltip id={credential?.sad?.d} delayShow={200}>
+                    <Flex flexDirection="row" fontSize={0} $flexGap={1}>
+                      <Text $color="">{formatMessage({ id: "credential.unidentifiedIssuee" })}</Text>
+                    </Flex>
+                  </ReactTooltip>
+                </>
+              )}
             </Box>
           </Box>
         </Box>
