@@ -72,48 +72,67 @@ window.addEventListener(
             rurl
           );
           break;
-        case "vendor-info":
-          if (event.data.subtype === "attempt-set-vendor-url") {
-            await sendMessage({
-              type: CS_EVENTS.action_icon_set,
-            });
-            await sendMessageWithExtId<{ vendorUrl: string }>(getExtId(), {
-              type: CS_EVENTS.vendor_info_attempt_set_vendor_url,
-              data: {
-                vendorUrl: event.data.data.vendorUrl,
-              },
-            });
-          }
+        case TAB_STATE.PROVIDE_CONFIG_URL:
+          await sendMessage({
+            type: CS_EVENTS.action_icon_set,
+          });
+          await sendMessageWithExtId<{ vendorUrl: string }>(getExtId(), {
+            type: CS_EVENTS.vendor_info_provide_config_url,
+            data: {
+              vendorUrl: event.data.payload.url,
+            },
+          });
           break;
-        case "fetch-resource":
-          if (event.data.subtype === "auto-signin-signature") {
-            const { data, error } = await sendMessageWithExtId<{ rurl: string }>(
-              getExtId(),
-              {
-                type: CS_EVENTS.fetch_resource_auto_signin_signature,
-                data: {
-                  rurl: event.data.rurl,
-                },
-              }
-            );
-            requestId = event?.data?.requestId ?? "";
-            rurl = event?.data?.rurl ?? rurl;
+        case TAB_STATE.AUTHORIZE_AUTO_SIGNIN:
+          const { data: autoSigninData, error } = await sendMessageWithExtId<{
+            rurl?: string;
+          }>(getExtId(), {
+            type: CS_EVENTS.fetch_resource_auto_signin_signature,
+            data: {
+            },
+          });
+          requestId = event?.data?.requestId ?? "";
+          rurl = event?.data?.rurl ?? rurl;
 
-            if (error) {
-              if (error.code === 404) {
-                window.postMessage(
-                  { type: "select-auto-signin", requestId, rurl },
-                  "*"
-                );
-              }
-            } else {
+          if (error) {
+            if (error.code === 404) {
               window.postMessage(
-                { type: "signify-signature", data: data, requestId, rurl },
+                { type: "select-auto-signin", requestId, rurl },
                 "*"
               );
             }
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: autoSigninData,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
           }
-
+          break;
+        case TAB_STATE.SIGN_REQUEST:
+          console.log("event.data", event.data);
+          const { data: signedHeaders } = await sendMessageWithExtId<{
+            rurl?: string;
+          }>(getExtId(), {
+            type: CS_EVENTS.fetch_resource_signed_headers,
+            data: event.data.payload,
+          });
+          requestId = event?.data?.requestId ?? "";
+          rurl = event?.data?.rurl ?? rurl;
+          console.log("signedHeaders", signedHeaders);
+          window.postMessage(
+            {
+              type: "/signify/reply",
+              payload: signedHeaders,
+              requestId,
+              rurl,
+            },
+            "*"
+          );
           break;
         default:
           break;
@@ -185,7 +204,7 @@ function insertDialog(
   autoSigninObj: any,
   vendorData: any,
   requestId: string,
-  rurl: string,
+  rurl: string
 ) {
   let rootContainer = document.querySelector("#__root");
 

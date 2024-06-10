@@ -65,14 +65,10 @@ export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
 
 export async function handleGetSignedHeaders({
   sendResponse,
-  url,
   data,
 }: IHandler) {
   try {
-    const resp = await signifyService.getSignedHeaders({
-      wurl: url!,
-      rurl: data?.rurl,
-      reqInit: data?.reqInit,
+    const resp = await signifyService.authorizeSelectedSignin({
       signin: data.signin,
     });
 

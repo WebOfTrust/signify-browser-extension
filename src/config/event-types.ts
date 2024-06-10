@@ -20,10 +20,11 @@ export const CS_EVENTS = {
   action_icon_unset_tab: `${CS}-${EVENT_TYPE.action_icon}-unset-tab`,
 
   fetch_resource_auto_signin_signature: `${CS}-${EVENT_TYPE.fetch_resource}-auto-signin-signature`,
+  fetch_resource_signed_headers: `${CS}-${EVENT_TYPE.fetch_resource}-signed-headers`,
   fetch_resource_tab_signin: `${CS}-${EVENT_TYPE.fetch_resource}-tab-signin`,
 
   vendor_info_get_vendor_data: `${CS}-${EVENT_TYPE.vendor_info}-get-vendor-data`,
-  vendor_info_attempt_set_vendor_url: `${CS}-${EVENT_TYPE.vendor_info}-attempt-set-vendor-url`,
+  vendor_info_provide_config_url: `${CS}-${EVENT_TYPE.vendor_info}-provide-config-url`,
 
   authentication_check_agent_connection: `${CS}-${EVENT_TYPE.authentication}-check-agent-connection`,
   authentication_get_signed_headers: `${CS}-${EVENT_TYPE.authentication}-get-signed-headers`,
