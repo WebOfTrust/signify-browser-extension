@@ -71,18 +71,18 @@ browser.runtime.onMessage.addListener(function (
 });
 
 // Listener to handle external messages from allowed web pages with auto signin
-browser.runtime.onMessageExternal.addListener(function (
-  message,
-  sender,
-  sendResponse
-) {
-  (async () => {
-    console.log("Message received from external source: ", sender);
-    console.log("Message received from external request: ", message);
+// browser.runtime.onMessageExternal.addListener(function (
+//   message,
+//   sender,
+//   sendResponse
+// ) {
+//   (async () => {
+//     console.log("Message received from external source: ", sender);
+//     console.log("Message received from external request: ", message);
 
-    // TODO: replace with External Handler like we did for uiHandler and csHandler
-  })();
+//     // TODO: replace with External Handler like we did for uiHandler and csHandler
+//   })();
 
-  // return true to indicate chrome api to send a response asynchronously
-  return true;
-});
+//   // return true to indicate chrome api to send a response asynchronously
+//   return true;
+// });

@@ -39,18 +39,18 @@ export async function handleFetchSignifyHeaders({
   data,
 }: IHandler) {
   const { sessionId: aidName } = data;
-  const signin = await signinResource.getDomainSigninByIssueeName(
-    url!,
-    aidName
-  );
-  if (!signin?.autoSignin) {
-    sendResponse({
-      data: {},
-    });
-    return;
-  }
 
   try {
+    const signin = await signinResource.getDomainSigninByIssueeName(
+      url!,
+      aidName
+    );
+    if (!signin?.autoSignin) {
+      sendResponse({
+        data: {},
+      });
+      return;
+    }
     const isig = await signifyService.getSignedHeaders({
       rurl: data.url,
       method: data.method,

@@ -114,8 +114,7 @@ window.addEventListener(
           }
           break;
         case TAB_STATE.SIGN_REQUEST:
-          console.log("event.data", event.data);
-          const { data: signedHeaders } = await sendMessageWithExtId<{
+          const { data: signedHeaders, error: signedHeadersError } = await sendMessageWithExtId<{
             rurl?: string;
           }>(getExtId(), {
             type: CS_EVENTS.fetch_resource_signed_headers,
@@ -124,15 +123,28 @@ window.addEventListener(
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
           console.log("signedHeaders", signedHeaders);
-          window.postMessage(
-            {
-              type: "/signify/reply",
-              payload: signedHeaders,
-              requestId,
-              rurl,
-            },
-            "*"
-          );
+          if(signedHeadersError){
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                error: signedHeadersError?.message,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: signedHeaders,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          }
+         
           break;
         default:
           break;

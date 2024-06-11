@@ -216,8 +216,10 @@ const Signify = () => {
     let aidName = signin.identifier
       ? signin.identifier?.name
       : signin.credential?.issueeName;
-      console.log("_client", _client);
-    const sreq = await _client?.createSignedRequest(aidName!, rurl, { method, headers });
+    const sreq = await _client?.createSignedRequest(aidName!, rurl, {
+      method,
+      headers,
+    });
     resetTimeoutAlarm();
     console.log("sreq", sreq);
     let jsonHeaders: { [key: string]: string } = {};
@@ -231,6 +233,7 @@ const Signify = () => {
   };
 
   const getControllerID = async (): Promise<string> => {
+    validateClient();
     const controllerId = await userService.getControllerId();
     return controllerId;
   };
