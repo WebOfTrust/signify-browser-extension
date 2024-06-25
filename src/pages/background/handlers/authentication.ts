@@ -1,5 +1,6 @@
 import { signifyService } from "@pages/background/services/signify";
 import { userService } from "@pages/background/services/user";
+import { getDomainFromUrl } from "@shared/utils";
 import { IHandler } from "@config/types";
 
 export async function handleCheckAgentConnection({
@@ -65,11 +66,15 @@ export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
 
 export async function handleGetSignedHeaders({
   sendResponse,
+  tabId,
+  url,
   data,
 }: IHandler) {
   try {
     const resp = await signifyService.authorizeSelectedSignin({
+      tabId: tabId!,
       signin: data.signin,
+      origin: getDomainFromUrl(url!),
     });
 
     sendResponse({

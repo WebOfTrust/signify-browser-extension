@@ -1,16 +1,10 @@
 import browser from "webextension-polyfill";
-import {
-  SignifyClient,
-  Tier,
-  ready,
-  Authenticater,
-  randomPasscode,
-} from "signify-ts";
+import { SignifyClient, Tier, ready, randomPasscode } from "signify-ts";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
-import { getDomainFromUrl } from "@shared/utils";
-import { IIdentifier, ISignin, ISignature } from "@config/types";
+import { sessionService } from "@pages/background/services/session";
+import { IIdentifier, ISignin } from "@config/types";
 import { SW_EVENTS } from "@config/event-types";
 
 const PASSCODE_TIMEOUT = 5;
@@ -159,36 +153,40 @@ const Signify = () => {
   };
 
   /**
-   *
+   * @param tabId - tabId of the tab from where the request is being made -- required
+   * @param origin - origin url from where request is being made -- required
    * @param signin - signin object containing identifier or credential -- required
    * @returns Promise<Request> - returns a signed headers request object
    */
   const authorizeSelectedSignin = async ({
+    tabId,
     signin,
+    origin,
   }: {
+    tabId: number;
     signin: ISignin;
+    origin: string;
   }): Promise<any> => {
     let aidName = signin.identifier
       ? signin.identifier?.name
       : signin.credential?.issueeName;
-    resetTimeoutAlarm();
     let credentialResp;
     if (signin.credential) {
       credentialResp = { raw: signin.credential, cesr: null };
       const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
       credentialResp.cesr = cesr;
     }
-
+    await sessionService.create({ tabId, origin, aidName: aidName! });
+    resetTimeoutAlarm();
     return {
       credential: credentialResp,
-      sessionId: aidName,
       identifier: signin?.identifier,
       autoSignin: signin?.autoSignin,
     };
   };
 
   /**
-   *
+   * @param origin - origin url from where request is being made -- required
    * @param rurl - resource url that the request is being made to -- required
    * @param method - http method of the request -- default GET
    * @param headers - headers object of the request -- default empty
@@ -196,15 +194,17 @@ const Signify = () => {
    * @returns Promise<Request> - returns a signed headers request object
    */
   const getSignedHeaders = async ({
+    origin,
     rurl,
     method = "GET",
     headers = new Headers({}),
-    signin,
+    tabId,
   }: {
+    origin: string;
     rurl: string;
     method?: string;
     headers?: Headers;
-    signin: ISignin;
+    tabId: number;
   }): Promise<any> => {
     // in case the client is not connected, try to connect
     const connected = await isConnected();
@@ -212,11 +212,9 @@ const Signify = () => {
     if (!connected) {
       validateClient();
     }
-    
-    let aidName = signin.identifier
-      ? signin.identifier?.name
-      : signin.credential?.issueeName;
-    const sreq = await _client?.createSignedRequest(aidName!, rurl, {
+
+    const session = await sessionService.get({ tabId, origin });
+    const sreq = await _client?.createSignedRequest(session.aidName, rurl, {
       method,
       headers,
     });

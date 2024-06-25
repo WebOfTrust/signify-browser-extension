@@ -72,7 +72,7 @@ window.addEventListener(
             rurl
           );
           break;
-        case TAB_STATE.PROVIDE_CONFIG_URL:
+        case TAB_STATE.CONFIGURE_VENDOR:
           await sendMessage({
             type: CS_EVENTS.action_icon_set,
           });
@@ -88,8 +88,7 @@ window.addEventListener(
             rurl?: string;
           }>(getExtId(), {
             type: CS_EVENTS.fetch_resource_auto_signin_signature,
-            data: {
-            },
+            data: {},
           });
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
@@ -114,16 +113,17 @@ window.addEventListener(
           }
           break;
         case TAB_STATE.SIGN_REQUEST:
-          const { data: signedHeaders, error: signedHeadersError } = await sendMessageWithExtId<{
-            rurl?: string;
-          }>(getExtId(), {
-            type: CS_EVENTS.fetch_resource_signed_headers,
-            data: event.data.payload,
-          });
+          const { data: signedHeaders, error: signedHeadersError } =
+            await sendMessageWithExtId<{
+              rurl?: string;
+            }>(getExtId(), {
+              type: CS_EVENTS.fetch_resource_signed_headers,
+              data: event.data.payload,
+            });
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
           console.log("signedHeaders", signedHeaders);
-          if(signedHeadersError){
+          if (signedHeadersError) {
             window.postMessage(
               {
                 type: "/signify/reply",
@@ -144,7 +144,7 @@ window.addEventListener(
               "*"
             );
           }
-         
+
           break;
         default:
           break;
@@ -228,7 +228,7 @@ function insertDialog(
   }
 
   const root = createRoot(rootContainer!);
-  
+
   root.render(
     <LocaleProvider>
       <Dialog
@@ -267,6 +267,8 @@ function getFilteredSignins(
   credentialSchema: any
 ) {
   let filteredSignins: any[] = [];
+  if (!signins?.length) return [];
+
   signins.forEach((signin: any) => {
     if (
       signin.identifier &&

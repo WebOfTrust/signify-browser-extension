@@ -2,6 +2,10 @@ export interface ObjectOfArrays<T> {
   [key: string]: T[];
 }
 
+export interface ObjectOfObject<T> {
+  [key: string]: T;
+}
+
 export interface IHandler {
   sendResponse: (response?: any) => void;
   tabId?: number;
@@ -80,4 +84,11 @@ export interface ISignature {
     prefix?: string;
   };
   autoSignin?: boolean;
+}
+
+export interface ISession {
+  tabId: number;
+  expiry: number;
+  origin: string;
+  aidName: string;
 }

@@ -27,6 +27,11 @@ export const getDomainFromUrl = (url: string): string => {
   }`;
 };
 
+export const getHostnameFromUrl = (url: string): string => {
+  const parsedUrl = new URL(url);
+  return parsedUrl?.hostname;
+};
+
 export const removeSlash = (site = "") => {
   return site.replace(/\/$/, "");
 };
