@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Subtext, Box, Flex, IconButton } from "@components/ui";
+import { Text, Box, Flex, IconButton, Subtext } from "@components/ui";
 import { IVendorData, ISignin } from "@config/types";
+import { getHostnameFromUrl } from "@shared/utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
@@ -59,6 +60,15 @@ interface IDialog {
   rurl: string;
 }
 
+const StyledRequestor = styled(Flex)`
+  border: 1px solid;
+  padding: 8px;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+  background-color: ${(props) => props.theme?.colors?.cardBg};
+  color: ${(props) => props.theme?.colors?.cardColor};
+`;
+
 export function Dialog({
   isConnected = false,
   vendorData,
@@ -68,7 +78,7 @@ export function Dialog({
   eventType = TAB_STATE.NONE,
   handleRemove,
   requestId,
-  rurl 
+  rurl,
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const logo =
@@ -154,14 +164,24 @@ export function Dialog({
           </Flex>
           {showRequestAuthPrompt ? (
             <Box marginTop={2} maxWidth="280px">
+              <StyledRequestor justifyContent="center">
+                <Text $color="">{getHostnameFromUrl(tabUrl)}</Text>{" "}
+              </StyledRequestor>
               <Text fontSize={1} fontWeight="bold" $color="bodyColor">
-                <Subtext $color="">{tabUrl}</Subtext>{" "}
                 {formatMessage({ id: "signin.requestAuth" })}{" "}
                 {formatMessage({ id: getTextKeyByEventType() })}
               </Text>
             </Box>
           ) : (
             <>
+              <Box marginTop={2}>
+                <StyledRequestor padding={1}>
+                  <Subtext fontSize={0} fontWeight="bold" $color="bodyColor">
+                    {formatMessage({ id: "signin.disclaimer" })}
+                  </Subtext>
+                </StyledRequestor>
+              </Box>
+
               {signins?.map((signin) => (
                 <SigninItem rurl={rurl} signin={signin} requestId={requestId} />
               ))}

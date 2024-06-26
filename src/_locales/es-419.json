@@ -56,6 +56,7 @@
   "permissions.warning.containsAgentUrl": "La respuesta contiene una URL de agente ({url}), cerrará su sesión para poder conectarse con ella.",
   "signin.aidOrCredential": "AID o Credencial",
   "signin.autoSignin": "Acceso automático",
+  "signin.disclaimer": "Al iniciar sesión, permite que la credencial seleccionada firme solicitudes posteriores",
   "signin.identifierAlias": "Alias ​​del identificador",
   "signin.lastUsed.label": "Último utilizado",
   "signin.requestAuth": "solicita autenticación con",

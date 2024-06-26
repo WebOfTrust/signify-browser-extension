@@ -56,6 +56,7 @@
   "permissions.warning.containsAgentUrl": "Response contains an agent Url ({url}), you will get logged out in order to connect with it.",
   "signin.aidOrCredential": "AID or Credential",
   "signin.autoSignin": "Auto Sign in",
+  "signin.disclaimer": "By signing in, you allow selected credential to sign subsequent requests",
   "signin.identifierAlias": "Identifier Alias",
   "signin.lastUsed.label": "Last Used",
   "signin.requestAuth": "requests authentication with",

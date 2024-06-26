@@ -1,16 +1,10 @@
 import browser from "webextension-polyfill";
-import {
-  SignifyClient,
-  Tier,
-  ready,
-  Authenticater,
-  randomPasscode,
-} from "signify-ts";
+import { SignifyClient, Tier, ready, randomPasscode } from "signify-ts";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
-import { getDomainFromUrl } from "@shared/utils";
-import { IIdentifier, ISignin, ISignature } from "@config/types";
+import { sessionService } from "@pages/background/services/session";
+import { IIdentifier, ISignin } from "@config/types";
 import { SW_EVENTS } from "@config/event-types";
 
 const PASSCODE_TIMEOUT = 5;
@@ -159,58 +153,85 @@ const Signify = () => {
   };
 
   /**
-   *
-   * @param wurl - webapp url to get the origin from -- required
+   * @param tabId - tabId of the tab from where the request is being made -- required
+   * @param origin - origin url from where request is being made -- required
+   * @param signin - signin object containing identifier or credential -- required
+   * @returns Promise<Request> - returns a signed headers request object
+   */
+  const authorizeSelectedSignin = async ({
+    tabId,
+    signin,
+    origin,
+  }: {
+    tabId: number;
+    signin: ISignin;
+    origin: string;
+  }): Promise<any> => {
+    let aidName = signin.identifier
+      ? signin.identifier?.name
+      : signin.credential?.issueeName;
+    let credentialResp;
+    if (signin.credential) {
+      credentialResp = { raw: signin.credential, cesr: null };
+      const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
+      credentialResp.cesr = cesr;
+    }
+    await sessionService.create({ tabId, origin, aidName: aidName! });
+    resetTimeoutAlarm();
+    return {
+      credential: credentialResp,
+      identifier: signin?.identifier,
+      autoSignin: signin?.autoSignin,
+    };
+  };
+
+  /**
+   * @param origin - origin url from where request is being made -- required
    * @param rurl - resource url that the request is being made to -- required
-   * @param reqInit - request init object -- default {}
+   * @param method - http method of the request -- default GET
+   * @param headers - headers object of the request -- default empty
    * @param signin - signin object containing identifier or credential -- required
    * @returns Promise<Request> - returns a signed headers request object
    */
   const getSignedHeaders = async ({
-    wurl,
+    origin,
     rurl,
-    reqInit = {},
-    signin,
+    method = "GET",
+    headers = new Headers({}),
+    tabId,
   }: {
-    wurl: string;
+    origin: string;
     rurl: string;
-    reqInit?: RequestInit;
-    signin: ISignin;
-  }): Promise<ISignature> => {
+    method?: string;
+    headers?: Headers;
+    tabId: number;
+  }): Promise<any> => {
     // in case the client is not connected, try to connect
     const connected = await isConnected();
     // connected is false, it means the client session timed out or disconnected by user
     if (!connected) {
       validateClient();
     }
-    const origin = getDomainFromUrl(wurl);
-    let heads = new Headers(reqInit.headers);
-    heads.set("Origin", origin);
-    const req = { ...reqInit, headers: heads };
 
-    let aidName = signin.identifier
-      ? signin.identifier?.name
-      : signin.credential?.issueeName;
-    const sreq = await _client?.createSignedRequest(aidName!, rurl, req);
+    const session = await sessionService.get({ tabId, origin });
+    const sreq = await _client?.createSignedRequest(session.aidName, rurl, {
+      method,
+      headers,
+    });
     resetTimeoutAlarm();
+    console.log("sreq", sreq);
     let jsonHeaders: { [key: string]: string } = {};
     for (const pair of sreq?.headers?.entries()) {
       jsonHeaders[pair[0]] = pair[1];
     }
-    if (signin.credential) {
-      const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
-      signin.credential.cesr = cesr;
-    }
 
     return {
       headers: jsonHeaders,
-      credential: signin?.credential,
-      identifier: signin?.identifier,
-      autoSignin: signin?.autoSignin,
     };
   };
 
   const getControllerID = async (): Promise<string> => {
+    validateClient();
     const controllerId = await userService.getControllerId();
     return controllerId;
   };
@@ -232,6 +253,7 @@ const Signify = () => {
     bootAndConnect,
     getControllerID,
     getSignedHeaders,
+    authorizeSelectedSignin,
   };
 };
 

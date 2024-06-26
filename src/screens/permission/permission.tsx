@@ -6,7 +6,7 @@ import {
   WEB_APP_PERMS,
   configService,
 } from "@pages/background/services/config";
-import { isValidUrl } from "@shared/utils";
+import { isValidUrl, getHostnameFromUrl } from "@shared/utils";
 import { setActionIcon } from "@shared/browser/action-utils";
 import { Box, Card, Button, Text, Flex } from "@components/ui";
 
@@ -176,7 +176,7 @@ export function Permission({
               {formatMessage(
                 { id: "permissions.desc.loadVendorUrl" },
                 {
-                  origin: permissionData?.origin,
+                  origin: getHostnameFromUrl(permissionData?.origin),
                   url: permissionData?.vendorUrl,
                 }
               )}

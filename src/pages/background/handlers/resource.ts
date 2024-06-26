@@ -1,10 +1,12 @@
 import * as signinResource from "@pages/background/resource/signin";
 import { signifyService } from "@pages/background/services/signify";
+import { getDomainFromUrl } from "@shared/utils";
 import { IHandler, IIdentifier, ICredential } from "@config/types";
 import { getCurrentUrl } from "@pages/background/utils";
 
 export async function handleFetchAutoSigninSignature({
   sendResponse,
+  tabId,
   url,
   data,
 }: IHandler) {
@@ -19,10 +21,10 @@ export async function handleFetchAutoSigninSignature({
   }
 
   try {
-    const isig = await signifyService.getSignedHeaders({
-      wurl: url!,
-      rurl: data.rurl,
+    const isig = await signifyService.authorizeSelectedSignin({
+      tabId: tabId!,
       signin: autoSignin,
+      origin: getDomainFromUrl(url!),
     });
 
     sendResponse({
@@ -38,26 +40,27 @@ export async function handleFetchAutoSigninSignature({
 export async function handleFetchSignifyHeaders({
   sendResponse,
   url,
+  tabId,
   data,
 }: IHandler) {
-  const { aidName } = data;
-  const signin = await signinResource.getDomainSigninByIssueeName(
-    url!,
-    aidName
-  );
-  if (!signin?.autoSignin) {
-    sendResponse({
-      data: {},
-    });
-    return;
-  }
-
   try {
+    // const signin = await signinResource.getDomainSigninByIssueeName(
+    //   url!,
+    //   aidName
+    // );
+    // if (!signin?.autoSignin) {
+    //   sendResponse({
+    //     data: {},
+    //   });
+    //   return;
+    // }
     const isig = await signifyService.getSignedHeaders({
-      wurl: url!,
-      rurl: data.rurl,
-      reqInit: data.reqInit,
-      signin,
+      origin: getDomainFromUrl(url!),
+      rurl: data.url,
+      method: data.method,
+      headers: data.headers,
+      tabId: tabId!,
+      // signin,
     });
     sendResponse({
       data: isig,
@@ -70,9 +73,15 @@ export async function handleFetchSignifyHeaders({
 }
 
 export async function handleFetchTabSignin({ sendResponse, url }: IHandler) {
-  const signins = await signinResource.getDomainSignins(url);
-  const autoSigninObj = signins?.find((signin) => signin.autoSignin);
-  sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
+  try {
+    const signins = await signinResource.getDomainSignins(url);
+    const autoSigninObj = signins?.find((signin) => signin.autoSignin);
+    sendResponse({ data: { signins: signins ?? [], autoSigninObj } });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
 }
 
 export async function handleFetchIdentifiers({ sendResponse }: IHandler) {
@@ -98,7 +107,6 @@ export async function handleFetchSignins({ sendResponse, url }: IHandler) {
 export async function handleFetchCredentials({ sendResponse }: IHandler) {
   var credentials = await signifyService.listCredentials();
   const indentifiers = await signifyService.listIdentifiers();
-  console.log(indentifiers);
   // Add holder name to credential
   // Add CESR to credential
   credentials?.forEach(async (credential: ICredential) => {

@@ -4,11 +4,6 @@ import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { setActionIcon } from "@shared/browser/action-utils";
 import { initCSHandler, initUIHandler } from "@pages/background/handlers";
-import {
-  handleFetchAutoSigninSignature,
-  handleFetchSignifyHeaders,
-} from "@pages/background/handlers/resource";
-import { onBeforeSendHeadersHandler } from "@pages/background/handlers/browser-event";
 
 console.log("Background script loaded");
 
@@ -32,14 +27,6 @@ browser.runtime.onInstalled.addListener(function (object) {
   }
 });
 
-if (browser.webRequest) {
-  browser.webRequest.onBeforeSendHeaders.addListener(
-    // @ts-ignore
-    onBeforeSendHeadersHandler,
-    { urls: ["<all_urls>"] },
-    ["blocking", "requestHeaders"]
-  );
-}
 
 // Listener to handle internal messages from content scripts from active tab and popup
 browser.runtime.onMessage.addListener(function (
@@ -84,35 +71,18 @@ browser.runtime.onMessage.addListener(function (
 });
 
 // Listener to handle external messages from allowed web pages with auto signin
-browser.runtime.onMessageExternal.addListener(function (
-  message,
-  sender,
-  sendResponse
-) {
-  (async () => {
-    console.log("Message received from external source: ", sender);
-    console.log("Message received from external request: ", message);
+// browser.runtime.onMessageExternal.addListener(function (
+//   message,
+//   sender,
+//   sendResponse
+// ) {
+//   (async () => {
+//     console.log("Message received from external source: ", sender);
+//     console.log("Message received from external request: ", message);
 
-    // TODO: replace with External Handler like we did for uiHandler and csHandler
-    if (
-      message.type === "fetch-resource" &&
-      message.subtype === "auto-signin-signature"
-    ) {
-      handleFetchAutoSigninSignature({ sendResponse, url: sender.url, data: message.data,});
-    }
+//     // TODO: replace with External Handler like we did for uiHandler and csHandler
+//   })();
 
-    if (
-      message.type === "fetch-resource" &&
-      message.subtype === "signify-headers"
-    ) {
-      handleFetchSignifyHeaders({
-        sendResponse,
-        url: sender.url,
-        data: message.data,
-      });
-    }
-  })();
-
-  // return true to indicate chrome api to send a response asynchronously
-  return true;
-});
+//   // return true to indicate chrome api to send a response asynchronously
+//   return true;
+// });

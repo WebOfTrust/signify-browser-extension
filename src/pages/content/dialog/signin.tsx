@@ -41,7 +41,7 @@ export const SigninItem = ({
     } else {
       resetTabState();
       // Communicate headers to web page
-      window.postMessage({ type: "signify-signature", requestId, data }, "*");
+      window.postMessage({ type: "/signify/reply", requestId, payload: data }, "*");
     }
   };
 

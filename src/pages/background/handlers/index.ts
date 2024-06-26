@@ -11,6 +11,7 @@ import {
   handleCreateSignin,
   handleDeleteSignin,
   handleFetchAutoSigninSignature,
+  handleFetchSignifyHeaders,
   handleFetchCredentials,
   handleFetchIdentifiers,
   handleFetchSignins,
@@ -65,16 +66,19 @@ export function initCSHandler() {
   handler.set(CS_EVENTS.action_icon_unset, handleUnsetActionIcon);
   handler.set(CS_EVENTS.action_icon_set_tab, handleSetTabActionIcon);
   handler.set(CS_EVENTS.action_icon_unset_tab, handleUnsetTabActionIcon);
-
   handler.set(
     CS_EVENTS.fetch_resource_auto_signin_signature,
     handleFetchAutoSigninSignature
+  );
+  handler.set(
+    CS_EVENTS.fetch_resource_signed_headers,
+    handleFetchSignifyHeaders
   );
   handler.set(CS_EVENTS.fetch_resource_tab_signin, handleFetchTabSignin);
 
   handler.set(CS_EVENTS.vendor_info_get_vendor_data, handleGetVendorData);
   handler.set(
-    CS_EVENTS.vendor_info_attempt_set_vendor_url,
+    CS_EVENTS.vendor_info_provide_config_url,
     handleAttemptSetVendorData
   );
 
