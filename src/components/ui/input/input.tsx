@@ -44,6 +44,7 @@ const StyledInputError = styled.p`
   color: ${({ theme }) => theme?.colors?.error};
   font-size: 12px;
   margin: 0;
+  overflow-wrap: break-word;
 `;
 
 export const Input = ({
