@@ -2,7 +2,7 @@ import { browserStorageService } from "@pages/background/services/browser-storag
 import { ObjectOfObject, ISession } from "@config/types";
 
 const SESSION_ENUMS = {
-  EXPIRY_IN_MINS: 5,
+  EXPIRY_IN_MINS: 30,
   SESSIONS: "sessions",
 };
 

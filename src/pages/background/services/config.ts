@@ -1,5 +1,6 @@
 import { browserStorageService } from "@pages/background/services/browser-storage";
 import { default as defaultVendor } from "@src/config/vendor.json";
+import { removeSlash } from "@shared/utils";
 
 const CONFIG_ENUMS = {
   VENDOR_URL: "vendor-url",
@@ -63,7 +64,10 @@ const Config = () => {
   };
 
   const setBootUrl = async (token: string) => {
-    await browserStorageService.setValue(CONFIG_ENUMS.BOOT_URL, token);
+    await browserStorageService.setValue(
+      CONFIG_ENUMS.BOOT_URL,
+      removeSlash(token)
+    );
   };
 
   const getBootUrl = async (): Promise<string> => {
@@ -73,7 +77,10 @@ const Config = () => {
   };
 
   const setAgentUrl = async (token: string) => {
-    await browserStorageService.setValue(CONFIG_ENUMS.AGENT_URL, token);
+    await browserStorageService.setValue(
+      CONFIG_ENUMS.AGENT_URL,
+      removeSlash(token)
+    );
   };
 
   const getHasOnboarded = async () => {
