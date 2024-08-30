@@ -17,6 +17,8 @@ import {
   handleFetchSignins,
   handleFetchTabSignin,
   handleUpdateAutoSignin,
+  handleCreateAttestationCredential,
+  handleFetchCredential
 } from "./resource";
 import { handleGetVendorData, handleAttemptSetVendorData } from "./vendorInfo";
 import {
@@ -75,6 +77,9 @@ export function initCSHandler() {
     handleFetchSignifyHeaders
   );
   handler.set(CS_EVENTS.fetch_resource_tab_signin, handleFetchTabSignin);
+  handler.set(CS_EVENTS.fetch_resource_credential, handleFetchCredential);
+
+  handler.set(CS_EVENTS.create_resource_data_attestation_credential, handleCreateAttestationCredential);
 
   handler.set(CS_EVENTS.vendor_info_get_vendor_data, handleGetVendorData);
   handler.set(

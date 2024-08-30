@@ -126,6 +126,13 @@ export async function handleFetchCredentials({ sendResponse }: IHandler) {
   }
 }
 
+export async function handleFetchCredential({ sendResponse, data }: IHandler) {
+  const cred = await signifyService.getCredential(data.id, data.includeCESR);
+  sendResponse({
+    data: { credential: cred ?? null },
+  });
+}
+
 export async function handleCreateIdentifier({ sendResponse, data }: IHandler) {
   try {
     const resp = await signifyService.createAID(data.name);
@@ -177,6 +184,29 @@ export async function handleCreateSignin({ sendResponse, data }: IHandler) {
     }
     const storageSignins = await signinResource.getSignins();
     sendResponse({ data: { signins: storageSignins } });
+  }
+}
+
+export async function handleCreateAttestationCredential({
+  sendResponse,
+  url,
+  tabId,
+  data,
+}: IHandler) {
+  try {
+    const resp = await signifyService.createAttestationCredential({
+      origin: getDomainFromUrl(url!),
+      credData: data.credData,
+      schemaSaid: data.schemaSaid,
+      tabId: tabId!
+    });
+    sendResponse({
+      data: { ...resp },
+    });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
   }
 }
 

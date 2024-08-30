@@ -146,6 +146,76 @@ window.addEventListener(
           }
 
           break;
+        case TAB_STATE.CREATE_DATA_ATTEST_CRED:
+          const { data: credData, error: attestCredError } =
+            await sendMessageWithExtId<{
+              rurl?: string;
+            }>(getExtId(), {
+              type: CS_EVENTS.create_resource_data_attestation_credential,
+              data: event.data.payload,
+            });
+          requestId = event?.data?.requestId ?? "";
+          rurl = event?.data?.rurl ?? rurl;
+
+          console.log("create attest credential resp data", credData);
+          if (attestCredError) {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                error: attestCredError?.message,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: credData,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          }
+
+          break;
+        case TAB_STATE.GET_CREDENTIAL:
+          const { data: cred, error: credError } =
+            await sendMessageWithExtId<{
+              rurl?: string;
+            }>(getExtId(), {
+              type: CS_EVENTS.fetch_resource_credential,
+              data: event.data.payload,
+            });
+          requestId = event?.data?.requestId ?? "";
+          rurl = event?.data?.rurl ?? rurl;
+
+          console.log("get credential result", cred);
+          if (credError) {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                error: credError?.message,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: cred,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          }
+
+          break;
         default:
           break;
       }
@@ -163,9 +233,9 @@ browser.runtime.onMessage.addListener(async function (
   if (sender.id === getExtId()) {
     console.log(
       "Content script received message from browser extension: " +
-        message.type +
-        ":" +
-        message.subtype
+      message.type +
+      ":" +
+      message.subtype
     );
     if (message.type === "tab" && message.subtype === "reload-state") {
       if (getTabState() !== TAB_STATE.NONE) {
