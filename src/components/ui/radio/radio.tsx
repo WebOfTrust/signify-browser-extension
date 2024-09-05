@@ -6,6 +6,7 @@ interface IRadio {
   component?: JSX.Element;
   checked: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const StyledRadio = styled.input`
@@ -26,10 +27,11 @@ export function Radio({
   component,
   checked,
   onClick,
+  disabled,
 }: IRadio): JSX.Element {
   return (
     <Flex
-      onClick={onClick}
+      onClick={disabled ? () => {} : onClick}
       alignItems="center"
       $cursorPointer
       borderWidth="1px"
@@ -42,6 +44,7 @@ export function Radio({
         type="radio"
         value=""
         name="bordered-radio"
+        disabled={disabled}
       />
       <StyledRadioLabel htmlFor={id}>{component}</StyledRadioLabel>
     </Flex>

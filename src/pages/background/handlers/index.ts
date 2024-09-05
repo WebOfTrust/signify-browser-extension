@@ -25,7 +25,9 @@ import {
   handleConnectAgent,
   handleDisconnectAgent,
   handleGeneratePasscode,
-  handleGetSignedHeaders,
+  handleGetAuthData,
+  handleGetSessionInfo,
+  handleClearSession,
 } from "./authentication";
 
 export function initUIHandler() {
@@ -87,8 +89,16 @@ export function initCSHandler() {
     handleCheckAgentConnection
   );
   handler.set(
-    CS_EVENTS.authentication_get_signed_headers,
-    handleGetSignedHeaders
+    CS_EVENTS.authentication_get_auth_data,
+    handleGetAuthData
+  );
+  handler.set(
+    CS_EVENTS.authentication_get_session_info,
+    handleGetSessionInfo
+  );
+  handler.set(
+    CS_EVENTS.authentication_clear_session,
+    handleClearSession
   );
 
   return handler;

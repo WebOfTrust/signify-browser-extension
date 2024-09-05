@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { Box, Text, Flex, NewButton, IconButton, Grid } from "@components/ui";
+import manifest from "@src/../manifest.json";
 import SettingIcon from "@src/components/shared/icons/setting";
 import { configService } from "@pages/background/services/config";
 import { Config } from "@src/screens/config";
@@ -92,6 +93,17 @@ export function Signin(props: ISignin): JSX.Element {
           </NewButton>
         </Box>
       </Box>
+      <Flex
+        width="100%"
+        justifyContent="center"
+        flexDirection="row"
+        position="absolute"
+        bottom="4px"
+      >
+        <Text $color="bodyColor">
+          Version: {manifest.version}
+        </Text>
+      </Flex>
     </Grid>
   );
 }

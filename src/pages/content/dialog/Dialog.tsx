@@ -1,13 +1,26 @@
 import browser from "webextension-polyfill";
 import { useState, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { ThemeProvider, styled } from "styled-components";
 import { useIntl } from "react-intl";
-import { Text, Box, Flex, IconButton, Subtext } from "@components/ui";
+import {
+  Text,
+  Box,
+  Flex,
+  IconButton,
+  Subtext,
+  Switch,
+  Input,
+  Radio,
+  Button,
+} from "@components/ui";
 import { IVendorData, ISignin } from "@config/types";
+import { CS_EVENTS } from "@config/event-types";
+import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { getHostnameFromUrl } from "@shared/utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { setTabState } from "@pages/content";
+import { resetTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
 
@@ -65,6 +78,8 @@ const StyledRequestor = styled(Flex)`
   padding: 8px;
   margin-bottom: 4px;
   overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
   background-color: ${(props) => props.theme?.colors?.cardBg};
   color: ${(props) => props.theme?.colors?.cardColor};
 `;
@@ -81,6 +96,10 @@ export function Dialog({
   rurl,
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
+  const [sessionTime, setSessionTime] = useState(5);
+  const [maxReq, setMaxReq] = useState(0);
+  const [selectedSignin, setSelectedSignin] = useState<ISignin>();
+
   const logo =
     vendorData?.logo ??
     browser.runtime.getURL("src/assets/img/128_keri_logo.png");
@@ -115,6 +134,35 @@ export function Dialog({
         return "signin.autoSignin";
       default:
         return "identifier.title";
+    }
+  };
+
+  const handleSignin = async () => {
+    if (!selectedSignin) {
+      return;
+    }
+    const { data, error } = await sendMessage<{
+      rurl: string;
+      signin: ISignin;
+      config: { sessionTime: number; maxReq: number };
+    }>({
+      type: CS_EVENTS.authentication_get_auth_data,
+      data: {
+        rurl,
+        signin: selectedSignin,
+        config: { sessionTime, maxReq },
+      },
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      resetTabState();
+      // Communicate headers to web page
+      window.postMessage(
+        { type: "/signify/reply", requestId, payload: data },
+        "*"
+      );
     }
   };
 
@@ -179,29 +227,57 @@ export function Dialog({
                   <Subtext fontSize={0} fontWeight="bold" $color="bodyColor">
                     {formatMessage({ id: "signin.disclaimer" })}
                   </Subtext>
+                  {eventType !== TAB_STATE.NONE ? (
+                    <Box
+                      onClick={handleClick}
+                      fontWeight="bold"
+                      fontSize={0}
+                      $cursorPointer
+                    >
+                      {formatMessage({ id: "action.click" })}{" "}
+                      <StyledImgSpan>
+                        <StyledImg height="16px" src={logo} alt="logo" />
+                      </StyledImgSpan>{" "}
+                      {formatMessage({ id: "action.toSelectOther" })}{" "}
+                      {formatMessage({ id: getTextKeyByEventType() })}
+                    </Box>
+                  ) : (
+                    <></>
+                  )}
                 </StyledRequestor>
               </Box>
 
-              {signins?.map((signin) => (
-                <SigninItem rurl={rurl} signin={signin} requestId={requestId} />
+              {signins?.map((signin, index) => (
+                <Radio
+                  id={index}
+                  checked={selectedSignin?.id === signin.id}
+                  onClick={() => setSelectedSignin(signin)}
+                  component={<SigninItem signin={signin} />}
+                />
               ))}
-              {eventType !== TAB_STATE.NONE ? (
-                <Box
-                  onClick={handleClick}
-                  fontWeight="bold"
-                  fontSize={1}
-                  $cursorPointer
-                >
-                  {formatMessage({ id: "action.click" })}{" "}
-                  <StyledImgSpan>
-                    <StyledImg height="16px" src={logo} alt="logo" />
-                  </StyledImgSpan>{" "}
-                  {formatMessage({ id: "action.toSelectOther" })}{" "}
-                  {formatMessage({ id: getTextKeyByEventType() })}
-                </Box>
-              ) : (
-                <></>
-              )}
+              {signins?.length ? (
+                <Flex flexDirection="column">
+                  <div>
+                    <Input
+                      label="Session (in minutes)"
+                      id="session-time"
+                      type="number"
+                      value={sessionTime}
+                      onChange={(e) => setSessionTime(Number(e.target.value))}
+                    />
+                    <Input
+                      value={maxReq}
+                      label="Max Requests"
+                      id="session-time"
+                      type="number"
+                      onChange={(e) => setMaxReq(Number(e.target.value))}
+                    />
+                  </div>
+                  <Button handleClick={handleSignin} disabled={!selectedSignin}>
+                    <>Sign in</>
+                  </Button>
+                </Flex>
+              ) : null}
             </>
           )}
         </StyledMain>

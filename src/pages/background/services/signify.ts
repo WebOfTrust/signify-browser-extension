@@ -1,10 +1,12 @@
 import browser from "webextension-polyfill";
 import { SignifyClient, Tier, ready, randomPasscode } from "signify-ts";
+import * as signinResource from "@pages/background/resource/signin";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
+import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { userService } from "@pages/background/services/user";
 import { configService } from "@pages/background/services/config";
 import { sessionService } from "@pages/background/services/session";
-import { IIdentifier, ISignin } from "@config/types";
+import { IIdentifier, ISignin, ISessionConfig } from "@config/types";
 import { SW_EVENTS } from "@config/event-types";
 
 const PASSCODE_TIMEOUT = 5;
@@ -156,16 +158,19 @@ const Signify = () => {
    * @param tabId - tabId of the tab from where the request is being made -- required
    * @param origin - origin url from where request is being made -- required
    * @param signin - signin object containing identifier or credential -- required
+   * @param config - configuration object containing sessionTime and maxReq -- required
    * @returns Promise<Request> - returns a signed headers request object
    */
   const authorizeSelectedSignin = async ({
     tabId,
     signin,
     origin,
+    config,
   }: {
     tabId: number;
     signin: ISignin;
     origin: string;
+    config: ISessionConfig;
   }): Promise<any> => {
     let aidName = signin.identifier
       ? signin.identifier?.name
@@ -176,13 +181,94 @@ const Signify = () => {
       const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
       credentialResp.cesr = cesr;
     }
-    await sessionService.create({ tabId, origin, aidName: aidName! });
-    resetTimeoutAlarm();
-    return {
+
+    const response = {
       credential: credentialResp,
       identifier: signin?.identifier,
-      autoSignin: signin?.autoSignin,
+      // autoSignin: signin?.autoSignin,
     };
+
+    const sessionInfo = await sessionService.create({
+      tabId,
+      origin,
+      aidName: aidName!,
+      signinId: signin.id,
+      config
+    });
+    if (sessionInfo?.expiry) {
+      response.expiry = sessionInfo.expiry;
+    }
+    await sendMessageTab(tabId, {
+      type: "tab",
+      subtype: "session-info",
+      data: response,
+    });
+
+    resetTimeoutAlarm();
+    return response;
+  };
+
+  /**
+   * @param tabId - tabId of the tab from where the request is being made -- required
+   * @param origin - origin url from where request is being made -- required
+   * @returns Promise<Request> - returns a signed headers request object
+   */
+  const getSessionInfo = async ({
+    tabId,
+    origin,
+  }: {
+    tabId: number;
+    origin: string;
+  }): Promise<any> => {
+    const session = await sessionService.get({ tabId, origin });
+    if (!session) {
+      return null;
+    }
+    const signin = await signinResource.getDomainSigninById(
+      origin,
+      session.signinId
+    );
+    let credentialResp;
+    if (signin?.credential) {
+      credentialResp = { raw: signin.credential, cesr: null };
+      const cesr = await getCredentialWithCESR(signin.credential?.sad?.d);
+      credentialResp.cesr = cesr;
+    }
+    const resp = {
+      credential: credentialResp,
+      identifier: signin?.identifier,
+      expiry: session.expiry,
+    };
+    await sendMessageTab(tabId, {
+      type: "tab",
+      subtype: "session-info",
+      data: resp,
+    });
+
+    resetTimeoutAlarm();
+    return resp;
+  };
+
+  /**
+   * @param tabId - tabId of the tab from where the request is being made -- required
+   * @param origin - origin url from where request is being made -- required
+   * @returns Promise<Request> - returns null
+   */
+  const removeSessionInfo = async ({
+    tabId,
+    origin,
+  }: {
+    tabId: number;
+    origin: string;
+  }): Promise<any> => {
+    await sessionService.remove(tabId);
+    await sendMessageTab(tabId, {
+      type: "tab",
+      subtype: "session-info",
+      data: null,
+    });
+
+    resetTimeoutAlarm();
   };
 
   /**
@@ -214,6 +300,10 @@ const Signify = () => {
     }
 
     const session = await sessionService.get({ tabId, origin });
+    await sessionService.incrementRequestCount(tabId);
+    if (!session) {
+      throw new Error("Session not found");
+    }
     const sreq = await _client?.createSignedRequest(session.aidName, rurl, {
       method,
       headers,
@@ -254,6 +344,8 @@ const Signify = () => {
     getControllerID,
     getSignedHeaders,
     authorizeSelectedSignin,
+    getSessionInfo,
+    removeSessionInfo,
   };
 };
 

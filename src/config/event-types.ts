@@ -27,7 +27,9 @@ export const CS_EVENTS = {
   vendor_info_provide_config_url: `${CS}-${EVENT_TYPE.vendor_info}-provide-config-url`,
 
   authentication_check_agent_connection: `${CS}-${EVENT_TYPE.authentication}-check-agent-connection`,
-  authentication_get_signed_headers: `${CS}-${EVENT_TYPE.authentication}-get-signed-headers`,
+  authentication_get_auth_data: `${CS}-${EVENT_TYPE.authentication}-get-auth-data`,
+  authentication_get_session_info: `${CS}-${EVENT_TYPE.authentication}-get-session-info`,
+  authentication_clear_session: `${CS}-${EVENT_TYPE.authentication}-clear-session`,
 } as const;
 
 export const UI_EVENTS = {

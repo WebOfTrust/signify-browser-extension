@@ -9,6 +9,7 @@ import {
 } from "@src/shared/browser/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { Dialog } from "./dialog/Dialog";
+import { SessionInfo } from "./session-info/session-info";
 
 var tabState = TAB_STATE.NONE;
 let requestId = "";
@@ -146,6 +147,83 @@ window.addEventListener(
           }
 
           break;
+        case TAB_STATE.GET_SESSION_INFO:
+          const sessionInfo = await sendMessageWithExtId(getExtId(), {
+            type: CS_EVENTS.authentication_get_session_info,
+          });
+
+          const vendorData = await sendMessage({
+            type: CS_EVENTS.vendor_info_get_vendor_data,
+          });
+
+          const agentConnection = await sendMessage({
+            type: CS_EVENTS.authentication_check_agent_connection,
+          });
+
+          requestId = event?.data?.requestId ?? "";
+          console.log("sessionInfo", sessionInfo);
+          if (sessionInfo?.error) {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                error: sessionInfo?.error?.message,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: sessionInfo?.data,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+            if (sessionInfo?.data) {
+              insertSessionInfo(
+                agentConnection?.data?.isConnected,
+                vendorData?.data?.vendorData,
+                sessionInfo?.data
+              );
+            }
+          }
+          break;
+        case TAB_STATE.CLEAR_SESSION:
+          const clearSession = await sendMessageWithExtId(getExtId(), {
+            type: CS_EVENTS.authentication_clear_session,
+          });
+
+          if (!clearSession?.data) {
+            removeSessionInfo();
+          }
+          requestId = event?.data?.requestId ?? "";
+          if (clearSession?.error) {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                error: clearSession?.error?.message,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          } else {
+            window.postMessage(
+              {
+                type: "/signify/reply",
+                payload: clearSession?.data,
+                requestId,
+                rurl,
+              },
+              "*"
+            );
+          }
+
+          break;
+
         default:
           break;
       }
@@ -205,6 +283,24 @@ browser.runtime.onMessage.addListener(async function (
     if (message.type === "tab" && message.subtype === "set-tab-state") {
       setTabState(message.data.tabState);
     }
+
+    if (message.type === "tab" && message.subtype === "session-info") {
+      const respVendorData = await sendMessage({
+        type: CS_EVENTS.vendor_info_get_vendor_data,
+      });
+
+      const { data } = await sendMessage({
+        type: CS_EVENTS.authentication_check_agent_connection,
+      });
+
+      if (message.data) {
+        insertSessionInfo(
+          data.isConnected,
+          respVendorData?.data?.vendorData,
+          message.data
+        );
+      }
+    }
   }
 });
 
@@ -253,6 +349,35 @@ function removeDialog() {
   sendMessage({
     type: CS_EVENTS.action_icon_unset_tab,
   });
+}
+
+const SESSION_INFO = "__signify-session-info";
+function removeSessionInfo() {
+  const element = document.getElementById(SESSION_INFO);
+  if (element) element.remove();
+}
+
+function insertSessionInfo(isConnected: boolean, vendorData: any, data: any) {
+  let rootContainer = document.querySelector(`#${SESSION_INFO}`);
+
+  if (!rootContainer) {
+    const div = document.createElement("div");
+    div.id = SESSION_INFO;
+    document.body.appendChild(div);
+    rootContainer = document.querySelector(`#${SESSION_INFO}`);
+  }
+
+  const root = createRoot(rootContainer!);
+  root.render(
+    <LocaleProvider>
+      <SessionInfo
+        isConnected={isConnected}
+        vendorData={vendorData}
+        data={data}
+        handleRemove={removeSessionInfo}
+      />
+    </LocaleProvider>
+  );
 }
 
 export function resetTabState() {
