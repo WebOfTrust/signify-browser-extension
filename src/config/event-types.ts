@@ -22,6 +22,9 @@ export const CS_EVENTS = {
   fetch_resource_auto_signin_signature: `${CS}-${EVENT_TYPE.fetch_resource}-auto-signin-signature`,
   fetch_resource_signed_headers: `${CS}-${EVENT_TYPE.fetch_resource}-signed-headers`,
   fetch_resource_tab_signin: `${CS}-${EVENT_TYPE.fetch_resource}-tab-signin`,
+  fetch_resource_credential: `${CS}-${EVENT_TYPE.fetch_resource}-credential`,
+  
+  create_resource_data_attestation_credential: `${CS}-${EVENT_TYPE.create_resource}-data-attestation-credential`,
 
   vendor_info_get_vendor_data: `${CS}-${EVENT_TYPE.vendor_info}-get-vendor-data`,
   vendor_info_provide_config_url: `${CS}-${EVENT_TYPE.vendor_info}-provide-config-url`,

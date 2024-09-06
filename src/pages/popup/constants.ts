@@ -8,5 +8,7 @@ export const TAB_STATE = {
     SIGN_REQUEST: "/signify/sign-request",
     CONFIGURE_VENDOR: "/signify/configure-vendor",
     SELECT_AUTO_SIGNIN: "select-auto-signin",
+    CREATE_DATA_ATTEST_CRED: "/signify/credential/create/data-attestation",
+    GET_CREDENTIAL: "/signify/credential/get",
     NONE: "none"
 }
