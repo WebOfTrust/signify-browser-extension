@@ -12,6 +12,7 @@ interface IInput {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
   type?: string;
+  disabled?: boolean;
 }
 
 const StyledInputLabel = styled.label`
@@ -57,6 +58,7 @@ export const Input = ({
   onChange,
   onBlur,
   type = "text",
+  disabled
 }: IInput) => {
   return (
     <Flex flexDirection="column" $flexGap={1}>
@@ -74,6 +76,7 @@ export const Input = ({
         value={value}
         onChange={onChange}
         onBlur={onBlur}
+        disabled={disabled}
       />
       {error ? (
         isValidElement(error) ? (

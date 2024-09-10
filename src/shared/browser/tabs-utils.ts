@@ -8,15 +8,18 @@ export const getCurrentTab = async (): Promise<browser.Tabs.Tab> => {
 export const sendMessageTab = async (tabId: number,{
   type,
   subtype,
-  eventType
+  eventType,
+  data,
 }: {
   type: string;
   subtype: string;
-  eventType?: string
+  eventType?: string;
+  data?: any;
 }) => {
   return browser.tabs.sendMessage(tabId, {
     type,
     subtype,
-    eventType
+    eventType,
+    data
   });
 };

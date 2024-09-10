@@ -51,6 +51,11 @@ export const getDomainSigninByIssueeName = async (
   );
 };
 
+export const getDomainSigninById = async (url: string, id: string) => {
+  const signins = await getDomainSignins(url);
+  return signins?.find((signin) => signin.id === id);
+};
+
 export const updateDomainAutoSignin = async (signin: ISignin) => {
   let signins = await getSignins();
   if (signins?.length) {

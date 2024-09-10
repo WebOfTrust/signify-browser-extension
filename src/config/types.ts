@@ -54,6 +54,7 @@ export interface ISignin {
   createdAt: number;
   updatedAt: number;
   autoSignin?: boolean;
+  expiry?: number;
 }
 
 export interface IIdentifier {
@@ -91,4 +92,11 @@ export interface ISession {
   expiry: number;
   origin: string;
   aidName: string;
+  signinId: string;
+  // maxReq?: number;
+  currentReq?: number;
+}
+
+export interface ISessionConfig {
+  sessionOneTime: boolean;
 }

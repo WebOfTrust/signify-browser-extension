@@ -64,7 +64,7 @@ export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
   sendResponse({ data: { passcode } });
 }
 
-export async function handleGetSignedHeaders({
+export async function handleGetAuthData({
   sendResponse,
   tabId,
   url,
@@ -74,6 +74,49 @@ export async function handleGetSignedHeaders({
     const resp = await signifyService.authorizeSelectedSignin({
       tabId: tabId!,
       signin: data.signin,
+      origin: getDomainFromUrl(url!),
+      config: data.config,
+    });
+
+    sendResponse({
+      data: resp,
+    });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
+}
+
+export async function handleGetSessionInfo({
+  sendResponse,
+  tabId,
+  url,
+}: IHandler) {
+  try {
+    const resp = await signifyService.getSessionInfo({
+      tabId: tabId!,
+      origin: getDomainFromUrl(url!),
+    });
+
+    sendResponse({
+      data: resp,
+    });
+  } catch (error: any) {
+    sendResponse({
+      error: { code: 503, message: error?.message },
+    });
+  }
+}
+
+export async function handleClearSession({
+  sendResponse,
+  tabId,
+  url,
+}: IHandler) {
+  try {
+    const resp = await signifyService.removeSessionInfo({
+      tabId: tabId!,
       origin: getDomainFromUrl(url!),
     });
 

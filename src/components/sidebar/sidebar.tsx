@@ -1,5 +1,6 @@
 import { useIntl, FormattedMessage } from "react-intl";
-import { Flex, Subtext } from "@components/ui";
+import { Flex, Subtext, Text } from "@components/ui";
+import manifest from "@src/../manifest.json";
 import IdentifierIcon from "@components/shared/icons/identifier";
 import CredentialIcon from "@components/shared/icons/credential";
 import SigninIcon from "@components/shared/icons/signin";
@@ -104,6 +105,15 @@ export function Sidebar(props: ISidebar): JSX.Element {
             </StyledBottomMenu>
           </StyledLiContainer>
         </ul>
+      </Flex>
+      <Flex
+        width="100%"
+        justifyContent="center"
+        flexDirection="row"
+        position="absolute"
+        bottom="24px"
+      >
+        <Text $color="bodyColor">Version: {manifest.version}</Text>
       </Flex>
     </StyledSidebar>
   );
