@@ -26,17 +26,17 @@ const Session = () => {
     if (session.origin !== origin) {
       throw new Error("Session origin mismatch");
     }
-    if (
-      session?.maxReq &&
-      session?.currentReq !== undefined &&
-      session?.currentReq !== null &&
-      session?.currentReq >= 0
-    ) {
-      if (session?.currentReq >= session.maxReq) {
-        await remove(tabId);
-        throw new Error("Session max request limit reached");
-      }
-    }
+    // if (
+    //   session?.maxReq &&
+    //   session?.currentReq !== undefined &&
+    //   session?.currentReq !== null &&
+    //   session?.currentReq >= 0
+    // ) {
+    //   if (session?.currentReq >= session.maxReq) {
+    //     await remove(tabId);
+    //     throw new Error("Session max request limit reached");
+    //   }
+    // }
 
     if (session.expiry < new Date().getTime()) {
       await remove(tabId);
@@ -50,7 +50,7 @@ const Session = () => {
     tabId,
     origin,
     aidName,
-    config,
+    // config,
   }: Pick<
     ISession,
     "origin" | "aidName" | "tabId" | "signinId"
@@ -58,21 +58,21 @@ const Session = () => {
     const sessions = await getSessionsObject();
     const expiry = new Date();
     // expiry.setSeconds(expiry.getSeconds() + 50);
-    const sessionTime = config?.sessionTime
-      ? Math.min(config.sessionTime, SESSION_ENUMS.EXPIRY_IN_MINS)
-      : SESSION_ENUMS.EXPIRY_IN_MINS;
-    expiry.setMinutes(expiry.getMinutes() + sessionTime);
+    // const sessionTime = config?.sessionTime
+    //   ? Math.min(config.sessionTime, SESSION_ENUMS.EXPIRY_IN_MINS)
+    //   : SESSION_ENUMS.EXPIRY_IN_MINS;
+    expiry.setMinutes(expiry.getMinutes() + SESSION_ENUMS.EXPIRY_IN_MINS);
 
-    const sessionMaxRequests = config?.maxReq
-      ? Math.min(SESSION_ENUMS.MAX_REQUESTS, config?.maxReq)
-      : undefined;
+    // const sessionMaxRequests = config?.maxReq
+    //   ? Math.min(SESSION_ENUMS.MAX_REQUESTS, config?.maxReq)
+    //   : undefined;
     sessions[tabId] = {
       origin,
       aidName,
       tabId,
       expiry: expiry.getTime(),
       signinId,
-      maxReq: sessionMaxRequests,
+      // maxReq: sessionMaxRequests,
       currentReq: 0,
     };
     await browserStorageService.setValue(SESSION_ENUMS.SESSIONS, sessions);

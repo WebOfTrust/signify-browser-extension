@@ -71,6 +71,7 @@ interface IDialog {
   autoSigninObjExists?: boolean;
   requestId: string;
   rurl: string;
+  sessionOneTime: boolean;
 }
 
 const StyledRequestor = styled(Flex)`
@@ -94,6 +95,7 @@ export function Dialog({
   handleRemove,
   requestId,
   rurl,
+  sessionOneTime,
 }: IDialog): JSX.Element {
   const { formatMessage } = useIntl();
   const [sessionTime, setSessionTime] = useState(5);
@@ -144,13 +146,13 @@ export function Dialog({
     const { data, error } = await sendMessage<{
       rurl: string;
       signin: ISignin;
-      config: { sessionTime: number; maxReq: number };
+      config: { sessionOneTime: boolean };
     }>({
       type: CS_EVENTS.authentication_get_auth_data,
       data: {
         rurl,
         signin: selectedSignin,
-        config: { sessionTime, maxReq },
+        config: { sessionOneTime },
       },
     });
 
@@ -224,9 +226,6 @@ export function Dialog({
             <>
               <Box marginTop={2}>
                 <StyledRequestor padding={1}>
-                  <Subtext fontSize={0} fontWeight="bold" $color="bodyColor">
-                    {formatMessage({ id: "signin.disclaimer" })}
-                  </Subtext>
                   {eventType !== TAB_STATE.NONE ? (
                     <Box
                       onClick={handleClick}
@@ -256,27 +255,24 @@ export function Dialog({
                 />
               ))}
               {signins?.length ? (
-                <Flex flexDirection="column">
-                  <div>
-                    <Input
-                      label="Session (in minutes)"
-                      id="session-time"
-                      type="number"
-                      value={sessionTime}
-                      onChange={(e) => setSessionTime(Number(e.target.value))}
-                    />
-                    <Input
-                      value={maxReq}
-                      label="Max Requests"
-                      id="session-time"
-                      type="number"
-                      onChange={(e) => setMaxReq(Number(e.target.value))}
-                    />
-                  </div>
-                  <Button handleClick={handleSignin} disabled={!selectedSignin}>
-                    <>Sign in</>
-                  </Button>
-                </Flex>
+                <Box marginTop={2}>
+                  <StyledRequestor padding={1}>
+                    <Subtext fontSize={0} fontWeight="bold" $color="bodyColor">
+                      {getHostnameFromUrl(tabUrl) +
+                        (sessionOneTime
+                          ? " is requesting a credential for one time request."
+                          : " is requesting a credential. By signing in, you allow selected credential to sign subsequent requests ")}
+                    </Subtext>
+                    <Box marginTop={1}>
+                      <Button
+                        handleClick={handleSignin}
+                        disabled={!selectedSignin}
+                      >
+                        {sessionOneTime ? "Select Credential" : "Sign in with Credential"}
+                      </Button>
+                    </Box>
+                  </StyledRequestor>
+                </Box>
               ) : null}
             </>
           )}

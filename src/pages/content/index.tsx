@@ -14,6 +14,7 @@ import { SessionInfo } from "./session-info/session-info";
 var tabState = TAB_STATE.NONE;
 let requestId = "";
 let rurl = "";
+let sessionOneTime = false;
 
 // Advertize extensionId to web page
 window.postMessage(
@@ -35,6 +36,7 @@ window.addEventListener(
       return;
     }
     console.log("Content script received from web page: " + event.data.type);
+    console.log("Here", event.data);
     if (event.data.type) {
       switch (event.data.type) {
         case TAB_STATE.SELECT_IDENTIFIER:
@@ -62,6 +64,7 @@ window.addEventListener(
 
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
+          sessionOneTime = event?.data?.payload?.session?.oneTime ?? sessionOneTime;
           insertDialog(
             data.isConnected,
             data.tabUrl,
@@ -70,7 +73,8 @@ window.addEventListener(
             tabSigninResp?.data?.autoSigninObj,
             respVendorData?.data?.vendorData,
             requestId,
-            rurl
+            rurl,
+            sessionOneTime
           );
           break;
         case TAB_STATE.CONFIGURE_VENDOR:
@@ -331,6 +335,7 @@ browser.runtime.onMessage.addListener(async function (
           message.eventType,
           message.schema
         );
+
         insertDialog(
           data.isConnected,
           data.tabUrl,
@@ -339,7 +344,8 @@ browser.runtime.onMessage.addListener(async function (
           tabSigninResp?.data?.autoSigninObj,
           respVendorData?.data?.vendorData,
           requestId,
-          rurl
+          rurl,
+          sessionOneTime
         );
       }
     }
@@ -380,7 +386,8 @@ function insertDialog(
   autoSigninObj: any,
   vendorData: any,
   requestId: string,
-  rurl: string
+  rurl: string,
+  sessionOneTime: boolean
 ) {
   let rootContainer = document.querySelector("#__root");
 
@@ -405,6 +412,7 @@ function insertDialog(
         handleRemove={resetTabState}
         requestId={requestId}
         rurl={rurl}
+        sessionOneTime={sessionOneTime}
       />
     </LocaleProvider>
   );

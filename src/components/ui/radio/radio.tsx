@@ -12,7 +12,7 @@ interface IRadio {
 const StyledRadio = styled.input`
   width: 16px;
   height: 16px;
-  accent-color: #61783e;
+  accent-color: ${({ theme }) => theme?.colors?.primary};
 `;
 
 const StyledRadioLabel = styled.label`

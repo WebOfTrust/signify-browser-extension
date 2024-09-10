@@ -93,11 +93,10 @@ export interface ISession {
   origin: string;
   aidName: string;
   signinId: string;
-  maxReq?: number;
+  // maxReq?: number;
   currentReq?: number;
 }
 
 export interface ISessionConfig {
-  sessionTime: number;
-  maxReq: number;
+  sessionOneTime: boolean;
 }
