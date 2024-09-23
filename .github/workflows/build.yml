@@ -57,19 +57,3 @@ jobs:
 
       - name: Remove dist folder
         run: rm -rf dist
-      
-      - name: Set custom workflow title
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const branch = process.env.GITHUB_REF.replace('refs/heads/', '');
-            const version = '${{ steps.vars.outputs.version }}';
-            const shortHash = '${{ steps.vars.outputs.short_hash }}';
-            const customTitle = `v${version}-${shortHash} ${branch}`;
-            
-            await github.rest.actions.updateWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-              name: customTitle
-            });
