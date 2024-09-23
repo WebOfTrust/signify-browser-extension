@@ -41,8 +41,23 @@ jobs:
           cd dist
           zip -r firefox.zip firefox/
 
+      - name: Get manifest version
+        id: manifest_version
+        run: |
+          version=$(cat manifest.json | jq -r .version)
+          echo "::set-output name=version::$version"
+
+      - name: Get short commit hash
+        id: commit_hash
+        run: |
+          short_hash=$(git rev-parse --short HEAD)
+          echo "::set-output name=short_hash::$short_hash"
+
       - name: Upload build asset
         uses: actions/upload-artifact@v4
         with:
-          name: extension-builds-${{ github.event.number || github.event.head_commit.id }}
+          name: v${{ steps.manifest_version.outputs.version }}-${{ steps.commit_hash.outputs.short_hash }}
           path: dist/*.zip
+
+      - name: Remove dist folder
+        run: rm -rf dist
