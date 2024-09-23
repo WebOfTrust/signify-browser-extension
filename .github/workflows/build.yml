@@ -42,7 +42,7 @@ jobs:
           zip -r firefox.zip firefox/
 
       - name: Upload build asset
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: extension-builds-${{ github.event.number || github.event.head_commit.id }}
           path: dist/*.zip
