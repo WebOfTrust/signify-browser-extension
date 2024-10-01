@@ -139,9 +139,11 @@ const Signify = () => {
     let total = 0;
     do {
       const res = await _client?.identifiers().list(start);
-      if (res.aids?.length) {
-        aids.push(...res.aids);
+      if (res.aids?.length === 0) {
+        break;
       }
+
+      aids.push(...res.aids);
       total = res.total;
       start = aids.length;
     } while (aids.length < total);
