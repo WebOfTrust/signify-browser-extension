@@ -9,6 +9,12 @@ console.log("Background script loaded");
 
 const csHandler = initCSHandler();
 const uiHandler = initUIHandler();
+const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
+function saveTimestamp() {
+  const timestamp = new Date().toISOString();
+
+  browser.storage.session.set({ timestamp });
+}
 
 browser.runtime.onStartup.addListener(function () {
   (async () => {
@@ -86,3 +92,9 @@ browser.runtime.onMessage.addListener(function (
 //   // return true to indicate chrome api to send a response asynchronously
 //   return true;
 // });
+
+async function initBackground() {
+  saveTimestamp();
+  setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
+}
+initBackground();
