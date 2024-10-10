@@ -8,6 +8,7 @@ import {
   sendMessageWithExtId,
 } from "@src/shared/browser/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
+import { postMessage } from "./utils";
 import { Dialog } from "./dialog/Dialog";
 import { SessionInfo } from "./session-info/session-info";
 
@@ -17,15 +18,12 @@ let rurl = "";
 let sessionOneTime = false;
 
 // Advertize extensionId to web page
-window.postMessage(
-  {
-    type: "signify-extension",
-    data: {
-      extensionId: getExtId(),
-    },
+postMessage({
+  type: "signify-extension",
+  data: {
+    extensionId: getExtId(),
   },
-  "*"
-);
+});
 
 // Handle messages from web page
 window.addEventListener(
@@ -36,7 +34,6 @@ window.addEventListener(
       return;
     }
     console.log("Content script received from web page: " + event.data.type);
-    console.log("Here", event.data);
     if (event.data.type) {
       switch (event.data.type) {
         case TAB_STATE.SELECT_IDENTIFIER:
@@ -64,7 +61,8 @@ window.addEventListener(
 
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
-          sessionOneTime = event?.data?.payload?.session?.oneTime ?? sessionOneTime;
+          sessionOneTime =
+            event?.data?.payload?.session?.oneTime ?? sessionOneTime;
           insertDialog(
             data.isConnected,
             data.tabUrl,
@@ -100,21 +98,15 @@ window.addEventListener(
 
           if (error) {
             if (error.code === 404) {
-              window.postMessage(
-                { type: "select-auto-signin", requestId, rurl },
-                "*"
-              );
+              postMessage({ type: "select-auto-signin", requestId, rurl });
             }
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: autoSigninData,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: autoSigninData,
+              requestId,
+              rurl,
+            });
           }
           break;
         case TAB_STATE.SIGN_REQUEST:
@@ -129,25 +121,19 @@ window.addEventListener(
           rurl = event?.data?.rurl ?? rurl;
           console.log("signedHeaders", signedHeaders);
           if (signedHeadersError) {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                error: signedHeadersError?.message,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              error: signedHeadersError?.message,
+              requestId,
+              rurl,
+            });
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: signedHeaders,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: signedHeaders,
+              requestId,
+              rurl,
+            });
           }
 
           break;
@@ -167,25 +153,19 @@ window.addEventListener(
           requestId = event?.data?.requestId ?? "";
           console.log("sessionInfo", sessionInfo);
           if (sessionInfo?.error) {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                error: sessionInfo?.error?.message,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              error: sessionInfo?.error?.message,
+              requestId,
+              rurl,
+            });
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: sessionInfo?.data,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: sessionInfo?.data,
+              requestId,
+              rurl,
+            });
             if (sessionInfo?.data) {
               insertSessionInfo(
                 agentConnection?.data?.isConnected,
@@ -205,25 +185,19 @@ window.addEventListener(
           }
           requestId = event?.data?.requestId ?? "";
           if (clearSession?.error) {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                error: clearSession?.error?.message,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              error: clearSession?.error?.message,
+              requestId,
+              rurl,
+            });
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: clearSession?.data,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: clearSession?.data,
+              requestId,
+              rurl,
+            });
           }
 
           break;
@@ -240,25 +214,19 @@ window.addEventListener(
 
           console.log("create attest credential resp data", credData);
           if (attestCredError) {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                error: attestCredError?.message,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              error: attestCredError?.message,
+              requestId,
+              rurl,
+            });
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: credData,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: credData,
+              requestId,
+              rurl,
+            });
           }
 
           break;
@@ -274,25 +242,19 @@ window.addEventListener(
 
           console.log("get credential result", cred);
           if (credError) {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                error: credError?.message,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              error: credError?.message,
+              requestId,
+              rurl,
+            });
           } else {
-            window.postMessage(
-              {
-                type: "/signify/reply",
-                payload: cred,
-                requestId,
-                rurl,
-              },
-              "*"
-            );
+            postMessage({
+              type: "/signify/reply",
+              payload: cred,
+              requestId,
+              rurl,
+            });
           }
 
           break;

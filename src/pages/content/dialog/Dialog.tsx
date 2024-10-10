@@ -23,6 +23,7 @@ import { setTabState } from "@pages/content";
 import { resetTabState } from "@pages/content";
 import { PopupPrompt } from "./popupPrompt";
 import { SigninItem } from "./signin";
+import { postMessage } from "../utils";
 
 const StyledMain = styled(Box)`
   border: ${(props) =>
@@ -161,10 +162,7 @@ export function Dialog({
     } else {
       resetTabState();
       // Communicate headers to web page
-      window.postMessage(
-        { type: "/signify/reply", requestId, payload: data },
-        "*"
-      );
+      postMessage({ type: "/signify/reply", requestId, payload: data });
     }
   };
 
@@ -268,7 +266,9 @@ export function Dialog({
                         handleClick={handleSignin}
                         disabled={!selectedSignin}
                       >
-                        {sessionOneTime ? "Select Credential" : "Sign in with Credential"}
+                        {sessionOneTime
+                          ? "Select Credential"
+                          : "Sign in with Credential"}
                       </Button>
                     </Box>
                   </StyledRequestor>
