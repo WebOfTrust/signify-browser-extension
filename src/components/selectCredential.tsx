@@ -22,7 +22,8 @@ export function SelectCredential(): JSX.Element {
     if (error) {
       toast.error(error?.message);
     } else {
-      setCredentials(data.credentials);
+      const _credentials = data?.credentials?.filter(_cred => _cred.issueeName) ?? [];
+      setCredentials(_credentials);
     }
   };
 
