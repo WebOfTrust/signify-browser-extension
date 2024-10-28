@@ -4,7 +4,7 @@ import { Loader } from "../loader";
 
 interface IButton {
   type?: "button" | "reset" | "submit" | undefined;
-  handleClick?: () => void;
+  handleClick?: (e?: any) => void;
   isLoading?: boolean;
   children?: JSX.Element | any;
   disabled?: boolean;
