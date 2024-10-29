@@ -58,7 +58,7 @@ export function CredentialRecursiveChain({
         openMessage ?? (
           <TriggerItem
             idx={idx}
-            title={credential?.schema?.title}
+            title={`> ${credential?.schema?.title}`}
             onClickTrigger={exploreChain}
           />
         )
