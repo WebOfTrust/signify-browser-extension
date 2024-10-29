@@ -65,6 +65,7 @@ export interface IIdentifier {
 export interface ICredential {
   issueeName: string;
   ancatc: string[];
+  chains?: ICredential[];
   sad: { a: { i: string }; d: string };
   schema: {
     title: string;
