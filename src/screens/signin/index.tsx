@@ -48,24 +48,31 @@ export function Signin(props: ISignin): JSX.Element {
           <SettingIcon size={6} />
         </IconButton>
       </Flex>
-      {props.showConfig ? (
-        <Config
-          handleBack={() => {
-            props.setShowConfig(false);
-            checkIfOnboarded();
-          }}
-          afterBootUrlUpdate={checkIfOnboarded}
-          afterSetUrl={props?.afterSetUrl}
-        />
-      ) : (
-        <SigninComponent
-          signinError={props?.signinError}
-          isLoading={props?.isLoading}
-          handleConnect={props.handleConnect}
-          logo={props.logo}
-        />
-      )}
-      <Box fontSize={0} padding={2} bottom={2}>
+      <Box>
+        {props.showConfig ? (
+          <Config
+            handleBack={() => {
+              props.setShowConfig(false);
+              checkIfOnboarded();
+            }}
+            afterBootUrlUpdate={checkIfOnboarded}
+            afterSetUrl={props?.afterSetUrl}
+          />
+        ) : (
+          <SigninComponent
+            signinError={props?.signinError}
+            isLoading={props?.isLoading}
+            handleConnect={props.handleConnect}
+            logo={props.logo}
+          />
+        )}
+      </Box>
+      <Flex
+        width="100%"
+        justifyContent="center"
+        flexDirection="column"
+        bottom="4px"
+      >
         {hasAgentAndBootUrls ? (
           <Box textAlign="center">
             <NewButton onClick={props.handleSignup} $hoverUnderline>
@@ -92,17 +99,9 @@ export function Signin(props: ISignin): JSX.Element {
             {formatMessage({ id: "account.support" })}
           </NewButton>
         </Box>
-      </Box>
-      <Flex
-        width="100%"
-        justifyContent="center"
-        flexDirection="row"
-        position="absolute"
-        bottom="4px"
-      >
-        <Text $color="bodyColor">
-          Version: {manifest.version}
-        </Text>
+        <Box textAlign="center">
+          <Text $color="bodyColor">Version: {manifest.version}</Text>
+        </Box>
       </Flex>
     </Grid>
   );

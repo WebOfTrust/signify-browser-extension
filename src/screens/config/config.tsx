@@ -51,38 +51,42 @@ export function Config(props: any): JSX.Element {
     }
   };
 
-  const handleSetAgentUrl = async (_url: string) => {
-    if (!_url || !isValidUrl(_url)) {
+  const validateAgentUrl = () => {
+    if (!agentUrl || !isValidUrl(agentUrl)) {
       setAgentUrlError(validUrlMsg);
-      return;
+      return false;
     }
+    setAgentUrlError("");
+    return true;
+  };
 
-    await configService.setAgentUrl(_url);
-    setAgentUrl(_url);
+  const validateBootUrl = () => {
+    if (!bootUrl || !isValidUrl(bootUrl)) {
+      setBootUrlError(validUrlMsg);
+      return false;
+    }
+    setBootUrlError("");
+    return true;
+  };
+
+  const handleSetAgentUrl = async () => {
+    await configService.setAgentUrl(agentUrl);
+    setAgentUrl(agentUrl);
     setAgentUrlError("");
 
     if (!hasOnboarded) {
       await configService.setHasOnboarded(true);
-      props.handleBack();
     }
+    return true;
   };
 
-  const handleSetBootUrl = async (_url: string) => {
-    if (_url) {
-      if (!isValidUrl(_url)) {
-        setBootUrlError(validUrlMsg);
-        return;
-      }
-
-      await configService.setBootUrl(_url);
-      setBootUrl(_url);
-      setBootUrlError("");
-    } else {
-      await configService.setBootUrl("");
-      setBootUrl("");
-      setBootUrlError("");
-    }
+  const handleSetBootUrl = async () => {
+    await configService.setBootUrl(bootUrl);
+    setBootUrl(bootUrl);
+    setBootUrlError("");
+    
     props.afterBootUrlUpdate();
+    return true;
   };
 
   const handleSetVendorUrl = async () => {
@@ -90,10 +94,10 @@ export function Config(props: any): JSX.Element {
     try {
       const resp = await (await fetch(vendorUrl)).json();
       if (resp?.agentUrl) {
-        await handleSetAgentUrl(resp?.agentUrl);
+        setAgentUrl(resp?.agentUrl);
       }
       if (resp?.bootUrl) {
-        await handleSetBootUrl(resp?.bootUrl);
+        setBootUrl(resp?.bootUrl);
       }
       await configService.setVendorData(resp);
       if (resp?.icon) {
@@ -109,17 +113,20 @@ export function Config(props: any): JSX.Element {
     }
   };
 
-  const handleSave = async () => {
+  const handleLoadVendorUrl = async () => {
     const hasError = checkErrorVendorUrl();
     if (hasError) return;
     await handleSetVendorUrl();
   };
 
-  const handleBack = async () => {
-    if (!agentUrl || !isValidUrl(agentUrl)) {
-      setAgentUrlError(validUrlMsg);
-      return;
-    }
+  const handleSave = async () => {
+    const agentUrlSuccess = validateAgentUrl();
+    const bootUrlSuccess = validateBootUrl();
+
+    if (!agentUrlSuccess || !bootUrlSuccess) return;
+
+    await handleSetAgentUrl();
+    await handleSetBootUrl();
     props.handleBack();
   };
 
@@ -136,56 +143,54 @@ export function Config(props: any): JSX.Element {
           onBlur={checkErrorVendorUrl}
         />
         <Box position="absolute" right="16px" bottom="-28px">
-          <Button handleClick={handleSave}>
+          <Button handleClick={handleLoadVendorUrl}>
             <Text $color="">{formatMessage({ id: "action.load" })}</Text>
           </Button>
         </Box>
       </Box>
-      <Box paddingX={3}>
-        <Input
-          id="agent_url"
-          label={`${formatMessage({ id: "config.agentUrl.label" })} *`}
-          error={agentUrlError}
-          placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
-          value={agentUrl}
-          onChange={(e) => setAgentUrl(e.target.value)}
-          onBlur={() => handleSetAgentUrl(agentUrl)}
-        />
-      </Box>
-      <Box paddingX={3}>
-        <Input
-          id="boot_url"
-          label={`${formatMessage({ id: "config.bootUrl.label" })} *`}
-          error={bootUrlError}
-          placeholder={formatMessage({ id: "config.bootUrl.placeholder" })}
-          value={bootUrl}
-          onChange={(e) => setBootUrl(e.target.value)}
-          onBlur={() => handleSetBootUrl(bootUrl)}
-        />
-      </Box>
-      <Box paddingX={3}>
-        <Dropdown
-          label={formatMessage({ id: "config.language.label" })}
-          selectedOption={langMap.find((s) => s.value === currentLocale)}
-          options={langMap}
-          onSelect={(option) => changeLocale(option.value)}
-        />
-      </Box>
-      {hasOnboarded ? (
+      <Box>
+        <Box paddingX={3}>
+          <Input
+            id="agent_url"
+            label={`${formatMessage({ id: "config.agentUrl.label" })} *`}
+            error={agentUrlError}
+            placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
+            value={agentUrl}
+            onChange={(e) => setAgentUrl(e.target.value)}
+            onBlur={() => validateAgentUrl()}
+          />
+        </Box>
+        <Box paddingX={3}>
+          <Input
+            id="boot_url"
+            label={`${formatMessage({ id: "config.bootUrl.label" })} *`}
+            error={bootUrlError}
+            placeholder={formatMessage({ id: "config.bootUrl.placeholder" })}
+            value={bootUrl}
+            onChange={(e) => setBootUrl(e.target.value)}
+            onBlur={() => validateBootUrl()}
+          />
+        </Box>
+        <Box paddingX={3}>
+          <Dropdown
+            label={formatMessage({ id: "config.language.label" })}
+            selectedOption={langMap.find((s) => s.value === currentLocale)}
+            options={langMap}
+            onSelect={(option) => changeLocale(option.value)}
+          />
+        </Box>
         <Flex
           fontSize={0}
           flexDirection="row"
           justifyContent="center"
           paddingX={3}
-          marginTop={3}
+          marginTop={1}
         >
-          <Button handleClick={handleBack}>
+          <Button handleClick={handleSave}>
             <Text $color="">{formatMessage({ id: "action.save" })}</Text>
           </Button>
         </Flex>
-      ) : (
-        <></>
-      )}
+      </Box>
     </>
   );
 }
