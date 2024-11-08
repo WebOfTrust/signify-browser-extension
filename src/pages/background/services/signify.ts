@@ -36,7 +36,7 @@ const Signify = () => {
           type: SW_EVENTS.check_popup_open,
         });
         if (response.data.isOpened) {
-          console.log("Timer expired, but extsenion is open. Resetting timer.");
+          console.log("Timer expired, but extension is open. Resetting timer.");
           resetTimeoutAlarm();
         }
       } catch (error) {
