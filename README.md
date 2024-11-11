@@ -33,9 +33,17 @@ The following rules are enforced by design to ensure the security of the extensi
 * All sensitive data is only accessed by the background script and popup, and never reaches the content script.
 * Never run external scripts in the extension (`eval()`).
 
-## Run for development:
+## Development Environment Getting Started:
+1. Install extension into target browser (whose build steps are described below).  In Chrome you can do that [by following these instructions](https://support.google.com/chrome/a/answer/2714278?hl=en#:~:text=Step%202%3A%20Test%20the%20app%20or%20extension)
+2. Start up a KERIA agent (the path of least resistance is probably [through the docker image from the repo](https://github.com/WebOfTrust/keria?tab=readme-ov-file#run-with-docker))
+3. Click on Extension.  First time you should see this: ![image](https://github.com/user-attachments/assets/57119d20-bf5c-467a-84dd-4b3ce938b39d).
+4. Fill in bootURL and agentURL with the boot and agent ports of the KERIA agent you started in step 2 and click "save"
+5. From there it should tell you to enter your passcode: ![image](https://github.com/user-attachments/assets/61c786a0-fd3d-462d-a15d-e8bd068a2a78) since you don't have a passcode yet you'll click on the dialogue that says _Don't have a KERIA agent?_
+6. That will bring you to a screen with a button called "Generate Passcode".  Click that and save the value, this is the passcode for this particular extension.  In a production setting this would be the master secret that the user must keep secure.  Enter it into the box that appears.  ![image](https://github.com/user-attachments/assets/b42a27a5-d40d-417f-9896-c78b4c0f98b6)
+7. If successful, you'll be taken to the main landing page ![image](https://github.com/user-attachments/assets/2be997e5-1135-436b-9a9b-9c09bf6d9852)
 
-### install packages:
+
+### How to build for various target browsers:
 ```
 npm install
 ```
@@ -57,3 +65,9 @@ The following command generates a build for firefox in [dist/firefox](./dist/fir
 npm run build:firefox
 ```
 See [this guide](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension) to run extension locally in firefox
+
+## Troubleshooting
+* There are three places things are logged.  Look here first when developing.
+  * KERIA's log console.  If using the docker images these should be set up to scroll as events occur
+  * Error log on the extension manager itself.  This will print stack traces when the extension logs unresolvable errors
+  * Console of the web worker run by the extension.
