@@ -1,4 +1,4 @@
-import browser from "webextension-polyfill";
+import browser, { Storage } from "webextension-polyfill";
 
 export const getSyncStorage = () => {
   return browser.storage.sync;
@@ -8,7 +8,11 @@ export const getNonSyncStorage = () => {
   return browser.storage.local;
 };
 
-const BrowserStorage = (storage = getNonSyncStorage()) => {
+export const getSessionStorage = () => {
+  return browser.storage.session;
+};
+
+const BrowserStorage = (storage: Storage.StorageArea) => {
   const _storage = storage;
 
   const getAllKeys = async () => {
@@ -43,4 +47,5 @@ const BrowserStorage = (storage = getNonSyncStorage()) => {
   };
 };
 
-export const browserStorageService = BrowserStorage();
+export const browserStorageService = BrowserStorage(getNonSyncStorage());
+export const sessionStorageService = BrowserStorage(getSessionStorage());

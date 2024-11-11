@@ -22,7 +22,8 @@ export function SelectCredential(): JSX.Element {
     if (error) {
       toast.error(error?.message);
     } else {
-      const _credentials = data?.credentials?.filter(_cred => _cred.issueeName) ?? [];
+      const _credentials =
+        data?.credentials?.filter((_cred) => _cred.issueeName) ?? [];
       setCredentials(_credentials);
     }
   };
@@ -83,7 +84,9 @@ export function SelectCredential(): JSX.Element {
                   </span>
                   <ReactTooltip id={credential?.sad?.d} delayShow={200}>
                     <Flex flexDirection="row" fontSize={0} $flexGap={1}>
-                      <Text $color="">{formatMessage({ id: "credential.unidentifiedIssuee" })}</Text>
+                      <Text $color="">
+                        {formatMessage({ id: "credential.unidentifiedIssuee" })}
+                      </Text>
                     </Flex>
                   </ReactTooltip>
                 </>
@@ -92,6 +95,13 @@ export function SelectCredential(): JSX.Element {
           </Box>
         </Box>
       ))}
+      {!isLoading && !credentials?.length ? (
+        <Text fontSize={0} $color="subtext">
+          {formatMessage({ id: "message.noItems" })}
+        </Text>
+      ) : (
+        <></>
+      )}
     </>
   );
 }
