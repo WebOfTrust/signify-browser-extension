@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import { configService } from "@pages/background/services/config";
+import { sessionStorageService } from "@pages/background/services/browser-storage";
 import { IMessage } from "@config/types";
 import { senderIsPopup } from "@pages/background/utils";
 import { setActionIcon } from "@shared/browser/action-utils";
@@ -13,7 +14,7 @@ const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
 function saveTimestamp() {
   const timestamp = new Date().toISOString();
 
-  browser.storage.session.set({ timestamp });
+  sessionStorageService.setValue("timestamp", timestamp);
 }
 
 browser.runtime.onStartup.addListener(function () {
@@ -32,7 +33,6 @@ browser.runtime.onInstalled.addListener(function (object) {
     console.log("Signify Browser Extension installed");
   }
 });
-
 
 // Listener to handle internal messages from content scripts from active tab and popup
 browser.runtime.onMessage.addListener(function (
