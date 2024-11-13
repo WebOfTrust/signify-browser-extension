@@ -97,16 +97,20 @@ export default function Popup(): JSX.Element {
     });
     setIsConnected(!!data.isConnected);
     if (data.isConnected) {
-      const tab = await getCurrentTab();
-      const { data } = await sendMessageTab(tab.id!, {
-        type: "tab",
-        subtype: "get-tab-state",
-      });
-      sendMessageTab(tab.id!, {
-        type: "tab",
-        subtype: "reload-state",
-        eventType: data?.tabState,
-      });
+      try {
+        const tab = await getCurrentTab();
+        const { data } = await sendMessageTab(tab.id!, {
+          type: "tab",
+          subtype: "get-tab-state",
+        });
+        sendMessageTab(tab.id!, {
+          type: "tab",
+          subtype: "reload-state",
+          eventType: data?.tabState,
+        });
+      } catch (error) {
+        console.log("Error in popup from sendMessageTab", error);
+      }
     }
   };
 
