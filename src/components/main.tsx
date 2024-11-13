@@ -26,6 +26,7 @@ export function Main(props: IMain): JSX.Element {
   const [currentTabState, setCurrentTabState] = useState(TAB_STATE.NONE);
 
   const fetchTabState = async () => {
+   try {
     const tab = await getCurrentTab();
     const { data } = await sendMessageTab(tab.id!, {
       type: "tab",
@@ -51,6 +52,9 @@ export function Main(props: IMain): JSX.Element {
         setActiveSidebar(SIDEBAR[2]);
       }
     }
+   } catch (error) {
+    console.log("Error fetching tab state", error);
+   }
   };
 
   useEffect(() => {
