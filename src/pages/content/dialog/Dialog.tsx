@@ -124,6 +124,12 @@ export function Dialog({
   }, []);
 
   const onClickRemove = () => {
+    postMessage({
+      type: "/signify/reply",
+      error: "request has been cancelled",
+      requestId,
+      rurl,
+    });
     handleRemove();
   };
 
