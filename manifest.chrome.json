@@ -1,0 +1,37 @@
+{
+    "manifest_version": 3,
+    "name": "Signify Browser Extension",
+    "version": "0.0.1",
+    "background": {
+      "service_worker": "src/pages/background/index.ts"
+    },
+    "action": {
+      "default_popup": "src/pages/popup/index.html",
+      "default_icon": {
+        "32": "32_keri_logo.png",
+        "128": "128_keri_logo.png"
+      }
+    },
+    "icons": {
+      "32": "32_keri_logo.png",
+      "128": "128_keri_logo.png"
+    },
+    "permissions": ["activeTab", "storage", "alarms"],
+    "content_scripts": [
+      {
+        "matches": ["file://*/*", "http://localhost/*", "https://*/*"],
+        "run_at": "document_end",
+        "js": ["src/pages/content/index.tsx"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["128_keri_logo.png"],
+        "matches": ["<all_urls>"]
+      }
+    ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+    }
+  }
+  

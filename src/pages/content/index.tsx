@@ -2,17 +2,13 @@ import browser from "webextension-polyfill";
 import { createRoot } from "react-dom/client";
 import { LocaleProvider } from "@src/_locales";
 import { CS_EVENTS } from "@config/event-types";
-import {
-  getExtId,
-  sendMessage,
-  sendMessageWithExtId,
-} from "@src/shared/browser/runtime-utils";
+import { getExtId, sendMessage, sendMessageWithExtId } from "@src/shared/browser/runtime-utils";
 import { TAB_STATE } from "@pages/popup/constants";
 import { postMessage } from "./utils";
 import { Dialog } from "./dialog/Dialog";
 import { SessionInfo } from "./session-info/session-info";
 
-var tabState = TAB_STATE.NONE;
+window.polaris_tab_state = window.polaris_tab_state ?? TAB_STATE.NONE;
 let requestId = "";
 let rurl = "";
 let sessionOneTime = false;
@@ -35,6 +31,7 @@ window.addEventListener(
     }
     console.log("Content script received from web page: " + event.data.type);
     if (event.data.type) {
+      console.log("Content script received event: " + JSON.stringify(event.data));
       switch (event.data.type) {
         case TAB_STATE.SELECT_IDENTIFIER:
         case TAB_STATE.SELECT_CREDENTIAL:
@@ -61,8 +58,7 @@ window.addEventListener(
 
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
-          sessionOneTime =
-            event?.data?.payload?.session?.oneTime ?? sessionOneTime;
+          sessionOneTime = event?.data?.payload?.session?.oneTime ?? sessionOneTime;
           insertDialog(
             data.isConnected,
             data.tabUrl,
@@ -110,13 +106,12 @@ window.addEventListener(
           }
           break;
         case TAB_STATE.SIGN_REQUEST:
-          const { data: signedHeaders, error: signedHeadersError } =
-            await sendMessageWithExtId<{
-              rurl?: string;
-            }>(getExtId(), {
-              type: CS_EVENTS.fetch_resource_signed_headers,
-              data: event.data.payload,
-            });
+          const { data: signedHeaders, error: signedHeadersError } = await sendMessageWithExtId<{
+            rurl?: string;
+          }>(getExtId(), {
+            type: CS_EVENTS.fetch_resource_signed_headers,
+            data: event.data.payload,
+          });
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
           console.log("signedHeaders", signedHeaders);
@@ -202,13 +197,12 @@ window.addEventListener(
 
           break;
         case TAB_STATE.CREATE_DATA_ATTEST_CRED:
-          const { data: credData, error: attestCredError } =
-            await sendMessageWithExtId<{
-              rurl?: string;
-            }>(getExtId(), {
-              type: CS_EVENTS.create_resource_data_attestation_credential,
-              data: event.data.payload,
-            });
+          const { data: credData, error: attestCredError } = await sendMessageWithExtId<{
+            rurl?: string;
+          }>(getExtId(), {
+            type: CS_EVENTS.create_resource_data_attestation_credential,
+            data: event.data.payload,
+          });
           requestId = event?.data?.requestId ?? "";
           rurl = event?.data?.rurl ?? rurl;
 
@@ -267,11 +261,7 @@ window.addEventListener(
 );
 
 // Handle messages from background script and popup
-browser.runtime.onMessage.addListener(async function (
-  message,
-  sender,
-  sendResponse
-) {
+browser.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
   if (sender.id === getExtId()) {
     console.log(
       "Content script received message from browser extension: " +
@@ -330,11 +320,7 @@ browser.runtime.onMessage.addListener(async function (
       });
 
       if (message.data) {
-        insertSessionInfo(
-          data.isConnected,
-          respVendorData?.data?.vendorData,
-          message.data
-        );
+        insertSessionInfo(data.isConnected, respVendorData?.data?.vendorData, message.data);
       }
     }
   }
@@ -424,11 +410,7 @@ export function resetTabState() {
 }
 
 // TODO: proper types for these params
-function getFilteredSignins(
-  signins: any,
-  currentTabState: any,
-  credentialSchema: any
-) {
+function getFilteredSignins(signins: any, currentTabState: any, credentialSchema: any) {
   let filteredSignins: any[] = [];
   if (!signins?.length) return [];
 
@@ -445,10 +427,7 @@ function getFilteredSignins(
       (currentTabState === TAB_STATE.SELECT_CREDENTIAL ||
         currentTabState === TAB_STATE.SELECT_ID_CRED)
     ) {
-      if (
-        !credentialSchema ||
-        signin.credential.schema.id === credentialSchema
-      ) {
+      if (!credentialSchema || signin.credential.schema.id === credentialSchema) {
         filteredSignins.push(signin);
       }
     }
@@ -458,10 +437,11 @@ function getFilteredSignins(
 
 export function setTabState(state: string) {
   console.log("setTabState: " + state);
-  tabState = state;
+  window.polaris_tab_state = state;
 }
 
 export function getTabState() {
-  console.log("getTabState: " + tabState);
-  return tabState;
+  console.log("window.polaris_tab_state", window.polaris_tab_state);
+  console.log("getTabState: " + window.polaris_tab_state);
+  return window.polaris_tab_state;
 }

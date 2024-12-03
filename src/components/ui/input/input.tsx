@@ -13,6 +13,8 @@ interface IInput {
   onBlur?: () => void;
   type?: string;
   disabled?: boolean;
+  testid?: string;
+  errorTestid?: string;
 }
 
 const StyledInputLabel = styled.label`
@@ -58,7 +60,9 @@ export const Input = ({
   onChange,
   onBlur,
   type = "text",
-  disabled
+  disabled,
+  testid,
+  errorTestid,
 }: IInput) => {
   return (
     <Flex flexDirection="column" $flexGap={1}>
@@ -70,6 +74,7 @@ export const Input = ({
       <StyledInput
         type={type}
         id={id}
+        data-testid={testid}
         error={error}
         placeholder={placeholder}
         required={required}
@@ -82,7 +87,7 @@ export const Input = ({
         isValidElement(error) ? (
           error
         ) : (
-          <StyledInputError>{error}</StyledInputError>
+          <StyledInputError data-testid={errorTestid}>{error}</StyledInputError>
         )
       ) : null}
     </Flex>

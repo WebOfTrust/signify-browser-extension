@@ -14,5 +14,10 @@ export const senderIsPopup = (sender: browser.Runtime.MessageSender) => {
 export const getCurrentUrl = async () => {
   const currentTab = await getCurrentTab();
   console.log("Current tab: ", currentTab);
-  return currentTab ? new URL(currentTab.url!) : null;
+  try {
+    return new URL(currentTab.url!)
+  } catch (error) {
+    console.error("Error getting current tab URL: ", error);
+    return new URL("http://localhost:3000");
+  }
 };

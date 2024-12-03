@@ -58,6 +58,8 @@ export function Signin(props: ISignin): JSX.Element {
         <Input
           type="password"
           id="passcode"
+          testid="signin-passcode"
+          errorTestid="signin-passcode-error"
           error={passcodeError}
           placeholder={passcodeMessage}
           value={passcode}
@@ -66,7 +68,7 @@ export function Signin(props: ISignin): JSX.Element {
         />
       </Box>
       <Flex flexDirection="row" justifyContent="center">
-        <Button handleClick={handleConnect} isLoading={props.isLoading}>
+        <Button testid="signin-connect" handleClick={handleConnect} isLoading={props.isLoading}>
           <Text $color="">{connectMessage}</Text>
         </Button>
       </Flex>

@@ -173,7 +173,7 @@ export function SessionInfo({
   }, []);
   const logo =
     vendorData?.logo ??
-    browser.runtime.getURL("src/assets/img/128_keri_logo.png");
+    browser.runtime.getURL("128_keri_logo.png");
 
   return (
     <ThemeProvider theme={vendorData?.theme}>

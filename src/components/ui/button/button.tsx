@@ -8,6 +8,7 @@ interface IButton {
   isLoading?: boolean;
   children?: JSX.Element | any;
   disabled?: boolean;
+  testid?: string;
 }
 
 type TNewButtonCustomProps = {
@@ -98,6 +99,7 @@ export function Button(props: IButton): JSX.Element {
       disabled={props.disabled}
       type={props.type}
       onClick={props.handleClick}
+      data-testid={props.testid}
     >
       {props.isLoading ? <Loader size={4} /> : null}
       {props.children}
