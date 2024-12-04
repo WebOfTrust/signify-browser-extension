@@ -84,7 +84,7 @@ export function Config(props: any): JSX.Element {
     await configService.setBootUrl(bootUrl);
     setBootUrl(bootUrl);
     setBootUrlError("");
-    
+
     props.afterBootUrlUpdate();
     return true;
   };
@@ -152,6 +152,8 @@ export function Config(props: any): JSX.Element {
         <Box paddingX={3}>
           <Input
             id="agent_url"
+            testid="settings-agent-url"
+            errorTestid="settings-agent-url-error"
             label={`${formatMessage({ id: "config.agentUrl.label" })} *`}
             error={agentUrlError}
             placeholder={formatMessage({ id: "config.agentUrl.placeholder" })}
@@ -163,6 +165,8 @@ export function Config(props: any): JSX.Element {
         <Box paddingX={3}>
           <Input
             id="boot_url"
+            testid="settings-boot-url"
+            errorTestid="settings-boot-url-error"
             label={`${formatMessage({ id: "config.bootUrl.label" })} *`}
             error={bootUrlError}
             placeholder={formatMessage({ id: "config.bootUrl.placeholder" })}
@@ -186,7 +190,7 @@ export function Config(props: any): JSX.Element {
           paddingX={3}
           marginTop={1}
         >
-          <Button handleClick={handleSave}>
+          <Button testid="settings-save" handleClick={handleSave}>
             <Text $color="">{formatMessage({ id: "action.save" })}</Text>
           </Button>
         </Flex>

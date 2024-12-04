@@ -7,6 +7,7 @@ interface IRadio {
   checked: boolean;
   onClick: () => void;
   disabled?: boolean;
+  testid?: string;
 }
 
 const StyledRadio = styled.input`
@@ -28,10 +29,12 @@ export function Radio({
   checked,
   onClick,
   disabled,
+  testid,
 }: IRadio): JSX.Element {
   return (
     <Flex
       onClick={disabled ? () => {} : onClick}
+      data-testid={testid}
       alignItems="center"
       $cursorPointer
       borderWidth="1px"

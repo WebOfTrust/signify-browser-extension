@@ -42,7 +42,7 @@ browser.runtime.onMessage.addListener(function (
 ) {
   (async () => {
     // Handle mesages from content script on active tab
-    if (sender.tab && sender.tab.active) {
+    if (sender.tab && sender.tab.active && !senderIsPopup(sender)) {
       console.log("Message received from content script at ", sender?.tab?.url);
       console.log("Message Type", message.type);
 
@@ -58,8 +58,8 @@ browser.runtime.onMessage.addListener(function (
 
       // Handle messages from Popup
     } else if (senderIsPopup(sender)) {
-      console.log("Message received from browser extension: ", message.type);
-
+      console.log("Message received from popup: ", message.type);
+      console.log("sender?.tab", sender?.tab)
       const processor = uiHandler.get(message.type);
       if (processor) {
         processor({

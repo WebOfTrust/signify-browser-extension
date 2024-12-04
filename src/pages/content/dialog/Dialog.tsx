@@ -105,7 +105,7 @@ export function Dialog({
 
   const logo =
     vendorData?.logo ??
-    browser.runtime.getURL("src/assets/img/128_keri_logo.png");
+    browser.runtime.getURL("128_keri_logo.png");
   const [showPopupPrompt, setShowPopupPrompt] = useState(false);
   const showRequestAuthPrompt =
     !signins?.length ||
@@ -212,7 +212,7 @@ export function Dialog({
         <StyledMain borderRadius="4px" textAlign="center" padding={3}>
           <Flex flexDirection="row" $flexGap={2} alignItems="center">
             <StyledImg src={logo} height="32px" alt="logo" />
-            <Text fontWeight="bold" fontSize={3} $color="bodyColor">
+            <Text data-testid="dialog-title" fontWeight="bold" fontSize={3} $color="bodyColor">
               {formatMessage({ id: "signin.with" })} {vendorData?.title}
             </Text>
           </Flex>
@@ -252,7 +252,8 @@ export function Dialog({
 
               {signins?.map((signin, index) => (
                 <Radio
-                  id={index}
+                  id={`${index}`}
+                  testid={`select-signin-${index}`}
                   checked={selectedSignin?.id === signin.id}
                   onClick={() => setSelectedSignin(signin)}
                   component={<SigninItem signin={signin} />}
@@ -271,6 +272,7 @@ export function Dialog({
                       <Button
                         handleClick={handleSignin}
                         disabled={!selectedSignin}
+                        testid="select-signin-button"
                       >
                         {sessionOneTime
                           ? "Select Credential"

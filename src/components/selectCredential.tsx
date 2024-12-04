@@ -22,8 +22,7 @@ export function SelectCredential(): JSX.Element {
     if (error) {
       toast.error(error?.message);
     } else {
-      const _credentials =
-        data?.credentials?.filter((_cred) => _cred.issueeName) ?? [];
+      const _credentials = data?.credentials?.filter((_cred) => _cred.issueeName) ?? [];
       setCredentials(_credentials);
     }
   };
@@ -36,6 +35,8 @@ export function SelectCredential(): JSX.Element {
       },
     });
     const tab = await getCurrentTab();
+    console.log("createSigninWithCredential tab", tab);
+
     const { data } = await sendMessageTab(tab.id!, {
       type: "tab",
       subtype: "get-tab-state",
@@ -56,7 +57,12 @@ export function SelectCredential(): JSX.Element {
   return (
     <>
       {isLoading ? (
-        <Flex flexDirection="row" justifyContent="center" alignItems="center">
+        <Flex
+          data-testid="select-credential-loader"
+          flexDirection="row"
+          justifyContent="center"
+          alignItems="center"
+        >
           <Loader size={6} />
         </Flex>
       ) : null}
@@ -69,6 +75,7 @@ export function SelectCredential(): JSX.Element {
                 <Button
                   handleClick={() => createSigninWithCredential(credential)}
                   disabled={!credential?.issueeName}
+                  testid={`select-credential-${index}`}
                 >
                   <>{`${formatMessage({ id: "action.select" })} >`}</>
                 </Button>
@@ -78,6 +85,7 @@ export function SelectCredential(): JSX.Element {
                     <Button
                       handleClick={() => createSigninWithCredential(credential)}
                       disabled={!credential?.issueeName}
+                      testid={`select-credential-${index}`}
                     >
                       <>{`${formatMessage({ id: "action.select" })} >`}</>
                     </Button>

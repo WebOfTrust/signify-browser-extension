@@ -44,7 +44,10 @@ export function Signin(props: ISignin): JSX.Element {
             ? formatMessage({ id: "account.settings" })
             : props.title}
         </Text>
-        <IconButton onClick={() => props.setShowConfig(true)}>
+        <IconButton
+          data-testid="settings-icon"
+          onClick={() => props.setShowConfig(true)}
+        >
           <SettingIcon size={6} />
         </IconButton>
       </Flex>
