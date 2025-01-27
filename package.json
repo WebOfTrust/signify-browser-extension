@@ -23,7 +23,7 @@
     "react-hot-toast": "^2.4.1",
     "react-intl": "^6.6.2",
     "react-tooltip": "^5.26.2",
-    "signify-ts": "github:WebOfTrust/signify-ts",
+    "signify-ts": "0.3.0-rc1",
     "styled-components": "^6.1.8",
     "styled-system": "^5.1.5",
     "webextension-polyfill": "^0.10.0"
