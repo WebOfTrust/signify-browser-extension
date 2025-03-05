@@ -6,7 +6,7 @@ import { copyFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 // import { crx, ManifestV3Export } from "@crxjs/vite-plugin";
 // import merge from "lodash/merge";
-// import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // import manifest from "./manifest.json";
 // import devManifest from "./manifest.dev.json";
@@ -101,7 +101,7 @@ export default defineConfig({
     //     injectCss: true,
     //   },
     // }),
-    // nodePolyfills(),
+    nodePolyfills(),
   ],
   publicDir,
   build: {

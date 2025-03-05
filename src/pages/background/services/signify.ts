@@ -24,6 +24,7 @@ import {
   setNodeValueInEdge,
   waitOperation,
 } from "@src/shared/signify-utils";
+import { workflowLoader } from "@src/shared/workflow-loader";
 
 const PASSCODE_TIMEOUT = 5;
 
@@ -64,6 +65,42 @@ const Signify = () => {
     return randomPasscode();
   };
 
+  const generateAndStorePasscode = async () => {
+    try {
+      // Generate a new passcode and get config
+      const result = await workflowLoader.generatePasscodeAndConfig();
+      const { passcode, config } = result;
+      
+      // Get the configured URLs
+      const agentUrl = await configService.getAgentUrl();
+      const bootUrl = await configService.getBootUrl();
+      
+      if (!agentUrl || !bootUrl) {
+        throw new Error("Agent URL or Boot URL not configured");
+      }
+      
+      // Update the config with the URLs
+      if (config && config.agents && config.agents.browser_extension) {
+        config.agents.browser_extension.url = agentUrl;
+        config.agents.browser_extension.boot_url = bootUrl;
+      }
+      
+      // Store the passcode for later use
+      await userService.setPasscode(passcode);
+      
+      console.log("Generated passcode and stored in user config", { 
+        agentUrl, 
+        bootUrl, 
+        passcodeLength: passcode ? passcode.length : 0 
+      });
+      
+      return { passcode, success: true };
+    } catch (error) {
+      console.error("Error generating and storing passcode:", error);
+      return { passcode: null, success: false, error };
+    }
+  };
+
   const bootAndConnect = async (
     agentUrl: string,
     bootUrl: string,
@@ -90,38 +127,58 @@ const Signify = () => {
     passcode: string,
   ) => {
     try {
+      console.log("Initializing workflow for boot and connect");
       await ready();
 
-      // Load the workflow file
-      const workflow = await vleiWorkflows.loadWorkflow(
-        "src/workflows/create-client-workflow.yaml",
-      );
-      const baseConfig = await vleiWorkflows.getConfig(
-        "src/user_config/create-client-config.json",
-      );
-
-      baseConfig.agents.browser_extension.url = agentUrl;
-      baseConfig.agents.browser_extension.boot_url = bootUrl;
-      baseConfig.agents.browser_extension.passcode = passcode;
-
-      const workflowRunner = new vleiWorkflows.WorkflowRunner(
-        workflow,
-        baseConfig,
-      );
-      await workflowRunner.runWorkflow();
-
-      const workflowState = vleiWorkflows.WorkflowState.getInstance();
-      _client = workflowState.clients.get("browser_extension");
-
-      if (!_client) {
-        throw new Error("Failed to create client through workflow");
+      // Load workflow and config from files (with fallback to defaults)
+      const workflow = await workflowLoader.loadWorkflow('create-client');
+      if (!workflow) {
+        throw new Error("Failed to load workflow definition");
       }
 
-      const state = await getState();
-      await userService.setControllerId(state?.controller?.state?.i);
-      setTimeoutAlarm();
+      // Load config with runtime values
+      const config = await workflowLoader.loadConfig('create-client-config', {
+        agentUrl,
+        bootUrl,
+        passcode
+      });
+      
+      if (!config) {
+        throw new Error("Failed to load config");
+      }
+
+      console.log("Starting workflow runner");
+      // Run the workflow
+      const workflowRunner = new vleiWorkflows.WorkflowRunner(
+        workflow,
+        config
+      );
+      
+      try {
+        await workflowRunner.runWorkflow();
+        
+        // Get the client from the workflow state
+        const workflowState = vleiWorkflows.WorkflowState.getInstance();
+        _client = workflowState.clients.get("browser_extension");
+        
+        if (!_client) {
+          throw new Error("Workflow did not create a client");
+        }
+        
+        // Set controller ID and timeout
+        const state = await getState();
+        await userService.setControllerId(state?.controller?.state?.i);
+        setTimeoutAlarm();
+        
+        return { success: true };
+      } catch (workflowError) {
+        console.error("Error running workflow:", workflowError);
+        // Fallback to direct bootAndConnect if workflow fails
+        console.log("Falling back to direct bootAndConnect");
+        return await bootAndConnect(agentUrl, bootUrl, passcode);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error in bootAndConnectWorkflow:", error);
       _client = null;
       return { error };
     }
@@ -531,17 +588,20 @@ const Signify = () => {
     disconnect,
     listIdentifiers,
     listCredentials,
-    getCredential,
-    createAID,
-    generatePasscode,
-    bootAndConnect,
-    bootAndConnectWorkflow,
-    getControllerID,
-    getSignedHeaders,
     authorizeSelectedSignin,
     getSessionInfo,
     removeSessionInfo,
+    getSignedHeaders,
+    getState,
+    getCredential,
+    getControllerID,
+    createAID,
+    createCredential,
     createAttestationCredential,
+    generatePasscode,
+    generateAndStorePasscode,
+    bootAndConnect,
+    bootAndConnectWorkflow,
   };
 };
 

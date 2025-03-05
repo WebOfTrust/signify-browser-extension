@@ -1,9 +1,9 @@
 {
   "agents": {
     "browser_extension": {
-      "url": "",
-      "boot_url": "",
-      "passcode": ""
+      "url": "http://localhost:3901",
+      "boot_url": "http://localhost:3903",
+      "passcode": "AE73McJC4-4e8g_8YzsMW"
     }
   }
 } 

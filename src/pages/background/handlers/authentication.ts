@@ -41,21 +41,44 @@ export async function handleConnectAgent({ sendResponse, data }: IHandler) {
 }
 
 export async function handleBootConnectAgent({ sendResponse, data }: IHandler) {
-  const resp = (await signifyService.bootAndConnectWorkflow(
-    data.agentUrl,
-    data.bootUrl,
-    data.passcode
-  )) as any;
-  if (resp?.error) {
+  try {
+    console.log("Booting and connecting agent via workflow with:", {
+      agentUrl: data.agentUrl,
+      bootUrl: data.bootUrl,
+      hasPasscode: !!data.passcode // Don't log actual passcode
+    });
+
+    // Call the workflow method
+    const resp = await signifyService.bootAndConnectWorkflow(
+      data.agentUrl,
+      data.bootUrl,
+      data.passcode
+    );
+
+    if (resp && 'error' in resp && resp.error) {
+      console.error("Error in boot connect workflow:", resp.error);
+      sendResponse({
+        error: {
+          code: 404,
+          message: resp.error instanceof Error 
+            ? resp.error.message 
+            : "Failed to connect to agent",
+        },
+      });
+    } else {
+      // Store the passcode for reconnection
+      await userService.setPasscode(data.passcode);
+      console.log("Successfully connected agent via workflow");
+      sendResponse({ data: { success: true } });
+    }
+  } catch (error) {
+    console.error("Unexpected error in handleBootConnectAgent:", error);
     sendResponse({
       error: {
-        code: 404,
-        message: resp?.error?.message,
+        code: 500,
+        message: error instanceof Error ? error.message : "An unexpected error occurred",
       },
     });
-  } else {
-    await userService.setPasscode(data.passcode);
-    sendResponse({ data: { success: true } });
   }
 }
 
@@ -92,8 +115,33 @@ export async function handleDisconnect() {
 }
 
 export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
-  const passcode = signifyService.generatePasscode();
-  sendResponse({ data: { passcode } });
+  try {
+    console.log("Generating passcode through workflow");
+    
+    // Use our method that generates a passcode and prepares the workflow config
+    const result = await signifyService.generateAndStorePasscode();
+    
+    if (result.success && result.passcode) {
+      console.log("Successfully generated passcode");
+      sendResponse({ data: { passcode: result.passcode } });
+    } else {
+      console.error("Failed to generate passcode");
+      sendResponse({ 
+        error: { 
+          message: "Failed to generate passcode" 
+        } 
+      });
+    }
+  } catch (error) {
+    console.error("Error in handleGeneratePasscode:", error);
+    sendResponse({ 
+      error: { 
+        message: error instanceof Error 
+          ? error.message 
+          : "Failed to generate passcode" 
+      } 
+    });
+  }
 }
 
 export async function handleGetAuthData({
