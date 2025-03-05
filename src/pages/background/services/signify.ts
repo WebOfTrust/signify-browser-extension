@@ -9,6 +9,7 @@ import {
   IssueCredentialResult,
   CredentialData,
 } from "signify-ts";
+import * as vleiWorkflows from "vlei-verifier-workflows";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
 import { userService } from "@pages/background/services/user";
@@ -73,6 +74,49 @@ const Signify = () => {
       _client = new SignifyClient(agentUrl, passcode, Tier.low, bootUrl);
       await _client.boot();
       await _client.connect();
+      const state = await getState();
+      await userService.setControllerId(state?.controller?.state?.i);
+      setTimeoutAlarm();
+    } catch (error) {
+      console.error(error);
+      _client = null;
+      return { error };
+    }
+  };
+
+  const bootAndConnectWorkflow = async (
+    agentUrl: string,
+    bootUrl: string,
+    passcode: string,
+  ) => {
+    try {
+      await ready();
+
+      // Load the workflow file
+      const workflow = await vleiWorkflows.loadWorkflow(
+        "src/workflows/create-client-workflow.yaml",
+      );
+      const baseConfig = await vleiWorkflows.getConfig(
+        "src/user_config/create-client-config.json",
+      );
+
+      baseConfig.agents.browser_extension.url = agentUrl;
+      baseConfig.agents.browser_extension.boot_url = bootUrl;
+      baseConfig.agents.browser_extension.passcode = passcode;
+
+      const workflowRunner = new vleiWorkflows.WorkflowRunner(
+        workflow,
+        baseConfig,
+      );
+      await workflowRunner.runWorkflow();
+
+      const workflowState = vleiWorkflows.WorkflowState.getInstance();
+      _client = workflowState.clients.get("browser_extension");
+
+      if (!_client) {
+        throw new Error("Failed to create client through workflow");
+      }
+
       const state = await getState();
       await userService.setControllerId(state?.controller?.state?.i);
       setTimeoutAlarm();
@@ -491,6 +535,7 @@ const Signify = () => {
     createAID,
     generatePasscode,
     bootAndConnect,
+    bootAndConnectWorkflow,
     getControllerID,
     getSignedHeaders,
     authorizeSelectedSignin,

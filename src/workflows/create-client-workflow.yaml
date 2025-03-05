@@ -1,0 +1,8 @@
+workflow:
+  description: "Create and boot Signify client using workflow"
+  steps:
+    create_client:
+      id: "create_client_step"
+      type: "create_client"
+      description: "Create Signify client"
+      agent_name: "browser_extension" 

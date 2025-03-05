@@ -1,0 +1,9 @@
+{
+  "agents": {
+    "browser_extension": {
+      "url": "",
+      "boot_url": "",
+      "passcode": ""
+    }
+  }
+} 

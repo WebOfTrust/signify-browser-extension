@@ -11,7 +11,10 @@
   "scripts": {
     "build": "vite build",
     "build:firefox": "BROWSER=firefox vite build",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "type": "module",
   "dependencies": {
@@ -26,11 +29,15 @@
     "signify-ts": "0.3.0-rc1",
     "styled-components": "^6.1.8",
     "styled-system": "^5.1.5",
+    "vlei-verifier-workflows": "^0.0.5",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.26",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/chrome": "^0.0.237",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.14.197",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
@@ -49,8 +56,10 @@
     "eslint-plugin-react": "^7.32.1",
     "eslint-plugin-react-hooks": "^4.3.0",
     "fs-extra": "^11.1.0",
+    "jest": "^29.7.0",
     "nodemon": "^2.0.20",
     "postcss": "^8.4.21",
+    "ts-jest": "^29.2.6",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",
     "vite": "^4.5.1",

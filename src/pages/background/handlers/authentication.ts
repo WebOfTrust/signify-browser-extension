@@ -41,7 +41,7 @@ export async function handleConnectAgent({ sendResponse, data }: IHandler) {
 }
 
 export async function handleBootConnectAgent({ sendResponse, data }: IHandler) {
-  const resp = (await signifyService.bootAndConnect(
+  const resp = (await signifyService.bootAndConnectWorkflow(
     data.agentUrl,
     data.bootUrl,
     data.passcode
@@ -57,6 +57,38 @@ export async function handleBootConnectAgent({ sendResponse, data }: IHandler) {
     await userService.setPasscode(data.passcode);
     sendResponse({ data: { success: true } });
   }
+}
+
+// Direct access methods for service functions
+// These are added from signify.ts to ensure all functionality is preserved
+export async function handleBootAndConnect({
+  agentUrl,
+  bootUrl,
+  passcode,
+}: {
+  agentUrl: string;
+  bootUrl: string;
+  passcode: string;
+}) {
+  return await signifyService.bootAndConnect(agentUrl, bootUrl, passcode);
+}
+
+export async function handleConnect({
+  agentUrl,
+  passcode,
+}: {
+  agentUrl: string;
+  passcode: string;
+}) {
+  return await signifyService.connect(agentUrl, passcode);
+}
+
+export async function handleIsConnected() {
+  return await signifyService.isConnected();
+}
+
+export async function handleDisconnect() {
+  return await signifyService.disconnect();
 }
 
 export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
