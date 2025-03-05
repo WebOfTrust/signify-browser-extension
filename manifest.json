@@ -27,8 +27,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "128_keri_logo.png", 
-        "src/workflows/*", 
+        "128_keri_logo.png",
+        "src/workflows/*",
         "src/user_config/*"
       ],
       "matches": ["<all_urls>"]
