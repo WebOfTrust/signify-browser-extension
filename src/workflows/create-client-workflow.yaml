@@ -1,8 +1,7 @@
 workflow:
-  description: "Create and boot Signify client using workflow"
   steps:
-    create_client:
-      id: "create_client_step"
-      type: "create_client"
-      description: "Create Signify client"
-      agent_name: "browser_extension" 
+    gleif_client:
+      id: 'gleif_client'
+      type: 'create_client'
+      agent_name: 'gleif-agent-1'
+      description: 'Creating client for gleif-agent-1'

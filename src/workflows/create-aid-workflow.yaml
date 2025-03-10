@@ -1,0 +1,7 @@
+workflow:
+  steps:
+    gleif_aid:
+      id: 'gleif_aid'
+      type: 'create_aid'
+      aid: 'gleif-aid-1'
+      description: 'Creating AID: gleif-aid-1' 
