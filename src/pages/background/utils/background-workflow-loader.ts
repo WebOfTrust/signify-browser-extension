@@ -120,21 +120,16 @@ export const generatePasscodeAndConfig = async (): Promise<{ passcode: string; c
 };
 
 /**
- * Load a workflow by name from embedded content or extension storage
+ * Load a workflow by name from bundled files or fallback sources
  */
 export const loadWorkflow = async (workflowName: string) => {
   try {
-    // First check if we have an embedded version
-    const embeddedWorkflow = EMBEDDED_WORKFLOWS[workflowName];
-    if (embeddedWorkflow) {
-      return yaml.load(embeddedWorkflow);
-    }
-    
-    // If not embedded, try to load from the extension's files
+    // First try to load from the extension's bundled files
     try {
       const browser = getExtensionApi();
       const workflowUrl = browser.runtime.getURL(`src/workflows/${workflowName}.yaml`);
       
+      console.log(`[WORKFLOW SOURCE] Attempting to load workflow from file: ${workflowUrl}`);
       const response = await fetch(workflowUrl);
       
       if (!response.ok) {
@@ -142,47 +137,85 @@ export const loadWorkflow = async (workflowName: string) => {
       }
       
       const yamlText = await response.text();
+      console.log(`[WORKFLOW SOURCE] SUCCESS: Using workflow from src/workflows/${workflowName}.yaml file`);
       return yaml.load(yamlText);
-    } catch (fetchError) {
-      // If we can't fetch from URL, try loading from extension storage
-      const browser = getExtensionApi();
-      const result = await browser.storage.local.get(`workflow_${workflowName}`);
-      const storedWorkflow = result[`workflow_${workflowName}`];
+    } catch (fetchError: any) {
+      console.warn(`[WORKFLOW SOURCE] File load failed: ${fetchError.message}`);
       
-      if (storedWorkflow) {
-        return yaml.load(storedWorkflow);
+      // Try using the embedded version as fallback
+      const embeddedWorkflow = EMBEDDED_WORKFLOWS[workflowName];
+      if (embeddedWorkflow) {
+        console.log(`[WORKFLOW SOURCE] Using embedded hardcoded workflow for: ${workflowName}`);
+        return yaml.load(embeddedWorkflow);
+      }
+      
+      // If not embedded, try loading from extension storage
+      try {
+        const browser = getExtensionApi();
+        const result = await browser.storage.local.get(`workflow_${workflowName}`);
+        const storedWorkflow = result[`workflow_${workflowName}`];
+        
+        if (storedWorkflow) {
+          console.log(`[WORKFLOW SOURCE] Using workflow from extension storage: ${workflowName}`);
+          return yaml.load(storedWorkflow);
+        }
+      } catch (storageError) {
+        console.warn(`[WORKFLOW SOURCE] Storage load failed: ${storageError}`);
       }
       
       // Last resort: Return a hardcoded fallback workflow for this name
+      console.log(`[WORKFLOW SOURCE] Using hardcoded fallback workflow definition for: ${workflowName}`);
       return getFallbackWorkflow(workflowName);
     }
-  } catch (error) {
-    console.error(`Error loading workflow: ${error}`);
+  } catch (error: any) {
+    console.error(`[WORKFLOW SOURCE] Critical error loading workflow: ${error.message}`);
+    console.log(`[WORKFLOW SOURCE] Using hardcoded fallback workflow definition as last resort`);
     return getFallbackWorkflow(workflowName);
   }
 };
 
 /**
  * Get a fallback workflow definition when all loading methods fail
+ * These are hardcoded definitions used when file loading fails
  */
 const getFallbackWorkflow = (workflowName: string) => {
-  // This is our last resort if we can't load from any source
-  if (workflowName === 'create-client-workflow' || workflowName === 'create-client') {
-    return {
-      workflow: {
-        steps: {
-          gleif_client: {
-            id: 'gleif_client',
-            type: 'create_client',
-            agent_name: 'gleif-agent-1',
-            description: 'Creating client for gleif agent'
+  console.log(`[WORKFLOW SOURCE] Creating fallback definition for: ${workflowName}`);
+  
+  // Provide fallback workflows based on the requested name
+  switch (workflowName) {
+    case 'create-client-workflow':
+    case 'create-client':
+      return {
+        workflow: {
+          steps: {
+            gleif_client: {
+              id: 'gleif_client',
+              type: 'create_client',
+              agent_name: 'gleif-agent-1',
+              description: 'Creating client for gleif agent (FALLBACK)'
+            }
           }
         }
-      }
-    };
+      };
+    
+    case 'create-aid-workflow':
+      return {
+        workflow: {
+          steps: {
+            gleif_aid: {
+              id: 'gleif_aid',
+              type: 'create_aid',
+              aid: 'gleif-aid-1',
+              description: 'Creating AID for gleif-aid-1 (FALLBACK)'
+            }
+          }
+        }
+      };
+      
+    default:
+      console.warn(`[WORKFLOW SOURCE] No fallback definition for: ${workflowName}`);
+      return null;
   }
-  
-  return null;
 };
 
 /**
@@ -195,6 +228,7 @@ export const loadConfig = async (configName: string, runtimeValues: any): Promis
       const browser = getExtensionApi();
       const configUrl = browser.runtime.getURL(`src/user_config/${configName}.json`);
       
+      console.log(`[CONFIG SOURCE] Attempting to load config from file: ${configUrl}`);
       const response = await fetch(configUrl);
       
       if (!response.ok) {
@@ -202,6 +236,7 @@ export const loadConfig = async (configName: string, runtimeValues: any): Promis
       }
       
       const configText = await response.text();
+      console.log(`[CONFIG SOURCE] SUCCESS: Using config from src/user_config/${configName}.json file`);
       
       // Parse the config
       const config = JSON.parse(configText) as ExtendedConfig;
@@ -230,11 +265,23 @@ export const loadConfig = async (configName: string, runtimeValues: any): Promis
         if (runtimeValues.bran) {
           config.bran = runtimeValues.bran;
         }
+        
+        // For AID creation workflow, update the identifiers section with the AID name
+        if (runtimeValues.aidName && config.identifiers) {
+          // Create or update the identity with the provided name
+          config.identifiers[runtimeValues.aidName] = {
+            agent: "gleif-agent-1",
+            name: runtimeValues.aidName
+          };
+        }
       }
       
       return config;
-    } catch (fetchError) {
+    } catch (fetchError: any) {
+      console.warn(`[CONFIG SOURCE] File load failed: ${fetchError.message}`);
+      
       // Fall back to default config with runtime values
+      console.log(`[CONFIG SOURCE] Using default hardcoded config`);
       const config: ExtendedConfig = { ...DEFAULT_CLIENT_CONFIG };
       
       // Inject runtime values
@@ -265,12 +312,23 @@ export const loadConfig = async (configName: string, runtimeValues: any): Promis
         if (runtimeValues.bran) {
           config.bran = runtimeValues.bran;
         }
+        
+        // For AID creation workflow, update the identifiers section with the AID name
+        if (runtimeValues.aidName) {
+          config.identifiers = {
+            ...config.identifiers,
+            [runtimeValues.aidName]: {
+              agent: "gleif-agent-1",
+              name: runtimeValues.aidName
+            }
+          };
+        }
       }
       
       return config;
     }
-  } catch (error) {
-    console.error(`Error loading config: ${error}`);
+  } catch (error: any) {
+    console.error(`[CONFIG SOURCE] Critical error loading config: ${error.message}`);
     return null;
   }
 }; 

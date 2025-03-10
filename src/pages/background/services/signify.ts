@@ -601,10 +601,41 @@ const Signify = () => {
     return controllerId;
   };
 
-  const createAID = async (name: string) => {
-    validateClient();
-    let res = await _client?.identifiers().create(name);
-    return await res?.op();
+  /**
+   * Create a new AID with the given name
+   * This is a wrapper function that uses the workflow-based approach when possible
+   * @returns A promise that resolves to an object with success or error information
+   */
+  const createAID = async (name: string): Promise<{ success?: boolean; error?: any }> => {
+    try {
+      // Check if called from workflow to prevent infinite recursion
+      const callerInfo = new Error().stack || '';
+      const isCalledFromWorkflow = callerInfo.includes('createAIDWorkflow');
+      
+      // Only use workflow approach if not already called from it
+      if (!isCalledFromWorkflow) {
+        try {
+          // Try to use the workflow-based approach first
+          return await createAIDWorkflow(name);
+        } catch (workflowError) {
+          // If the workflow approach fails, fall back to direct API call
+          console.warn("Falling back to direct AID creation");
+        }
+      }
+      
+      // Direct API approach as fallback
+      // Ensure client is connected
+      if (!_client) {
+        throw new Error("Client must be connected before creating an AID");
+      }
+      
+      // Use direct API call
+      await _client.identifiers().create(name);
+      return { success: true };
+    } catch (error) {
+      console.error("Error creating AID:", error);
+      return { error };
+    }
   };
 
   const createCredential = async (
@@ -621,6 +652,98 @@ const Signify = () => {
       typeof aid.group === "object" &&
       aid.group !== null
     );
+  };
+
+  /**
+   * Create an AID using the workflow approach
+   * @param name The name for the AID
+   * @returns A promise that resolves to an object with success or error information
+   */
+  const createAIDWorkflow = async (name: string): Promise<{ success?: boolean; error?: any }> => {
+    try {
+      console.log("Initializing workflow for AID creation");
+      
+      // First, verify the client is connected
+      if (!_client) {
+        throw new Error("Client must be connected before creating an AID");
+      }
+      
+      // Generate a valid bran (browser authentication record number)
+      const generateValidBran = () => {
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        for (let i = 0; i < 21; i++) {
+          result += charset.charAt(Math.floor(Math.random() * charset.length));
+        }
+        return result;
+      };
+      
+      const validBran = generateValidBran();
+      
+      // Load AID creation workflow
+      const workflow = await backgroundWorkflowLoader.loadWorkflow("create-aid-workflow");
+      if (!workflow) {
+        console.warn("Failed to load AID workflow, falling back to direct creation");
+        return await createAID(name);
+      }
+      
+      // Get the current agent URL - safely checking for undefined values
+      let agentUrl = "";
+      if (_client && _client.controller && _client.controller.connection) {
+        agentUrl = _client.controller.connection.url;
+      } else {
+        // Get from config service as fallback
+        agentUrl = await configService.getAgentUrl() || "";
+      }
+      
+      if (!agentUrl) {
+        throw new Error("Cannot determine agent URL for AID creation");
+      }
+      
+      // Get passcode from user service
+      const passcode = await userService.getPasscode();
+      
+      if (!passcode) {
+        throw new Error("No passcode available for AID creation");
+      }
+      
+      // Load config with runtime values
+      const config = await backgroundWorkflowLoader.loadConfig("create-client-config", {
+        agentUrl,
+        bootUrl: "", // Not needed for AID creation
+        passcode,
+        bran: validBran,
+        aidName: name // Add the AID name to the config
+      });
+      
+      if (!config) {
+        console.warn("Failed to load config, falling back to direct creation");
+        return await createAID(name);
+      }
+      
+      // Modify the workflow to use the provided AID name
+      if (workflow.workflow && workflow.workflow.steps && workflow.workflow.steps.gleif_aid) {
+        workflow.workflow.steps.gleif_aid.aid = name;
+        workflow.workflow.steps.gleif_aid.description = `Creating AID: ${name}`;
+      }
+      
+      // Run the workflow
+      console.log("Starting AID workflow runner");
+      const workflowRunner = new vleiWorkflows.WorkflowRunner(workflow, config);
+      
+      try {
+        await workflowRunner.runWorkflow();
+        console.log(`AID ${name} created successfully via workflow`);
+        return { success: true };
+      } catch (workflowError) {
+        console.error("Error running AID workflow");
+        console.log("Falling back to direct AID creation");
+        return await createAID(name);
+      }
+    } catch (error) {
+      console.error("Error in createAIDWorkflow");
+      return { error };
+    }
   };
 
   return {
@@ -643,6 +766,7 @@ const Signify = () => {
     generateAndStorePasscode,
     bootAndConnect,
     bootAndConnectWorkflow,
+    createAIDWorkflow,
   };
 };
 
