@@ -1,7 +1,10 @@
 import { signifyService } from "@pages/background/services/signify";
 import { userService } from "@pages/background/services/user";
 import { getDomainFromUrl } from "@shared/utils";
-import { IHandler } from "@config/types";
+import { IHandler, ISessionConfig, ISignin } from "@config/types";
+import { getCurrentUrl } from "@pages/background/utils";
+import { getExtensionApi } from "@src/shared/browser/extension-api";
+import * as vleiWorkflows from "vlei-verifier-workflows";
 
 export async function handleCheckAgentConnection({
   sendResponse,
@@ -144,6 +147,74 @@ export async function handleGeneratePasscode({ sendResponse, data }: IHandler) {
           error instanceof Error
             ? error.message
             : "Failed to generate passcode",
+      },
+    });
+  }
+}
+
+export async function handleRunUploadedWorkflow({
+  sendResponse,
+  data,
+}: IHandler) {
+  try {
+    console.log("Running uploaded workflow");
+
+    // Get the browser extension API
+    const browser = getExtensionApi();
+
+    // Retrieve the uploaded workflow and config from storage
+    const result = await browser.storage.local.get([
+      "uploaded_workflow",
+      "uploaded_config",
+    ]);
+
+    if (!result.uploaded_workflow || !result.uploaded_config) {
+      throw new Error("No uploaded workflow or config found");
+    }
+
+    // Parse the stored JSON strings back to objects
+    const workflowData = JSON.parse(result.uploaded_workflow);
+    const configData = JSON.parse(result.uploaded_config);
+
+    console.log("Retrieved workflow and config from storage:", {
+      workflowData,
+      configData,
+    });
+
+    // Check if we have valid workflow data
+    if (!workflowData.workflow || !workflowData.workflow.steps) {
+      throw new Error("Invalid workflow format");
+    }
+
+    try {
+      // Run the workflow using the WorkflowRunner directly
+      const workflowRunner = new vleiWorkflows.WorkflowRunner(
+        workflowData,
+        configData,
+      );
+      await workflowRunner.runWorkflow();
+
+      // If we get here, the workflow succeeded
+      sendResponse({
+        data: {
+          success: true,
+          requiresPasscode: true, // Indicate that we need a passcode for next steps
+        },
+      });
+    } catch (workflowError) {
+      console.error("Error running workflow:", workflowError);
+      throw new Error(
+        `Workflow execution failed: ${workflowError instanceof Error ? workflowError.message : String(workflowError)}`,
+      );
+    }
+  } catch (error) {
+    console.error("Error in handleRunUploadedWorkflow:", error);
+    sendResponse({
+      error: {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to run uploaded workflow",
       },
     });
   }

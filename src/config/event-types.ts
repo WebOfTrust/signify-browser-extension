@@ -23,7 +23,7 @@ export const CS_EVENTS = {
   fetch_resource_signed_headers: `${CS}-${EVENT_TYPE.fetch_resource}-signed-headers`,
   fetch_resource_tab_signin: `${CS}-${EVENT_TYPE.fetch_resource}-tab-signin`,
   fetch_resource_credential: `${CS}-${EVENT_TYPE.fetch_resource}-credential`,
-  
+
   create_resource_data_attestation_credential: `${CS}-${EVENT_TYPE.create_resource}-data-attestation-credential`,
 
   vendor_info_get_vendor_data: `${CS}-${EVENT_TYPE.vendor_info}-get-vendor-data`,
@@ -42,6 +42,7 @@ export const UI_EVENTS = {
   authentication_connect_agent: `${UI}-${EVENT_TYPE.authentication}-connect-agent`,
   authentication_boot_connect_agent: `${UI}-${EVENT_TYPE.authentication}-boot-connect-agent`,
   authentication_generate_passcode: `${UI}-${EVENT_TYPE.authentication}-generate-passcode`,
+  authentication_run_uploaded_workflow: `${UI}-${EVENT_TYPE.authentication}-run-uploaded-workflow`,
 
   create_resource_signin: `${UI}-${EVENT_TYPE.create_resource}-signin`,
   create_resource_identifier: `${UI}-${EVENT_TYPE.create_resource}-identifier`,
@@ -65,7 +66,6 @@ export const SW_EVENTS = {
 type T_CS_EVENTS = (typeof CS_EVENTS)[keyof typeof CS_EVENTS];
 type T_UI_EVENTS = (typeof UI_EVENTS)[keyof typeof UI_EVENTS];
 type T_SW_EVENTS = (typeof SW_EVENTS)[keyof typeof SW_EVENTS];
-
 
 // this would make sure the type must be a string from these objects
 type T_EventType = T_CS_EVENTS | T_UI_EVENTS | T_SW_EVENTS;

@@ -2,6 +2,7 @@
   "account.docs": "docs",
   "account.enterPasscode": "Enter your passcode",
   "account.onboard.cta": "Don't have a KERIA agent?",
+  "account.uploadConfig.cta": "Upload config file and workflow file",
   "account.settings": "Settings",
   "account.support": "support",
   "action.allow": "Allow",
@@ -10,6 +11,7 @@
   "action.click": "click",
   "action.clickToRemove": "click to remove",
   "action.connect": "Connect",
+  "action.continue": "Continue",
   "action.create": "Create",
   "action.createNew": "Create New",
   "action.delete": "Delete",
@@ -68,5 +70,14 @@
   "signup.desc.storeYourPasscode": "Please store it in a secure online or offline location.",
   "signup.title.generatePasscode": "Generate Passcode",
   "signup.title.saveYourPasscode": "Save your Passcode",
-  "signup.warning.cannotRetrieve": "We CANNOT retrieve your passcode if you lose it."
+  "signup.warning.cannotRetrieve": "We CANNOT retrieve your passcode if you lose it.",
+  "fileupload.action.upload": "Upload Files",
+  "fileupload.error.nofiles": "Please select at least one file to upload",
+  "fileupload.label.configFile": "Config File",
+  "fileupload.label.workflowFile": "Workflow File",
+  "fileupload.label.selectedFile": "Selected file",
+  "fileupload.message.uploadDescription": "Upload your configuration and workflow files. After saving, you'll be returned to the passcode entry screen to complete setup.",
+  "fileupload.title.uploadFiles": "Upload Configuration Files",
+  "fileupload.title.enterPasscode": "Enter Your Passcode",
+  "fileupload.message.enterPasscodeDescription": "Enter your passcode to complete the setup with the uploaded configuration files."
 }

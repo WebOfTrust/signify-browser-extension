@@ -21,6 +21,7 @@ interface ISignin {
   showConfig: boolean;
   setShowConfig: (state: boolean) => void;
   handleSignup: () => void;
+  handleFileUpload?: () => void;
 }
 
 export function Signin(props: ISignin): JSX.Element {
@@ -83,6 +84,13 @@ export function Signin(props: ISignin): JSX.Element {
             </NewButton>
           </Box>
         ) : null}
+        {props.handleFileUpload && (
+          <Box textAlign="center">
+            <NewButton onClick={props.handleFileUpload} $hoverUnderline>
+              {formatMessage({ id: "account.uploadConfig.cta" })}
+            </NewButton>
+          </Box>
+        )}
         <Box textAlign="center">
           <NewButton
             as="a"

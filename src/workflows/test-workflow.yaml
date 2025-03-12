@@ -1,0 +1,12 @@
+workflow:
+  steps:
+    gleif_client:
+      id: 'gleif_client'
+      type: 'create_client'
+      agent_name: 'gleif-agent-1'
+      description: 'Creating client for gleif-agent-1'
+    gleif_aid:
+      id: 'gleif_aid'
+      type: 'create_aid'
+      aid: 'gleif-aid-1'
+      description: 'Creating AID: gleif-aid-1' 

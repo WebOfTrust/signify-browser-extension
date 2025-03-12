@@ -1,4 +1,11 @@
-import { useState, useEffect } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  createContext,
+  useContext,
+} from "react";
 import { Toaster } from "react-hot-toast";
 import { createGlobalStyle } from "styled-components";
 import { UI_EVENTS } from "@config/event-types";
@@ -16,6 +23,7 @@ import { IVendorData } from "@config/types";
 import { Permission } from "@src/screens/permission";
 import { Signin } from "@src/screens/signin";
 import { Signup } from "@src/screens/signup";
+import { FileUpload } from "@src/screens/fileupload";
 import { Loader, Box } from "@components/ui";
 import { Main } from "@components/main";
 
@@ -57,6 +65,7 @@ export default function Popup(): JSX.Element {
   const [vendorData, setVendorData] = useState<IVendorData>(defaultVendor);
   const [showConfig, setShowConfig] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [showFileUpload, setShowFileUpload] = useState(false);
 
   const [permissionData, setPermissionData] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -171,19 +180,178 @@ export default function Popup(): JSX.Element {
   };
 
   const handleDisconnect = async () => {
-    await sendMessage({
-      type: UI_EVENTS.authentication_disconnect_agent,
-    });
-    checkConnection();
+    setIsLoading(true);
+    await sendMessage({ type: UI_EVENTS.authentication_disconnect_agent });
+    await checkConnection();
+    setIsLoading(false);
   };
 
   const handleDisconnectPermission = async () => {
-    await sendMessage({
-      type: UI_EVENTS.authentication_disconnect_agent,
-    });
-    await checkConnection();
-    checkIfVendorDataExists();
-    checkWebRequestedPermissions();
+    setIsLoading(true);
+    await sendMessage({ type: UI_EVENTS.authentication_disconnect_agent });
+    setPermissionData(false);
+    await checkInitialConnection();
+    setIsLoading(false);
+  };
+
+  const handleFileUpload = async (
+    configFile: File | null,
+    workflowFile: File | null,
+  ) => {
+    setIsLoading(true);
+    setConnectError("");
+
+    try {
+      // Verify we have the needed files
+      if (!configFile && !workflowFile) {
+        throw new Error("At least one of config or workflow file is required");
+      }
+
+      // Read the contents of the uploaded files
+      let configData: any = null;
+      let workflowData: any = null;
+
+      if (configFile) {
+        const configText = await configFile.text();
+        try {
+          // Parse config based on file type (JSON or YAML)
+          if (configFile.name.endsWith(".json")) {
+            configData = JSON.parse(configText);
+          } else if (
+            configFile.name.endsWith(".yaml") ||
+            configFile.name.endsWith(".yml")
+          ) {
+            // We need to import yaml parser dynamically since it might not be available in all contexts
+            const { default: yaml } = await import("js-yaml");
+            configData = yaml.load(configText);
+          } else {
+            throw new Error(
+              "Unsupported config file format. Please use JSON or YAML.",
+            );
+          }
+        } catch (parseError) {
+          throw new Error(
+            `Error parsing config file: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+          );
+        }
+      }
+
+      if (workflowFile) {
+        const workflowText = await workflowFile.text();
+        try {
+          // Parse workflow based on file type (JSON or YAML)
+          if (workflowFile.name.endsWith(".json")) {
+            workflowData = JSON.parse(workflowText);
+          } else if (
+            workflowFile.name.endsWith(".yaml") ||
+            workflowFile.name.endsWith(".yml")
+          ) {
+            const { default: yaml } = await import("js-yaml");
+            workflowData = yaml.load(workflowText);
+          } else {
+            throw new Error(
+              "Unsupported workflow file format. Please use JSON or YAML.",
+            );
+          }
+        } catch (parseError) {
+          throw new Error(
+            `Error parsing workflow file: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+          );
+        }
+      }
+
+      console.log("Config data:", configData);
+      console.log("Workflow data:", workflowData);
+
+      // If either file is missing, try to get default data
+      if (!configData) {
+        // Use a default configuration
+        console.log("No config file, using default config");
+        const result = await sendMessage({
+          type: UI_EVENTS.authentication_generate_passcode,
+        });
+        if (result.data?.passcode) {
+          configData = {
+            secrets: {
+              browser_extension: result.data.passcode,
+            },
+            agents: {
+              browser_extension: {
+                secret: "browser_extension",
+              },
+            },
+            identifiers: {},
+            users: [],
+            credentials: {},
+          };
+        } else {
+          throw new Error("Failed to generate default configuration");
+        }
+      }
+
+      if (!workflowData) {
+        // Use a default workflow
+        console.log("No workflow file, using default client workflow");
+        workflowData = {
+          workflow: {
+            steps: {
+              gleif_client: {
+                id: "gleif_client",
+                type: "create_client",
+                agent_name: "gleif-agent-1",
+                description: "Creating client from uploaded configuration",
+              },
+            },
+          },
+        };
+      }
+
+      // Store the workflow and config in extension storage for background script access
+      const browser = await import("@src/shared/browser/extension-api").then(
+        (m) => m.getExtensionApi(),
+      );
+      await browser.storage.local.set({
+        uploaded_workflow: JSON.stringify(workflowData),
+        uploaded_config: JSON.stringify(configData),
+      });
+
+      // Notify the background script to run the workflow
+      const { data, error } = await sendMessage({
+        type: UI_EVENTS.authentication_run_uploaded_workflow,
+      });
+
+      if (error) {
+        throw new Error(`Error running workflow: ${error.message}`);
+      }
+
+      console.log("Workflow execution result:", data);
+
+      // On successful completion, return to sign in
+      setIsLoading(false);
+      setShowFileUpload(false);
+
+      // If the workflow execution requires a passcode, show a message
+      if (data && data.requiresPasscode) {
+        setConnectError("Please enter your passcode to complete the setup.");
+        setTimeout(() => {
+          setConnectError("");
+        }, 5000);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setConnectError(
+        error instanceof Error
+          ? error.message
+          : "Failed to process uploaded files",
+      );
+      setTimeout(() => {
+        setConnectError("");
+      }, 5000);
+    }
+  };
+
+  const handleUserPreferences = async (autoSignin?: boolean) => {
+    // ... existing code ...
   };
 
   const logo = vendorData?.logo ?? "/128_keri_logo.png";
@@ -230,6 +398,14 @@ export default function Popup(): JSX.Element {
                     signupError={connectError}
                   />
                 </Box>
+              ) : showFileUpload ? (
+                <Box width="300px">
+                  <FileUpload
+                    isLoading={isLoading}
+                    handleFileUpload={handleFileUpload}
+                    fileUploadError={connectError}
+                  />
+                </Box>
               ) : (
                 <>
                   {isConnected ? (
@@ -251,6 +427,7 @@ export default function Popup(): JSX.Element {
                         showConfig={showConfig}
                         setShowConfig={setShowConfig}
                         handleSignup={() => setShowSignup(true)}
+                        handleFileUpload={() => setShowFileUpload(true)}
                       />
                     </Box>
                   )}

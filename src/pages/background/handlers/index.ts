@@ -18,7 +18,7 @@ import {
   handleFetchTabSignin,
   handleUpdateAutoSignin,
   handleCreateAttestationCredential,
-  handleFetchCredential
+  handleFetchCredential,
 } from "./resource";
 import { handleGetVendorData, handleAttemptSetVendorData } from "./vendorInfo";
 import {
@@ -30,6 +30,7 @@ import {
   handleGetAuthData,
   handleGetSessionInfo,
   handleClearSession,
+  handleRunUploadedWorkflow,
 } from "./authentication";
 
 export function initUIHandler() {
@@ -38,17 +39,21 @@ export function initUIHandler() {
 
   handler.set(
     UI_EVENTS.authentication_check_agent_connection,
-    handleCheckAgentConnection
+    handleCheckAgentConnection,
   );
   handler.set(UI_EVENTS.authentication_disconnect_agent, handleDisconnectAgent);
   handler.set(UI_EVENTS.authentication_connect_agent, handleConnectAgent);
   handler.set(
     UI_EVENTS.authentication_boot_connect_agent,
-    handleBootConnectAgent
+    handleBootConnectAgent,
   );
   handler.set(
     UI_EVENTS.authentication_generate_passcode,
-    handleGeneratePasscode
+    handleGeneratePasscode,
+  );
+  handler.set(
+    UI_EVENTS.authentication_run_uploaded_workflow,
+    handleRunUploadedWorkflow,
   );
 
   handler.set(UI_EVENTS.create_resource_signin, handleCreateSignin);
@@ -72,39 +77,33 @@ export function initCSHandler() {
   handler.set(CS_EVENTS.action_icon_unset_tab, handleUnsetTabActionIcon);
   handler.set(
     CS_EVENTS.fetch_resource_auto_signin_signature,
-    handleFetchAutoSigninSignature
+    handleFetchAutoSigninSignature,
   );
   handler.set(
     CS_EVENTS.fetch_resource_signed_headers,
-    handleFetchSignifyHeaders
+    handleFetchSignifyHeaders,
   );
   handler.set(CS_EVENTS.fetch_resource_tab_signin, handleFetchTabSignin);
   handler.set(CS_EVENTS.fetch_resource_credential, handleFetchCredential);
 
-  handler.set(CS_EVENTS.create_resource_data_attestation_credential, handleCreateAttestationCredential);
+  handler.set(
+    CS_EVENTS.create_resource_data_attestation_credential,
+    handleCreateAttestationCredential,
+  );
 
   handler.set(CS_EVENTS.vendor_info_get_vendor_data, handleGetVendorData);
   handler.set(
     CS_EVENTS.vendor_info_provide_config_url,
-    handleAttemptSetVendorData
+    handleAttemptSetVendorData,
   );
 
   handler.set(
     CS_EVENTS.authentication_check_agent_connection,
-    handleCheckAgentConnection
+    handleCheckAgentConnection,
   );
-  handler.set(
-    CS_EVENTS.authentication_get_auth_data,
-    handleGetAuthData
-  );
-  handler.set(
-    CS_EVENTS.authentication_get_session_info,
-    handleGetSessionInfo
-  );
-  handler.set(
-    CS_EVENTS.authentication_clear_session,
-    handleClearSession
-  );
+  handler.set(CS_EVENTS.authentication_get_auth_data, handleGetAuthData);
+  handler.set(CS_EVENTS.authentication_get_session_info, handleGetSessionInfo);
+  handler.set(CS_EVENTS.authentication_clear_session, handleClearSession);
 
   return handler;
 }
