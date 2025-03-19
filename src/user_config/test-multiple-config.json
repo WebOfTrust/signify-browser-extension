@@ -1,0 +1,92 @@
+{
+  "secrets": {
+    "gleif1": "D_PbQb01zuzQgK-kDWjq5",
+    "qvi1": "BTaqgh1eeOjXO5iQJp6m5",
+    "le1": "Akv4TFoiYeHNqzj3N8gE5",
+    "ecr1": "nf98hUHUy8Vt5tvdyaYV5"
+  },
+  "credentials": {
+    "gleif_to_qvi_vlei_cred": {
+      "type": "direct",
+      "schema": "QVI_SCHEMA_SAID",
+      "privacy": false,
+      "attributes": {}
+    },
+    "qvi_to_le_vlei_cred": {
+      "credSource": {
+        "type": "qvi"
+      },
+      "type": "direct",
+      "schema": "LE_SCHEMA_SAID",
+      "rules": "LE_RULES",
+      "privacy": false,
+      "attributes": {}
+    },
+    "le_to_ecr_vlei_cred": {
+      "credSource": {
+        "type": "le"
+      },
+      "type": "direct",
+      "schema": "ECR_SCHEMA_SAID",
+      "rules": "ECR_RULES",
+      "privacy": true,
+      "attributes": {
+        "engagementContextRole": "EBA Data Submitter"
+      }
+    }
+  },
+  "agents": {
+    "gleif-agent-1": {
+      "secret": "gleif1"
+    },
+    "qvi-agent-1": {
+      "secret": "qvi1"
+    },
+    "le-agent-1": {
+      "secret": "le1"
+    },
+    "ecr-agent-1": {
+      "secret": "ecr1"
+    }
+  },
+  "identifiers": {
+    "gleif-aid-1": {
+      "agent": "gleif-agent-1",
+      "name": "gleif-aid-1"
+    },
+    "qvi-aid-1": {
+      "agent": "qvi-agent-1",
+      "name": "qvi-aid-1"
+    },
+    "le-aid-1": {
+      "agent": "le-agent-1",
+      "name": "le-aid-1"
+    },
+    "ecr-aid-1": {
+      "agent": "ecr-agent-1",
+      "name": "ecr-aid-1"
+    }
+  },
+  "users": [
+    {
+      "type": "GLEIF",
+      "alias": "gleif-user-1",
+      "identifiers": ["gleif-aid-1"]
+    },
+    {
+      "type": "QVI",
+      "alias": "qvi-user-1",
+      "identifiers": ["qvi-aid-1"]
+    },
+    {
+      "type": "LE",
+      "alias": "le-user-1",
+      "identifiers": ["le-aid-1"]
+    },
+    {
+      "type": "ECR",
+      "alias": "ecr-user-1",
+      "identifiers": ["ecr-aid-1"]
+    }
+  ]
+}
