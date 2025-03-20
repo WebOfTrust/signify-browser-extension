@@ -9,10 +9,10 @@ import * as vleiWorkflows from "vlei-verifier-workflows";
 // Remove these imports as they're no longer needed in this file
 // Import necessary utility functions directly from vlei-verifier-workflows
 // These imports are needed for our patched implementation
-// import { 
-//   getOrCreateAID, 
-//   resolveOobi, 
-//   waitOperation 
+// import {
+//   getOrCreateAID,
+//   resolveOobi,
+//   waitOperation
 // } from "vlei-verifier-workflows/dist/utils/test-util.js";
 
 export async function handleCheckAgentConnection({
@@ -195,12 +195,14 @@ export async function handleRunUploadedWorkflow({
     // Use the signify service to run the workflow with safe delegation handling
     const workflowResult = await signifyService.patchWorkflowWithSafeDelegation(
       workflowData,
-      configData
+      configData,
     );
 
     if (workflowResult.success) {
-      console.log("Workflow executed successfully with patched delegation handling");
-      
+      console.log(
+        "Workflow executed successfully with patched delegation handling",
+      );
+
       // If we get here, the workflow succeeded
       sendResponse({
         data: {

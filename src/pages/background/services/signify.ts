@@ -10,10 +10,10 @@ import {
   CredentialData,
 } from "signify-ts";
 import * as vleiWorkflows from "vlei-verifier-workflows";
-import { 
+import {
   getOrCreateAID,
   resolveOobi,
-  waitOperation
+  waitOperation,
 } from "vlei-verifier-workflows/dist/utils/test-util.js";
 import { sendMessage } from "@src/shared/browser/runtime-utils";
 import { sendMessageTab, getCurrentTab } from "@src/shared/browser/tabs-utils";
@@ -29,7 +29,7 @@ import {
   setNodeValueInEdge,
   waitOperation as waitSignifyOperation,
 } from "@src/shared/signify-utils";
-import * as backgroundWorkflowLoader from '../utils/background-workflow-loader';
+import * as backgroundWorkflowLoader from "../utils/background-workflow-loader";
 import { workflowLoader } from "@src/shared/workflow-loader";
 
 const PASSCODE_TIMEOUT = 5;
@@ -115,25 +115,26 @@ const Signify = () => {
     try {
       console.log("Directly booting and connecting agent");
       await ready();
-      
+
       // Generate a valid bran (browser authentication record number)
       // Must be exactly 21 characters
       const generateValidBran = () => {
-        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const charset =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let result = "";
         for (let i = 0; i < 21; i++) {
           result += charset.charAt(Math.floor(Math.random() * charset.length));
         }
         return result;
       };
-      
+
       const validBran = generateValidBran();
-      
+
       // Create client with the valid bran
       _client = new SignifyClient(agentUrl, passcode, Tier.low, {
-        bran: validBran
+        bran: validBran,
       });
-      
+
       await _client.connect();
       const state = await getState();
       await userService.setControllerId(state?.controller?.state?.i);
@@ -154,40 +155,50 @@ const Signify = () => {
     try {
       console.log("Initializing workflow for boot and connect");
       await ready();
-      
+
       // Generate a valid bran (browser authentication record number)
       // Must be exactly 21 characters
       const generateValidBran = () => {
-        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const charset =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let result = "";
         for (let i = 0; i < 21; i++) {
           result += charset.charAt(Math.floor(Math.random() * charset.length));
         }
         return result;
       };
-      
+
       const validBran = generateValidBran();
-      
+
       // Load client workflow using our background-compatible loader
-      const workflow = await backgroundWorkflowLoader.loadWorkflow("create-client-workflow");
+      const workflow = await backgroundWorkflowLoader.loadWorkflow(
+        "create-client-workflow",
+      );
       if (!workflow) {
-        console.warn("Failed to load workflow, falling back to direct connection");
+        console.warn(
+          "Failed to load workflow, falling back to direct connection",
+        );
         return await bootAndConnect(agentUrl, bootUrl, passcode);
       }
 
       // Load config with runtime values using our background-compatible loader
-      const config = await backgroundWorkflowLoader.loadConfig("create-client-config", {
-        agentUrl,
-        bootUrl,
-        passcode,
-        bran: validBran
-      });
+      const config = await backgroundWorkflowLoader.loadConfig(
+        "create-client-config",
+        {
+          agentUrl,
+          bootUrl,
+          passcode,
+          bran: validBran,
+        },
+      );
 
       if (!config) {
-        console.warn("Failed to load config, falling back to direct connection");
+        console.warn(
+          "Failed to load config, falling back to direct connection",
+        );
         return await bootAndConnect(agentUrl, bootUrl, passcode);
       }
-      
+
       // Add the bran to the config
       if (!config.bran) {
         config.bran = validBran;
@@ -202,12 +213,14 @@ const Signify = () => {
 
         // Get the client from the workflow state
         const workflowState = vleiWorkflows.WorkflowState.getInstance();
-        
+
         // Look for gleif-agent-1 instead of browser_extension
         _client = workflowState.clients.get("gleif-agent-1");
 
         if (!_client) {
-          console.warn("Workflow did not create a client for gleif-agent-1, falling back to direct connection");
+          console.warn(
+            "Workflow did not create a client for gleif-agent-1, falling back to direct connection",
+          );
           return await bootAndConnect(agentUrl, bootUrl, passcode);
         }
 
@@ -606,180 +619,241 @@ const Signify = () => {
 
   /**
    * Patches the createAidSinglesig method in vleiWorkflows.VleiIssuance to handle delegation safely
-   * 
+   *
    * This implementation:
    * 1. Uses the original function for non-delegated AIDs to maintain compatibility
    * 2. Only applies custom code to the delegated AID case that was causing errors
    * 3. Adds strategic delays, safe property access, and better error handling for delegations
-   * 
+   *
    * @param workflowData The workflow data to run
    * @param configData The configuration for the workflow
    * @returns An object containing success status and any error information
    */
   const patchWorkflowWithSafeDelegation = async (
     workflowData: any,
-    configData: any
+    configData: any,
   ): Promise<{ success: boolean; error?: any }> => {
     try {
       console.log("Applying patch to delegation approval process");
-      
+
       // Reset WorkflowState to ensure clean execution
       console.log("Resetting WorkflowState for clean execution");
       vleiWorkflows.WorkflowState.resetInstance();
-      
+
       // Save the original method to restore it later
-      const originalCreateAidSinglesig = vleiWorkflows.VleiIssuance.createAidSinglesig;
-      
+      const originalCreateAidSinglesig =
+        vleiWorkflows.VleiIssuance.createAidSinglesig;
+
       // Replace with our patched version that handles the error
-      vleiWorkflows.VleiIssuance.createAidSinglesig = async (identifierData: any) => {
-        console.log(`Patched createAidSinglesig called for: ${identifierData.name}`);
+      vleiWorkflows.VleiIssuance.createAidSinglesig = async (
+        identifierData: any,
+      ) => {
+        console.log(
+          `Patched createAidSinglesig called for: ${identifierData.name}`,
+        );
         const delegator = identifierData.delegator;
-        
+
         // Regular non-delegated AID flow - use original function
         if (!delegator) {
-          console.log(`Creating regular non-delegated AID: ${identifierData.name} (using original method)`);
+          console.log(
+            `Creating regular non-delegated AID: ${identifierData.name} (using original method)`,
+          );
           return await originalCreateAidSinglesig(identifierData);
         }
-        
+
         // Delegated AID flow with manual error handling
-        console.log(`Creating delegated AID: ${identifierData.name} with delegator: ${delegator} (using patched method)`);
+        console.log(
+          `Creating delegated AID: ${identifierData.name} with delegator: ${delegator} (using patched method)`,
+        );
         try {
           const workflow_state = vleiWorkflows.WorkflowState.getInstance();
-          
+
           // Check if the delegator exists in the workflow state
           const delegatorAid = workflow_state.aids.get(delegator);
           if (!delegatorAid) {
-            throw new Error(`Delegator AID ${delegator} not found in WorkflowState`);
+            throw new Error(
+              `Delegator AID ${delegator} not found in WorkflowState`,
+            );
           }
-          
+
           // Extract info needed for delegation
           const singlesigIdentifierData = identifierData as any;
-          const client = workflow_state.clients.get(singlesigIdentifierData.agent.name);
-          
+          const client = workflow_state.clients.get(
+            singlesigIdentifierData.agent.name,
+          );
+
           if (!client) {
-            throw new Error(`Client not found for agent '${singlesigIdentifierData.agent.name}'`);
+            throw new Error(
+              `Client not found for agent '${singlesigIdentifierData.agent.name}'`,
+            );
           }
-          
+
           // Try to retrieve existing AID
           try {
-            const existingAid = await client.identifiers().get(identifierData.name);
+            const existingAid = await client
+              .identifiers()
+              .get(identifierData.name);
             console.log(`Delegated AID ${identifierData.name} already exists`);
             return existingAid;
           } catch (e) {
             // AID doesn't exist, continue with creation
             console.log(`Creating new delegated AID ${identifierData.name}`);
           }
-          
+
           // Prepare delegation arguments
           const kargsSinglesigAID: any = {
             toad: workflow_state.kargsAID.toad,
             wits: workflow_state.kargsAID.wits,
-            delpre: delegatorAid.prefix
+            delpre: delegatorAid.prefix,
           };
-          
+
           // Get delegator info and client
-          const delegatorIdentifierData = workflow_state.aidsInfo.get(delegator) as any;
-          const delegatorClient = workflow_state.clients.get(delegatorIdentifierData.agent.name);
-          
+          const delegatorIdentifierData = workflow_state.aidsInfo.get(
+            delegator,
+          ) as any;
+          const delegatorClient = workflow_state.clients.get(
+            delegatorIdentifierData.agent.name,
+          );
+
           // Resolve delegator's OOBI
           console.log("Resolving delegator's OOBI");
-          const oobi = await delegatorClient.oobis().get(delegator, 'agent');
+          const oobi = await delegatorClient.oobis().get(delegator, "agent");
           await resolveOobi(client, oobi.oobis[0], delegator);
-          
+
           // Create delegated AID
-          console.log(`Creating delegated AID with delpre: ${delegatorAid.prefix}`);
-          const icpResult = await client.identifiers().create(identifierData.name, { delpre: delegatorAid.prefix });
+          console.log(
+            `Creating delegated AID with delpre: ${delegatorAid.prefix}`,
+          );
+          const icpResult = await client
+            .identifiers()
+            .create(identifierData.name, { delpre: delegatorAid.prefix });
           const op = await icpResult.op();
-          const delegateAidPrefix = op.name.split('.')[1];
+          const delegateAidPrefix = op.name.split(".")[1];
           console.log(`Delegate's prefix: ${delegateAidPrefix}`);
-          
+
           // Prepare anchor for delegation approval
           const anchor = {
             i: delegateAidPrefix,
-            s: '0',
-            d: delegateAidPrefix
+            s: "0",
+            d: delegateAidPrefix,
           };
-          
+
           // ERROR HANDLING: This is where the original code fails
           console.log("Applying safe delegation approval");
           try {
             // Safely approve delegation
-            const apprDelRes = await delegatorClient.delegations().approve(delegator, anchor);
+            const apprDelRes = await delegatorClient
+              .delegations()
+              .approve(delegator, anchor);
             const approvalOp = await apprDelRes.op();
             await waitOperation(delegatorClient, approvalOp);
-            console.log('Delegator approve delegation submitted and confirmed');
-            
+            console.log("Delegator approve delegation submitted and confirmed");
+
             // Wait for the changes to propagate
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
             // Safely check the result with error handling for 'a' property
             try {
               // The line that causes errors because 'a' is sometimes undefined
-              if (apprDelRes.serder && apprDelRes.serder.ked && 
-                  apprDelRes.serder.ked.a && 
-                  JSON.stringify(apprDelRes.serder.ked.a[0]) === JSON.stringify(anchor)) {
+              if (
+                apprDelRes.serder &&
+                apprDelRes.serder.ked &&
+                apprDelRes.serder.ked.a &&
+                JSON.stringify(apprDelRes.serder.ked.a[0]) ===
+                  JSON.stringify(anchor)
+              ) {
                 console.log("Delegation anchor verified successfully");
               } else {
-                console.log("Warning: Could not verify delegation anchor, but continuing anyway");
+                console.log(
+                  "Warning: Could not verify delegation anchor, but continuing anyway",
+                );
               }
             } catch (anchorError) {
-              console.warn("Warning: Error checking anchor but continuing delegation process:", anchorError);
+              console.warn(
+                "Warning: Error checking anchor but continuing delegation process:",
+                anchorError,
+              );
             }
           } catch (approvalError: any) {
             console.error("Error during delegation approval:", approvalError);
-            throw new Error(`Delegation approval failed: ${approvalError.message}`);
+            throw new Error(
+              `Delegation approval failed: ${approvalError.message}`,
+            );
           }
-          
+
           // Continue with the delegation process
           try {
-            const op3 = await client.keyStates().query(delegatorAid.prefix, '1');
+            const op3 = await client
+              .keyStates()
+              .query(delegatorAid.prefix, "1");
             await waitOperation(client, op3);
             console.log("Key state query completed");
           } catch (error) {
-            console.warn("Warning: Key state query failed but continuing:", error);
+            console.warn(
+              "Warning: Key state query failed but continuing:",
+              error,
+            );
           }
-          
+
           // Wait for delegation operation to complete
           await waitOperation(client, op);
           console.log("Delegation operation completed");
-          
+
           // Get the newly created delegated AID
           const aid2 = await client.identifiers().get(identifierData.name);
           console.log(`Delegation approved for aid: ${aid2.prefix}`);
-          
+
           // Add end role
           try {
-            const rpyResult = await client.identifiers().addEndRole(identifierData.name, 'agent', client.agent.pre);
+            const rpyResult = await client
+              .identifiers()
+              .addEndRole(identifierData.name, "agent", client.agent.pre);
             await waitOperation(client, await rpyResult.op());
             console.log("End role added successfully");
           } catch (roleError) {
-            console.warn("Warning: Adding end role failed but continuing:", roleError);
+            console.warn(
+              "Warning: Adding end role failed but continuing:",
+              roleError,
+            );
           }
-          
+
           return aid2;
         } catch (error) {
-          console.error(`Error in patched createAidSinglesig for ${identifierData.name}:`, error);
+          console.error(
+            `Error in patched createAidSinglesig for ${identifierData.name}:`,
+            error,
+          );
           throw error;
         }
       };
-      
+
       try {
         // Run the workflow with our patched method
         console.log("Running workflow with patched delegation handling");
-        const workflowRunner = new vleiWorkflows.WorkflowRunner(workflowData, configData);
+        const workflowRunner = new vleiWorkflows.WorkflowRunner(
+          workflowData,
+          configData,
+        );
         await workflowRunner.runWorkflow();
-        console.log("Workflow executed successfully with patched delegation handling");
-        
+        console.log(
+          "Workflow executed successfully with patched delegation handling",
+        );
+
         // Restore original method
-        vleiWorkflows.VleiIssuance.createAidSinglesig = originalCreateAidSinglesig;
-        
+        vleiWorkflows.VleiIssuance.createAidSinglesig =
+          originalCreateAidSinglesig;
+
         // Return success result
         return { success: true };
       } catch (workflowError) {
         // Restore original method before handling the error
-        vleiWorkflows.VleiIssuance.createAidSinglesig = originalCreateAidSinglesig;
-        
-        console.error("Error running workflow with patched method:", workflowError);
+        vleiWorkflows.VleiIssuance.createAidSinglesig =
+          originalCreateAidSinglesig;
+
+        console.error(
+          "Error running workflow with patched method:",
+          workflowError,
+        );
         return { success: false, error: workflowError };
       }
     } catch (error) {
@@ -793,12 +867,14 @@ const Signify = () => {
    * This is a wrapper function that uses the workflow-based approach when possible
    * @returns A promise that resolves to an object with success or error information
    */
-  const createAID = async (name: string): Promise<{ success?: boolean; error?: any }> => {
+  const createAID = async (
+    name: string,
+  ): Promise<{ success?: boolean; error?: any }> => {
     try {
       // Check if called from workflow to prevent infinite recursion
-      const callerInfo = new Error().stack || '';
-      const isCalledFromWorkflow = callerInfo.includes('createAIDWorkflow');
-      
+      const callerInfo = new Error().stack || "";
+      const isCalledFromWorkflow = callerInfo.includes("createAIDWorkflow");
+
       // Only use workflow approach if not already called from it
       if (!isCalledFromWorkflow) {
         try {
@@ -809,13 +885,13 @@ const Signify = () => {
           console.warn("Falling back to direct AID creation");
         }
       }
-      
+
       // Direct API approach as fallback
       // Ensure client is connected
       if (!_client) {
         throw new Error("Client must be connected before creating an AID");
       }
-      
+
       // Use direct API call
       await _client.identifiers().create(name);
       return { success: true };
@@ -846,78 +922,92 @@ const Signify = () => {
    * @param name The name for the AID
    * @returns A promise that resolves to an object with success or error information
    */
-  const createAIDWorkflow = async (name: string): Promise<{ success?: boolean; error?: any }> => {
+  const createAIDWorkflow = async (
+    name: string,
+  ): Promise<{ success?: boolean; error?: any }> => {
     try {
       console.log("Initializing workflow for AID creation");
-      
+
       // First, verify the client is connected
       if (!_client) {
         throw new Error("Client must be connected before creating an AID");
       }
-      
+
       // Generate a valid bran (browser authentication record number)
       const generateValidBran = () => {
-        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const charset =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let result = "";
         for (let i = 0; i < 21; i++) {
           result += charset.charAt(Math.floor(Math.random() * charset.length));
         }
         return result;
       };
-      
+
       const validBran = generateValidBran();
-      
+
       // Load AID creation workflow
-      const workflow = await backgroundWorkflowLoader.loadWorkflow("create-aid-workflow");
+      const workflow = await backgroundWorkflowLoader.loadWorkflow(
+        "create-aid-workflow",
+      );
       if (!workflow) {
-        console.warn("Failed to load AID workflow, falling back to direct creation");
+        console.warn(
+          "Failed to load AID workflow, falling back to direct creation",
+        );
         return await createAID(name);
       }
-      
+
       // Get the current agent URL - safely checking for undefined values
       let agentUrl = "";
       if (_client && _client.controller && _client.controller.connection) {
         agentUrl = _client.controller.connection.url;
       } else {
         // Get from config service as fallback
-        agentUrl = await configService.getAgentUrl() || "";
+        agentUrl = (await configService.getAgentUrl()) || "";
       }
-      
+
       if (!agentUrl) {
         throw new Error("Cannot determine agent URL for AID creation");
       }
-      
+
       // Get passcode from user service
       const passcode = await userService.getPasscode();
-      
+
       if (!passcode) {
         throw new Error("No passcode available for AID creation");
       }
-      
+
       // Load config with runtime values
-      const config = await backgroundWorkflowLoader.loadConfig("create-client-config", {
-        agentUrl,
-        bootUrl: "", // Not needed for AID creation
-        passcode,
-        bran: validBran,
-        aidName: name // Add the AID name to the config
-      });
-      
+      const config = await backgroundWorkflowLoader.loadConfig(
+        "create-client-config",
+        {
+          agentUrl,
+          bootUrl: "", // Not needed for AID creation
+          passcode,
+          bran: validBran,
+          aidName: name, // Add the AID name to the config
+        },
+      );
+
       if (!config) {
         console.warn("Failed to load config, falling back to direct creation");
         return await createAID(name);
       }
-      
+
       // Modify the workflow to use the provided AID name
-      if (workflow.workflow && workflow.workflow.steps && workflow.workflow.steps.gleif_aid) {
+      if (
+        workflow.workflow &&
+        workflow.workflow.steps &&
+        workflow.workflow.steps.gleif_aid
+      ) {
         workflow.workflow.steps.gleif_aid.aid = name;
         workflow.workflow.steps.gleif_aid.description = `Creating AID: ${name}`;
       }
-      
+
       // Run the workflow
       console.log("Starting AID workflow runner");
       const workflowRunner = new vleiWorkflows.WorkflowRunner(workflow, config);
-      
+
       try {
         await workflowRunner.runWorkflow();
         console.log(`AID ${name} created successfully via workflow`);
