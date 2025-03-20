@@ -623,7 +623,7 @@ const Signify = () => {
    * This implementation:
    * 1. Uses the original function for non-delegated AIDs to maintain compatibility
    * 2. Only applies custom code to the delegated AID case that was causing errors
-   * 3. Adds strategic delays, safe property access, and better error handling for delegations
+   * 3. Adds delays, safe property access, and better error handling for delegations
    *
    * @param workflowData The workflow data to run
    * @param configData The configuration for the workflow
@@ -663,7 +663,7 @@ const Signify = () => {
 
         // Delegated AID flow with manual error handling
         console.log(
-          `Creating delegated AID: ${identifierData.name} with delegator: ${delegator} (using patched method)`,
+          `Creating delegated AID: ${identifierData.name} with delegator: ${delegator}`,
         );
         try {
           const workflow_state = vleiWorkflows.WorkflowState.getInstance();
@@ -752,9 +752,7 @@ const Signify = () => {
             // Wait for the changes to propagate
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
-            // Safely check the result with error handling for 'a' property
             try {
-              // The line that causes errors because 'a' is sometimes undefined
               if (
                 apprDelRes.serder &&
                 apprDelRes.serder.ked &&
@@ -828,16 +826,11 @@ const Signify = () => {
       };
 
       try {
-        // Run the workflow with our patched method
-        console.log("Running workflow with patched delegation handling");
         const workflowRunner = new vleiWorkflows.WorkflowRunner(
           workflowData,
           configData,
         );
         await workflowRunner.runWorkflow();
-        console.log(
-          "Workflow executed successfully with patched delegation handling",
-        );
 
         // Restore original method
         vleiWorkflows.VleiIssuance.createAidSinglesig =

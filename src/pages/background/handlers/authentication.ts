@@ -4,16 +4,6 @@ import { getDomainFromUrl } from "@shared/utils";
 import { IHandler, ISessionConfig, ISignin } from "@config/types";
 import { getCurrentUrl } from "@pages/background/utils";
 import { getExtensionApi } from "@src/shared/browser/extension-api";
-import * as vleiWorkflows from "vlei-verifier-workflows";
-
-// Remove these imports as they're no longer needed in this file
-// Import necessary utility functions directly from vlei-verifier-workflows
-// These imports are needed for our patched implementation
-// import {
-//   getOrCreateAID,
-//   resolveOobi,
-//   waitOperation
-// } from "vlei-verifier-workflows/dist/utils/test-util.js";
 
 export async function handleCheckAgentConnection({
   sendResponse,
